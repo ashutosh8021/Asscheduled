@@ -1,0 +1,619 @@
+/* ============================================================
+   AS SCHEDULED — V2 THEME (Gochujang Red field, Crimson Blaze accent)
+   Parallel surface. Every selector is scoped under .v2 so this file
+   cannot leak into the Season 01 build in app/globals.css.
+
+   Fonts are inherited from the root layout's CSS variables — no extra
+   webfont cost for this route.
+   ============================================================ */
+
+.v2 {
+  /* ---- The four supplied anchors ---------------------------------
+     Gochujang Red  #780001
+     Crimson Blaze  #C1B21F   (reads olive-gold, not crimson)
+     Varden         #FEE0D5
+     Cosmos Blue    #002F49
+     Everything below is one of those four or a tint/shade of one.
+
+     Red is the field and Blaze is the primary accent: every CTA, every
+     hover, every marker. Varden is the type. Cosmos appears exactly once,
+     as the numbers band — it fails contrast against red (1.2:1) so it can
+     only ever be a full block with Varden on it, never ink on the page.
+     Gochujang is likewise a surface, never type. */
+  --gochujang: #780001;
+  --blaze: #c1b21f;
+  --varden: #fee0d5;
+  --cosmos: #002f49;
+
+  /* base — Gochujang Red carries the whole field. Every value is a shade
+     or tint of #780001. Measured against Varden and Blaze: the page gives
+     Blaze 7.5:1 and Varden 13:1, so both stay legible at any size. */
+  --void: #4a0001;   /* page */
+  --deep: #620001;   /* bands */
+  --raised: #780001; /* Gochujang, unmodified */
+  --card: #8f1518;   /* lifted card face */
+  --line: #a33a34;   /* hairline */
+
+  /* type — Varden for copy, a warm tint for secondary.
+     --mute clears AA on page, band and card alike (8.7 / 6.2 / 4.9). */
+  --ink: #fee0d5;
+  --mute: #e0b3a6;
+
+  --disp: var(--font-anton), Impact, sans-serif;
+  --body: var(--font-grotesk), system-ui, sans-serif;
+  --mono: var(--font-plex), ui-monospace, monospace;
+  --ser: var(--font-instrument), Georgia, serif;
+
+  --bez: cubic-bezier(0.22, 1, 0.36, 1);
+  --pad: clamp(18px, 4.5vw, 72px);
+
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  min-height: 100svh; /* 100vh first — Safari rule */
+  background: var(--void);
+  color: var(--ink);
+  font-family: var(--body);
+  overflow-x: hidden;
+}
+
+.v2 *,
+.v2 *::before,
+.v2 *::after {
+  box-sizing: border-box;
+}
+
+.v2 ::selection {
+  background: var(--blaze);
+  color: var(--void);
+}
+
+.v2 :focus-visible {
+  outline: 2px solid var(--blaze);
+  outline-offset: 3px;
+}
+
+/* ---------- shared atoms ---------- */
+.v2 .lbl {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+
+.v2 .disp {
+  font-family: var(--disp);
+  text-transform: uppercase;
+  line-height: 0.88;
+  letter-spacing: 0.005em;
+  font-weight: 400;
+}
+
+.v2 .ser {
+  font-family: var(--ser);
+  font-style: italic;
+  text-transform: none;
+}
+
+/* Neon rule: a hairline that glows rather than a heavy border. */
+.v2 .rule {
+  height: 1px;
+  border: 0;
+  background: linear-gradient(90deg, transparent, var(--line) 18%, var(--line) 82%, transparent);
+}
+
+.v2 .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 16px 30px;
+  border-radius: 2px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 0.3s var(--bez), color 0.3s var(--bez),
+    box-shadow 0.3s var(--bez), transform 0.3s var(--bez);
+}
+.v2 .btn:hover {
+  border-color: var(--blaze);
+  color: var(--blaze);
+  box-shadow: 0 0 0 1px rgba(193, 178, 31, 0.3), 0 0 34px rgba(193, 178, 31, 0.22);
+  transform: translateY(-2px);
+}
+.v2 .btn-hot {
+  border-color: transparent;
+  color: var(--void);
+  background: var(--blaze);
+  font-weight: 700;
+}
+.v2 .btn-hot:hover {
+  color: var(--void);
+  box-shadow: 0 0 44px rgba(193, 178, 31, 0.42);
+}
+
+/* ---------- nav ---------- */
+.v2-nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 16px var(--pad);
+  background: rgba(43, 0, 1, 0.8);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line);
+}
+.v2-mark {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--ink);
+  text-decoration: none;
+}
+.v2-mark sup {
+  color: var(--blaze);
+  font-size: 0.6em;
+}
+.v2-nav-links {
+  display: none;
+  gap: 30px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.v2-nav-links a {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--mute);
+  text-decoration: none;
+  transition: color 0.25s var(--bez);
+}
+.v2-nav-links a:hover {
+  color: var(--ink);
+}
+@media (min-width: 880px) {
+  .v2-nav-links {
+    display: flex;
+  }
+}
+
+/* ---------- hero ---------- */
+.v2-hero {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 120px var(--pad) clamp(40px, 7vh, 90px);
+  isolation: isolate;
+}
+
+/* The canvas sits behind the copy and never blocks it — content is painted
+   server-side, WebGL only ever arrives later. */
+.v2-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+/* Static fallback: what a reduced-motion or low-end visitor sees instead. */
+.v2-canvas-fallback {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(ellipse 68% 54% at 64% 36%, rgba(193, 178, 31, 0.26), transparent 70%),
+    radial-gradient(ellipse 54% 48% at 24% 62%, rgba(120, 0, 1, 0.95), transparent 74%),
+    radial-gradient(ellipse 64% 54% at 50% 94%, rgba(0, 47, 73, 0.35), transparent 72%);
+}
+.v2-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(43, 0, 1, 0.85) 0%, transparent 28%, transparent 55%, var(--void) 96%);
+}
+
+.v2-hero-kicker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+.v2-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--blaze);
+  box-shadow: 0 0 12px var(--blaze);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .v2-dot {
+    animation: v2pulse 2.4s var(--bez) infinite;
+  }
+}
+@keyframes v2pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.82); }
+}
+
+.v2-hero h1 {
+  font-family: var(--disp);
+  text-transform: uppercase;
+  font-size: clamp(46px, 11.5vw, 190px);
+  line-height: 0.85;
+  letter-spacing: -0.01em;
+  margin: 0 0 26px;
+  max-width: 16ch;
+}
+.v2-hero h1 .ser {
+  display: block;
+  font-size: 0.82em;
+  line-height: 0.95;
+  background: linear-gradient(96deg, var(--blaze) 5%, var(--varden) 78%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.v2-hero-sub {
+  max-width: 46ch;
+  font-size: clamp(15px, 1.6vw, 19px);
+  line-height: 1.6;
+  color: var(--mute);
+  margin: 0 0 34px;
+}
+.v2-hero-acts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+}
+
+/* ---------- marquee ---------- */
+.v2-marquee {
+  border-block: 1px solid var(--line);
+  background: var(--deep);
+  overflow: hidden;
+  padding: 16px 0;
+}
+.v2-marquee-track {
+  display: flex;
+  gap: 46px;
+  width: max-content;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mute);
+  white-space: nowrap;
+}
+.v2-marquee-track b {
+  color: var(--blaze);
+  font-weight: 600;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .v2-marquee-track {
+    animation: v2slide 46s linear infinite;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .v2-marquee {
+    overflow-x: auto;
+  }
+}
+@keyframes v2slide {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ---------- generic section ---------- */
+.v2-sec {
+  padding: clamp(72px, 11vw, 160px) var(--pad);
+  position: relative;
+}
+.v2-sec-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: clamp(34px, 5vw, 64px);
+}
+.v2-sec-head h2 {
+  font-family: var(--disp);
+  text-transform: uppercase;
+  font-size: clamp(32px, 6.4vw, 92px);
+  line-height: 0.88;
+  margin: 8px 0 0;
+}
+.v2-sec-head p {
+  max-width: 34ch;
+  color: var(--mute);
+  font-size: 14.5px;
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* ---------- departure cards ---------- */
+.v2-deck {
+  display: grid;
+  gap: clamp(16px, 2.2vw, 28px);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+}
+.v2-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 400px;
+  padding: 26px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: linear-gradient(168deg, var(--raised), var(--deep) 72%);
+  text-decoration: none;
+  color: inherit;
+  overflow: hidden;
+  transition: transform 0.5s var(--bez), border-color 0.5s var(--bez),
+    box-shadow 0.5s var(--bez);
+}
+/* Accent wash keyed per card by --accent, set inline from the trip index. */
+.v2-card::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(ellipse 90% 60% at 50% 0%, var(--accent), transparent 68%);
+  transition: opacity 0.5s var(--bez);
+}
+.v2-card:hover,
+.v2-card:focus-visible {
+  background: linear-gradient(168deg, var(--card), var(--raised) 72%);
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
+  box-shadow: 0 22px 60px -28px var(--accent);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .v2-card:hover,
+  .v2-card:focus-visible {
+    transform: translateY(-6px);
+  }
+}
+.v2-card:hover::before,
+.v2-card:focus-visible::before {
+  opacity: 0.16;
+}
+.v2-card > * {
+  position: relative;
+}
+.v2-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: auto;
+}
+.v2-code {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+}
+.v2-seats {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--mute);
+  border: 1px solid var(--line);
+  border-radius: 100px;
+  padding: 4px 11px;
+}
+/* Almost full. Gochujang is the fill, never the type — a filled red pill is
+   both readable and more urgent than dark-red text on a dark card. */
+/* Almost full. Blaze fill with deep-red type — 7.5:1, and it is the loudest
+   thing on a red card, which is the point. */
+.v2-seats.tight {
+  color: var(--void);
+  background: var(--blaze);
+  border-color: transparent;
+  font-weight: 600;
+}
+.v2-card h3 {
+  font-family: var(--disp);
+  text-transform: uppercase;
+  font-size: clamp(30px, 3.4vw, 46px);
+  line-height: 0.9;
+  margin: 30px 0 10px;
+}
+.v2-card-where {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--mute);
+  margin: 0 0 16px;
+}
+.v2-card-hook {
+  font-family: var(--ser);
+  font-style: italic;
+  font-size: 17px;
+  line-height: 1.4;
+  color: var(--ink);
+  margin: 0 0 22px;
+  opacity: 0.86;
+}
+.v2-card-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+.v2-price {
+  font-family: var(--disp);
+  font-size: clamp(22px, 2.4vw, 30px);
+}
+.v2-card-go {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* ---------- counters ---------- */
+.v2-stats {
+  display: grid;
+  gap: 1px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+  background: rgba(254, 224, 213, 0.18);
+  border-block: 1px solid var(--cosmos);
+}
+.v2-stat {
+  background: var(--cosmos);
+  padding: clamp(30px, 4.5vw, 56px) var(--pad);
+  text-align: center;
+}
+.v2-stat b {
+  display: block;
+  font-family: var(--disp);
+  font-size: clamp(38px, 5.6vw, 76px);
+  line-height: 0.9;
+  font-weight: 400;
+  background: linear-gradient(180deg, var(--ink), var(--mute));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.v2-stat span {
+  display: block;
+  margin-top: 12px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+
+/* ---------- protocol steps ---------- */
+.v2-steps {
+  display: grid;
+  gap: clamp(18px, 2.4vw, 30px);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  counter-reset: v2step;
+}
+.v2-step {
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--deep);
+  position: relative;
+}
+.v2-step::before {
+  counter-increment: v2step;
+  content: "0" counter(v2step);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--blaze);
+}
+.v2-step h3 {
+  font-family: var(--disp);
+  text-transform: uppercase;
+  font-size: 22px;
+  line-height: 1;
+  margin: 18px 0 10px;
+}
+.v2-step p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--mute);
+}
+
+/* ---------- closing ---------- */
+.v2-cta {
+  text-align: center;
+  padding: clamp(90px, 14vw, 200px) var(--pad);
+  background:
+    radial-gradient(ellipse 60% 100% at 50% 100%, rgba(193, 178, 31, 0.22), transparent 70%),
+    var(--void);
+}
+.v2-cta h2 {
+  font-family: var(--disp);
+  text-transform: uppercase;
+  font-size: clamp(40px, 9vw, 140px);
+  line-height: 0.86;
+  margin: 18px 0 26px;
+}
+.v2-cta h2 .ser {
+  display: block;
+  color: var(--blaze);
+  font-size: 0.78em;
+}
+.v2-cta-note {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--mute);
+  margin: 26px 0 0;
+}
+
+.v2-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding: 30px var(--pad) 46px;
+  border-top: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+.v2-foot a {
+  color: var(--mute);
+  text-decoration: none;
+}
+.v2-foot a:hover {
+  color: var(--blaze);
+}
+
+/* ---------- scroll reveal ---------- */
+.v2-rv {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.8s var(--bez), transform 0.8s var(--bez);
+}
+.v2-rv.in {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .v2-rv {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

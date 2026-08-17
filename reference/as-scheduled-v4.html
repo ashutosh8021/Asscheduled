@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AS SCHEDULED — Fest Departures. 19 Seats. Application Only.</title>
+<meta name="description" content="Curated six-day departures around India's biggest college fests. Travel, fest tickets, stays and all meals included. 19 seats. You apply. We choose.">
+<meta property="og:title" content="AS SCHEDULED — Season 01 Departure Board">
+<meta property="og:description" content="One fest. One city. Six days. Nineteen strangers. Application only.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 56 34'%3E%3Cpath d='M4 18 C14 6 30 4 44 10 C36 11 30 14 27 19 C36 16 46 18 52 25 C43 22 35 24 30 30 C27 23 18 20 4 18 Z' fill='%23FFAD84'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   AS SCHEDULED — SEASON 01 · BUILD 02
+   Cotton paper · deep navy ink · powder blue fills · peach mark
+   Red reserved for rubber stamps only. Zero JS libraries.
+   ============================================================ */
+:root{
+  --cotton:#FAF6EE;        /* floral white cotton */
+  --cotton-2:#F1EADC;      /* aged sheet */
+  --navy:#12234F;          /* deep blue ink */
+  --navy-2:#0C1838;        /* night ink */
+  --powder:#C6D8EF;        /* powder blue */
+  --powder-2:#E2ECF8;      /* powder wash */
+  --peach:#FFAD84;         /* the bird, the mark */
+  --peach-2:#FF9463;
+  --red:#D9351F;           /* stamps only */
+  --grey:#8A8FA1;          /* pencil */
+  --ok:#1D6B3C;
+  --mono:'IBM Plex Mono','Courier New',monospace;
+  --body:'Space Grotesk','Helvetica Neue',Arial,sans-serif;
+  --disp:'Anton','Arial Narrow',Impact,sans-serif;
+  --ser:'Instrument Serif',Georgia,serif;
+  --pad:clamp(20px,4vw,64px);
+  --bez:cubic-bezier(.22,1,.36,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--cotton);color:var(--navy);font-family:var(--body);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::selection{background:var(--peach);color:var(--navy)}
+img{max-width:100%;display:block}
+a{color:inherit}
+button{font-family:inherit;cursor:pointer;background:none;border:none;color:inherit}
+.skip{position:fixed;top:-60px;left:12px;z-index:12000;background:var(--navy);color:var(--cotton);padding:10px 16px;font-family:var(--mono);font-size:12px;transition:top .2s}
+.skip:focus{top:12px}
+:focus-visible{outline:3px solid var(--peach-2);outline-offset:2px}
+
+.grain{position:fixed;inset:-50%;width:200%;height:200%;pointer-events:none;z-index:9000;opacity:.06;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+@keyframes grainShift{0%{transform:translate(0,0)}25%{transform:translate(-2%,1%)}50%{transform:translate(1%,-2%)}75%{transform:translate(-1%,-1%)}100%{transform:translate(0,0)}}
+@media (prefers-reduced-motion:no-preference){.grain{animation:grainShift .9s steps(4) infinite}}
+
+.mono{font-family:var(--mono)}
+.ser{font-family:var(--ser);font-style:italic;font-weight:400;letter-spacing:0;text-transform:none}
+.lbl{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.lbl-grey{color:var(--grey)}
+.disp{font-family:var(--disp);text-transform:uppercase;line-height:.92;letter-spacing:.01em;font-weight:400}
+.st{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--red);border:2px solid var(--red);padding:3px 10px;transform:rotate(-3deg);border-radius:2px}
+.st-blue{color:var(--navy);border-color:var(--navy)}
+.st-ok{color:var(--ok);border-color:var(--ok)}
+.st-grey{color:var(--grey);border-color:var(--grey)}
+.st-peach{color:var(--peach-2);border-color:var(--peach-2)}
+
+.btn{display:inline-block;font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;border:2px solid var(--navy);padding:14px 26px;background:var(--cotton);color:var(--navy);transition:transform .18s var(--bez),box-shadow .18s var(--bez),background .18s,color .18s}
+.btn:hover{transform:translate(-3px,-3px);box-shadow:5px 5px 0 var(--navy)}
+.btn:active{transform:translate(0,0);box-shadow:none}
+.btn-peach{background:var(--peach);color:var(--navy)}
+.btn-navy{background:var(--navy);color:var(--cotton)}
+.btn[disabled]{opacity:.4;pointer-events:none}
+
+.rv{opacity:0;transform:translateY(26px)}
+.rv.on{opacity:1;transform:none;transition:opacity .7s var(--bez),transform .7s var(--bez)}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}}
+
+/* ---------- MONOGRAM ---------- */
+.mgm{display:inline-flex;align-items:center;justify-content:center;background:var(--navy);width:38px;height:38px;flex-shrink:0}
+.mgm span{font-family:var(--disp);font-size:19px;color:var(--peach);letter-spacing:.02em;transform:translateY(1px)}
+.mgm-lg{width:84px;height:84px}
+.mgm-lg span{font-size:42px}
+
+/* ============================================================
+   PRELOADER — 7s, skippable at 1.5s
+   ============================================================ */
+.pre{position:fixed;inset:0;z-index:11000;background:var(--navy-2);color:var(--cotton);display:flex;flex-direction:column;justify-content:center;padding:var(--pad);transition:opacity .7s var(--bez),visibility .7s}
+.pre.done{opacity:0;visibility:hidden;pointer-events:none}
+.pre-lines{font-family:var(--mono);font-size:clamp(11px,1.4vw,14px);letter-spacing:.08em;min-height:9em}
+.pre-lines div{opacity:0;transform:translateY(6px);transition:opacity .4s,transform .4s;margin-bottom:.6em}
+.pre-lines div.in{opacity:1;transform:none}
+.pre-lines .dim{color:#7E88A6}
+.pre-bar{height:2px;background:rgba(250,246,238,.15);margin-top:28px;max-width:520px;position:relative;overflow:hidden}
+.pre-bar i{position:absolute;inset:0;background:var(--peach);transform:scaleX(0);transform-origin:left}
+@media (prefers-reduced-motion:no-preference){.pre.play .pre-bar i{animation:barFill 6.4s linear forwards}}
+@keyframes barFill{to{transform:scaleX(1)}}
+.pre-bird{position:absolute;top:18%;left:-80px;width:64px;opacity:.95}
+@media (prefers-reduced-motion:no-preference){.pre.play .pre-bird{animation:birdFly 5.5s cubic-bezier(.4,.1,.3,1) .8s forwards}}
+@keyframes birdFly{0%{transform:translate(0,0) rotate(4deg)}40%{transform:translate(45vw,-6vh) rotate(-3deg)}100%{transform:translate(115vw,-14vh) rotate(-6deg)}}
+.pre-stamp{position:absolute;right:clamp(20px,8vw,120px);bottom:clamp(80px,16vh,160px);font-family:var(--mono);font-weight:600;font-size:clamp(18px,3vw,30px);letter-spacing:.14em;color:var(--red);border:3px solid var(--red);padding:10px 22px;border-radius:3px;transform:rotate(-8deg) scale(3);opacity:0}
+.pre-stamp.hit{opacity:1;transform:rotate(-8deg) scale(1);transition:transform .22s cubic-bezier(.5,1.8,.4,.9),opacity .1s}
+.pre-skip{position:absolute;right:var(--pad);top:var(--pad);font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#7E88A6;border:1px solid #7E88A6;padding:8px 14px;opacity:0;transition:opacity .3s,color .2s,border-color .2s}
+.pre-skip.show{opacity:1}
+.pre-skip:hover{color:var(--cotton);border-color:var(--cotton)}
+
+/* ============================================================
+   NAV
+   ============================================================ */
+.nav{position:fixed;top:0;left:0;right:0;z-index:8000;display:flex;align-items:center;justify-content:space-between;padding:12px var(--pad);background:color-mix(in srgb,var(--cotton) 92%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:2px solid var(--navy)}
+.nav-mark{font-family:var(--disp);font-size:19px;letter-spacing:.02em;text-decoration:none;display:flex;align-items:center;gap:12px}
+.nav-links{display:flex;gap:28px;align-items:center;list-style:none}
+.nav-links a{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;position:relative}
+.nav-links a:not(.btn)::after{content:'';position:absolute;left:0;bottom:-4px;height:2px;width:0;background:var(--peach-2);transition:width .25s var(--bez)}
+.nav-links a:not(.btn):hover::after{width:100%}
+.nav-links .btn{padding:9px 18px;font-size:11px}
+.burger{display:none;flex-direction:column;gap:5px;padding:8px}
+.burger span{display:block;width:26px;height:2px;background:var(--navy);transition:transform .25s,opacity .25s}
+.mnav{position:fixed;inset:0;z-index:7900;background:var(--navy-2);color:var(--cotton);display:flex;flex-direction:column;justify-content:center;padding:var(--pad);gap:8px;transform:translateY(-100%);transition:transform .45s var(--bez)}
+.mnav.open{transform:none}
+.mnav a{font-family:var(--disp);font-size:clamp(38px,10vw,72px);text-transform:uppercase;text-decoration:none;line-height:1.05}
+.mnav a:hover{color:var(--peach)}
+.mnav .lbl{color:#7E88A6;margin-bottom:18px}
+body.locked{overflow:hidden}
+
+/* ============================================================
+   HERO — Nued-style ghost columns + peach bird watermark
+   ============================================================ */
+.hero{min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;padding:calc(var(--pad) + 60px) var(--pad) var(--pad);position:relative;overflow:hidden;border-bottom:2px solid var(--navy)}
+.hero-ghost{position:absolute;inset:0;pointer-events:none;user-select:none;overflow:hidden}
+.hero-ghost .col{position:absolute;top:-6%;font-family:var(--disp);font-size:clamp(90px,17vw,300px);text-transform:uppercase;line-height:.98;white-space:nowrap;color:transparent;-webkit-text-stroke:1px rgba(18,35,79,.10);writing-mode:vertical-rl}
+.hero-ghost .c1{left:2%}.hero-ghost .c2{left:34%;top:-18%;-webkit-text-stroke-color:rgba(18,35,79,.06)}
+.hero-ghost .bird-w{position:absolute;right:-6%;top:6%;width:clamp(340px,42vw,760px);opacity:.5}
+@media (prefers-reduced-motion:no-preference){.hero-ghost .bird-w{animation:hover 7s ease-in-out infinite}}
+.hero-h{font-size:clamp(58px,13.5vw,200px);position:relative;z-index:2}
+.hero-h .ln2{font-family:var(--ser);font-style:italic;text-transform:none;font-size:.88em;color:var(--peach-2);letter-spacing:-.01em}
+.hero-sub{max-width:560px;margin-top:26px;font-size:clamp(15px,1.6vw,18px);z-index:2;position:relative}
+.hero-sub em{font-family:var(--ser);font-style:italic;font-size:1.1em}
+.hero-cta{display:flex;gap:14px;margin-top:30px;flex-wrap:wrap;z-index:2;position:relative}
+.hero-meta{position:absolute;top:calc(60px + 18px);left:var(--pad);right:var(--pad);display:flex;justify-content:space-between;z-index:2}
+.stamp-rot{position:absolute;right:clamp(16px,6vw,90px);bottom:clamp(200px,30vh,320px);width:clamp(110px,13vw,160px);z-index:2}
+@media (prefers-reduced-motion:no-preference){.stamp-rot svg{animation:spin 22s linear infinite}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.stamp-rot text{font-family:var(--mono);font-size:11.5px;letter-spacing:2.5px;fill:var(--navy);text-transform:uppercase}
+.stamp-rot .bird-c{fill:var(--peach-2)}
+@keyframes hover{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+
+.tick{background:var(--navy);color:var(--cotton);border-bottom:2px solid var(--navy);overflow:hidden;padding:10px 0}
+.tick-in{display:flex;width:max-content;will-change:transform}
+@media (prefers-reduced-motion:no-preference){.tick-in{animation:tick 28s linear infinite}}
+@keyframes tick{to{transform:translateX(-50%)}}
+.tick span{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;padding:0 26px;white-space:nowrap}
+.tick b{font-weight:600;color:var(--peach)}
+
+/* ============================================================
+   SECTIONS
+   ============================================================ */
+.sec{padding:clamp(72px,10vw,140px) var(--pad);border-bottom:2px solid var(--navy);position:relative}
+.sec-head{display:flex;justify-content:space-between;align-items:baseline;gap:20px;flex-wrap:wrap;margin-bottom:clamp(36px,5vw,64px)}
+.sec-h{font-size:clamp(38px,7vw,96px)}
+.sec-h .ser{color:var(--peach-2);font-size:.92em}
+.sec-no{font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--grey)}
+
+.mani{background:var(--navy);color:var(--cotton)}
+.mani .disp{font-size:clamp(34px,6.4vw,86px);max-width:20ch}
+.mani .disp em{font-family:var(--ser);font-style:italic;text-transform:none;color:var(--peach);font-size:.95em}
+.mani-foot{margin-top:36px;color:#7E88A6}
+
+/* ---- departure board ---- */
+.board{padding:0}
+.board-head{padding:clamp(56px,8vw,110px) var(--pad) clamp(28px,4vw,48px)}
+.board-cols{display:grid;grid-template-columns:96px 1.6fr 1fr 1fr .8fr 130px;gap:18px;padding:10px var(--pad);border-top:2px solid var(--navy);border-bottom:2px solid var(--navy);font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--grey)}
+.card{border-bottom:2px solid var(--navy)}
+.card-row{display:grid;grid-template-columns:96px 1.6fr 1fr 1fr .8fr 130px;gap:18px;align-items:center;padding:22px var(--pad);width:100%;text-align:left;transition:background .18s,color .18s}
+.card-row:hover,.card.open .card-row{background:var(--navy);color:var(--cotton)}
+.card-row:hover .lbl-grey,.card.open .card-row .lbl-grey{color:#9FB2D8}
+.card-code{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.1em}
+.card-fest{font-family:var(--disp);font-size:clamp(26px,4vw,52px);text-transform:uppercase;line-height:.95}
+.card-cell{font-family:var(--mono);font-size:12px;letter-spacing:.06em;line-height:1.7}
+.card-price{font-family:var(--disp);font-size:clamp(20px,2.4vw,30px)}
+.card-price small{font-family:var(--mono);font-size:10px;letter-spacing:.12em;display:block;color:var(--grey)}
+.card-act{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.card-open-ind{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--grey)}
+.card.open .card-open-ind::before{content:'– '}
+.card:not(.open) .card-open-ind::before{content:'+ '}
+.card-x{max-height:0;overflow:hidden;transition:max-height .7s var(--bez);background:var(--cotton-2)}
+.card.open .card-x{max-height:6000px}
+.card-x-in{padding:clamp(28px,4vw,56px) var(--pad)}
+.card-chips{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:30px}
+.chip{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;border:1.5px solid var(--navy);padding:6px 12px;background:var(--powder-2)}
+.chip.hot{background:var(--peach);border-color:var(--navy)}
+.card-x h4{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--grey);margin:0 0 16px;border-bottom:1px solid var(--grey);padding-bottom:8px}
+
+/* day-by-day manifest */
+.days{margin-bottom:36px}
+.day{border:2px solid var(--navy);border-bottom:none;background:var(--cotton)}
+.day:last-child{border-bottom:2px solid var(--navy)}
+.day summary{list-style:none;display:grid;grid-template-columns:86px 1fr auto;gap:16px;align-items:center;padding:16px 18px;cursor:pointer;transition:background .15s}
+.day summary::-webkit-details-marker{display:none}
+.day summary:hover{background:var(--powder-2)}
+.day[open] summary{background:var(--navy);color:var(--cotton)}
+.day[open] summary .lbl-grey{color:#9FB2D8}
+.day-no{font-family:var(--disp);font-size:22px}
+.day-t{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;line-height:1.6}
+.day-mk{font-family:var(--mono);font-size:16px}
+.day[open] .day-mk{transform:rotate(45deg)}
+.day-in{padding:18px;border-top:2px solid var(--navy)}
+.blk{display:grid;grid-template-columns:74px 1fr;gap:14px;padding:9px 0;border-bottom:1px dashed rgba(18,35,79,.22);font-size:14px}
+.blk:last-of-type{border-bottom:none}
+.blk b{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--peach-2);padding-top:2px}
+.day-stay{margin-top:14px;font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;background:var(--powder-2);border:1.5px dashed var(--navy);padding:10px 12px}
+.day-stay b{color:var(--navy)}
+
+.incx{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,56px);margin-bottom:30px}
+.inc{list-style:none;font-size:14px}
+.inc li{padding:8px 0 8px 24px;position:relative;border-bottom:1px dashed rgba(18,35,79,.22)}
+.inc li::before{content:'✓';position:absolute;left:0;font-family:var(--mono);color:var(--ok);font-weight:600}
+.inc.ex li::before{content:'✕';color:var(--red)}
+.card-x-meta{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.card-x-note{font-family:var(--mono);font-size:12px;color:var(--grey);letter-spacing:.04em}
+.cd{font-family:var(--mono);font-size:12px;letter-spacing:.1em;font-weight:600}
+.cd b{color:var(--peach-2)}
+.card-row .cd b{color:var(--peach)}
+
+.soon-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--navy);border:2px solid var(--navy)}
+.soon-tile{background:var(--cotton);padding:26px 22px;min-height:130px;display:flex;flex-direction:column;justify-content:space-between;gap:14px;position:relative;overflow:hidden}
+.soon-tile::after{content:'';position:absolute;inset:0;pointer-events:none;opacity:.55;background:repeating-linear-gradient(-45deg,transparent,transparent 10px,rgba(18,35,79,.05) 10px,rgba(18,35,79,.05) 12px)}
+.soon-tile h3{font-family:var(--disp);font-size:clamp(20px,2.6vw,32px);text-transform:uppercase;line-height:1}
+.soon-tile:hover{background:var(--powder-2)}
+
+.proto{background:var(--navy);color:var(--cotton)}
+.proto .sec-no{color:#7E88A6}
+.proto-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:#3A4A78;border:2px solid #3A4A78}
+.proto-step{background:var(--navy);padding:30px 24px;min-height:290px;display:flex;flex-direction:column;gap:16px}
+.proto-step b{font-family:var(--mono);font-size:12px;letter-spacing:.16em;color:var(--peach)}
+.proto-step h3{font-family:var(--disp);font-size:clamp(24px,2.8vw,36px);text-transform:uppercase;line-height:1}
+.proto-step p{font-size:14px;color:#C4CEE4;line-height:1.65}
+.proto-foot{margin-top:28px;color:#7E88A6;font-family:var(--mono);font-size:12px;letter-spacing:.06em}
+
+.rec-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(32px,5vw,72px);align-items:start}
+.rec-file{border:2px solid var(--navy);padding:clamp(24px,3vw,40px);background:var(--cotton-2);position:relative}
+.rec-file .st{position:absolute;top:-14px;right:22px;background:var(--cotton)}
+.rec-kv{display:grid;grid-template-columns:auto 1fr;gap:8px 22px;font-family:var(--mono);font-size:13px;letter-spacing:.04em;margin-top:20px}
+.rec-kv dt{color:var(--grey);text-transform:uppercase;font-size:11px;letter-spacing:.14em;padding-top:2px}
+.rec-kv dd{border-bottom:1px dashed rgba(18,35,79,.25);padding-bottom:6px}
+.rec-slots{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:26px}
+.slot{aspect-ratio:4/5;border:2px dashed var(--grey);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--grey);text-align:center;padding:10px;text-transform:uppercase;background:repeating-linear-gradient(45deg,transparent,transparent 14px,rgba(138,143,161,.08) 14px,rgba(138,143,161,.08) 16px)}
+.rec-copy p{margin-bottom:18px;max-width:52ch}
+.rec-copy .disp{font-size:clamp(30px,4.6vw,58px);margin-bottom:22px}
+.rec-copy .disp em{font-family:var(--ser);font-style:italic;text-transform:none;color:var(--peach-2)}
+
+.nums{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:var(--navy);border-top:2px solid var(--navy)}
+.num{background:var(--cotton);padding:clamp(28px,4vw,52px) var(--pad)}
+.num b{font-family:var(--disp);font-size:clamp(44px,7vw,110px);display:block;line-height:1}
+.num span{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--grey)}
+
+.arch-empty{border:2px dashed var(--grey);padding:clamp(40px,6vw,90px) var(--pad);text-align:center;display:flex;flex-direction:column;align-items:center;gap:18px}
+.arch-empty .disp{font-size:clamp(28px,4.5vw,56px);color:var(--grey)}
+.sup-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:var(--navy);border:2px solid var(--navy)}
+.sup-tile{background:var(--cotton);aspect-ratio:1/1.1;padding:22px;display:flex;flex-direction:column;justify-content:space-between}
+.sup-tile h3{font-family:var(--disp);font-size:clamp(18px,2.2vw,28px);text-transform:uppercase;line-height:1}
+.sup-tile .ph{flex:1;margin:16px 0;border:1px dashed var(--grey);display:flex;align-items:center;justify-content:center;color:var(--grey);font-family:var(--mono);font-size:10px;letter-spacing:.14em}
+
+.faq details{border-bottom:2px solid var(--navy)}
+.faq summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:24px 0;cursor:pointer;font-family:var(--disp);font-size:clamp(18px,2.6vw,32px);text-transform:uppercase;transition:color .18s,padding-left .25s var(--bez)}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary:hover{color:var(--peach-2);padding-left:10px}
+.faq summary .mk{font-family:var(--mono);font-size:20px;flex-shrink:0}
+.faq details[open] summary .mk{transform:rotate(45deg)}
+.faq details p{padding:0 0 26px;max-width:64ch;font-size:15px}
+.faq details p b{font-family:var(--mono);font-size:13px}
+
+.cta{background:var(--peach);color:var(--navy)}
+.cta .disp{font-size:clamp(52px,11vw,160px)}
+.cta .disp .ser{font-size:.9em}
+.cta .btn{margin-top:34px;background:var(--navy);color:var(--cotton);border-color:var(--navy)}
+.cta .btn:hover{box-shadow:5px 5px 0 var(--navy);background:var(--cotton);color:var(--navy)}
+.cta .sec-no{color:var(--navy);opacity:.6}
+
+.foot{background:var(--navy-2);color:var(--cotton);padding:clamp(56px,8vw,110px) var(--pad) 34px}
+.foot-top{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:clamp(28px,5vw,72px);margin-bottom:60px}
+.foot h4{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#7E88A6;margin-bottom:16px}
+.foot ul{list-style:none}
+.foot ul a,.foot ul button{display:block;padding:6px 0;text-decoration:none;font-family:var(--mono);font-size:13px;letter-spacing:.05em;color:#C4CEE4;text-align:left}
+.foot ul a:hover,.foot ul button:hover{color:var(--peach)}
+.foot-mark{font-family:var(--disp);font-size:clamp(40px,6vw,80px);text-transform:uppercase;line-height:.95}
+.foot-bird{width:70px;margin-bottom:22px}
+@media (prefers-reduced-motion:no-preference){.foot-bird{animation:hover 4s ease-in-out infinite}}
+.foot-line{font-family:var(--ser);font-style:italic;font-size:17px;color:#9FB2D8;margin-top:14px}
+.foot-legal{border-top:1px solid rgba(250,246,238,.15);padding-top:22px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:#7E88A6}
+
+/* ============================================================
+   FORM 7A — full-screen application experience
+   ============================================================ */
+.app{position:fixed;inset:0;z-index:10000;background:var(--cotton);display:none;flex-direction:column}
+.app.open{display:flex}
+.app-top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px var(--pad);border-bottom:2px solid var(--navy);background:var(--cotton);flex-shrink:0}
+.app-top .lbl b{color:var(--peach-2)}
+.app-close{font-family:var(--mono);font-size:12px;letter-spacing:.12em;border:1.5px solid var(--navy);padding:8px 14px;text-transform:uppercase}
+.app-close:hover{background:var(--navy);color:var(--cotton)}
+.app-prog{height:4px;background:var(--cotton-2);flex-shrink:0;position:relative}
+.app-prog i{position:absolute;left:0;top:0;bottom:0;background:var(--peach);width:0;transition:width .5s var(--bez)}
+.app-body{flex:1;overflow-y:auto;position:relative}
+.ascr{display:none;min-height:100%;padding:clamp(32px,6vh,72px) var(--pad) 120px;max-width:860px;margin:0 auto;width:100%}
+.ascr.on{display:block;animation:scrIn .45s var(--bez)}
+@keyframes scrIn{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.ascr.on{animation:none}}
+.ascr .qno{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--peach-2);margin-bottom:18px;display:flex;align-items:center;gap:12px}
+.ascr .qno::after{content:'';flex:1;height:1px;background:rgba(18,35,79,.2)}
+.ascr h2{font-family:var(--ser);font-style:italic;font-weight:400;font-size:clamp(28px,4.6vw,52px);line-height:1.12;margin-bottom:10px;letter-spacing:-.01em}
+.ascr .qhint{font-family:var(--mono);font-size:12px;color:var(--grey);letter-spacing:.06em;margin-bottom:30px}
+.ascr textarea,.ascr input[type=text],.ascr input[type=number],.ascr input[type=tel],.ascr input[type=email],.ascr select{width:100%;background:transparent;border:none;border-bottom:2px solid var(--navy);padding:14px 2px;font-family:var(--body);font-size:clamp(18px,2.4vw,26px);color:var(--navy);border-radius:0;-webkit-appearance:none;appearance:none}
+.ascr textarea{min-height:120px;resize:vertical;line-height:1.5}
+.ascr textarea:focus,.ascr input:focus,.ascr select:focus{outline:none;border-bottom-color:var(--peach-2)}
+.ascr ::placeholder{color:#B9BDCB}
+.a2{display:grid;grid-template-columns:1fr 1fr;gap:0 40px}
+.afield{margin-bottom:30px}
+.afield label{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:4px;color:var(--grey)}
+.acnt{font-family:var(--mono);font-size:11px;color:var(--grey);text-align:right;margin-top:8px;letter-spacing:.08em}
+.aerr{display:none;font-family:var(--mono);font-size:12px;color:var(--red);margin-top:10px;letter-spacing:.06em}
+.ascr.err .aerr,.afield.err .aerr{display:block}
+.afield.err input{border-bottom-color:var(--red)}
+.ascr.err textarea,.ascr.err > input{border-bottom-color:var(--red)}
+.a-tripsel{border:2px solid var(--navy)!important;padding:16px!important;font-size:16px!important;background:var(--cotton)!important;font-family:var(--mono)!important}
+.a-file{border:2px dashed var(--grey);padding:34px;text-align:center;font-family:var(--mono);font-size:13px;letter-spacing:.06em;color:var(--grey);cursor:pointer;display:block;transition:border-color .2s,color .2s}
+.a-file:hover{border-color:var(--navy);color:var(--navy)}
+.a-file input{display:none}
+.a-preview{display:none;margin:18px auto 0;max-width:180px;border:2px solid var(--navy);padding:6px;background:#fff;transform:rotate(-2deg);box-shadow:6px 6px 0 rgba(18,35,79,.15)}
+.a-preview img{width:100%}
+.a-preview.show{display:block}
+.app-nav{position:sticky;bottom:0;display:flex;justify-content:space-between;align-items:center;gap:14px;padding:16px var(--pad);border-top:2px solid var(--navy);background:var(--cotton);flex-shrink:0}
+.app-nav .khint{font-family:var(--mono);font-size:11px;color:var(--grey);letter-spacing:.08em}
+.app-nav .khint b{border:1px solid var(--grey);padding:1px 6px;border-radius:2px}
+/* dossier */
+.doss{border:2px solid var(--navy);background:#fff;padding:clamp(22px,3vw,36px);position:relative;box-shadow:8px 8px 0 var(--powder)}
+.doss .st{position:absolute;top:-14px;right:20px;background:var(--cotton)}
+.doss dl{display:grid;grid-template-columns:auto 1fr;gap:10px 24px;font-size:14px}
+.doss dt{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--grey);padding-top:3px}
+.doss dd{border-bottom:1px dashed rgba(18,35,79,.2);padding-bottom:8px}
+.doss dd em{font-family:var(--ser);font-style:italic}
+.doss .edit{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--peach-2);text-transform:uppercase;margin-left:8px;text-decoration:underline;cursor:pointer}
+/* fee ledger */
+.ledger{border:2px solid var(--navy);background:var(--powder-2);margin-bottom:26px}
+.ledger .lrow{display:flex;justify-content:space-between;gap:16px;padding:14px 18px;border-bottom:1.5px dashed var(--navy);font-family:var(--mono);font-size:13px;letter-spacing:.04em}
+.ledger .lrow:last-child{border-bottom:none;background:var(--navy);color:var(--cotton);font-weight:600}
+.ledger .lrow em{font-family:var(--ser);color:var(--peach-2)}
+/* done */
+.a-done{text-align:center;padding-top:6vh}
+.a-done .st{font-size:18px;padding:12px 28px}
+.a-done h2{margin:26px 0 8px}
+.a-done .ref{font-family:var(--mono);font-size:15px;letter-spacing:.14em;border:1.5px dashed var(--grey);display:inline-block;padding:12px 20px;margin:18px 0 30px}
+.tl{max-width:460px;margin:0 auto;text-align:left}
+.tl li{list-style:none;display:grid;grid-template-columns:20px 1fr;gap:14px;padding:12px 0;border-bottom:1px dashed rgba(18,35,79,.2);font-size:14px}
+.tl li b{font-family:var(--mono);font-size:11px;letter-spacing:.08em;display:block;color:var(--grey);margin-bottom:2px}
+.tl .dot{width:12px;height:12px;border:2px solid var(--navy);border-radius:50%;margin-top:4px}
+.tl .dot.on{background:var(--peach);border-color:var(--navy)}
+
+/* ============================================================
+   LEGAL SHEET
+   ============================================================ */
+.legal{position:fixed;inset:0;z-index:9800;display:none}
+.legal.open{display:block}
+.legal-bg{position:absolute;inset:0;background:rgba(12,24,56,.85)}
+.legal-sheet{position:relative;margin:4vh auto;width:min(760px,94vw);max-height:92vh;overflow-y:auto;background:var(--cotton);border:2px solid var(--navy);box-shadow:10px 10px 0 var(--peach)}
+.legal-head{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:16px 24px;border-bottom:2px solid var(--navy);position:sticky;top:0;background:var(--cotton);z-index:2}
+.legal-head .disp{font-size:clamp(18px,3vw,26px)}
+.legal-tabs{display:flex;gap:0;border-bottom:2px solid var(--navy)}
+.legal-tabs button{flex:1;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:12px;border-right:2px solid var(--navy)}
+.legal-tabs button:last-child{border-right:none}
+.legal-tabs button.on{background:var(--navy);color:var(--cotton)}
+.legal-body{padding:26px}
+.lpane{display:none}
+.lpane.on{display:block}
+.lpane h3{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;margin:22px 0 10px;color:var(--peach-2)}
+.lpane h3:first-child{margin-top:0}
+.lpane p,.lpane li{font-size:14px;margin-bottom:10px;max-width:64ch}
+.lpane ul{padding-left:18px}
+.lpane .lnote{font-family:var(--mono);font-size:11px;color:var(--grey);letter-spacing:.06em;border-top:1px dashed var(--grey);padding-top:14px;margin-top:22px}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width:1020px){
+  .board-cols{display:none}
+  .card-row{grid-template-columns:1fr 1fr;gap:10px 18px;padding:24px var(--pad)}
+  .card-fest{grid-column:1/-1}
+  .card-code{order:-1}
+  .proto-grid{grid-template-columns:repeat(2,1fr)}
+  .rec-grid{grid-template-columns:1fr}
+  .nums{grid-template-columns:repeat(2,1fr)}
+  .sup-grid{grid-template-columns:repeat(2,1fr)}
+  .foot-top{grid-template-columns:1fr 1fr}
+  .incx{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  .nav-links{display:none}
+  .burger{display:flex}
+  .soon-grid{grid-template-columns:1fr 1fr}
+  .a2{grid-template-columns:1fr}
+  .hero-meta{flex-direction:column;gap:4px}
+  .stamp-rot{display:none}
+  .hero-ghost .c2{display:none}
+  .day summary{grid-template-columns:60px 1fr auto}
+}
+@media (max-width:520px){
+  .proto-grid,.soon-grid,.sup-grid{grid-template-columns:1fr}
+  .proto-step{min-height:0}
+  .blk{grid-template-columns:60px 1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  .tick-in,.stamp-rot svg,.foot-bird,.grain,.hero-ghost .bird-w{animation:none!important}
+  .card-x,.btn,.mnav{transition:none!important}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#board">Skip to departures</a>
+<div class="grain" aria-hidden="true"></div>
+
+<!-- PRELOADER -->
+<div class="pre play" id="pre" aria-hidden="false">
+  <svg class="pre-bird" viewBox="0 0 56 34" aria-hidden="true"><path d="M4 18 C14 6 30 4 44 10 C36 11 30 14 27 19 C36 16 46 18 52 25 C43 22 35 24 30 30 C27 23 18 20 4 18 Z" fill="#FFAD84"/></svg>
+  <div class="pre-lines" id="preLines">
+    <div>AS SCHEDULED — SEASON 01</div>
+    <div class="dim">DEPARTURE MANIFEST LOADING…</div>
+    <div class="dim">SEATS VERIFIED: 19 PER DEPARTURE</div>
+    <div class="dim">FILES OPEN: PUL-01 · REN-02 · ANT-03 · OAS-04</div>
+    <div>DO NOT REFRESH. WE DON'T REPEAT OURSELVES.</div>
+  </div>
+  <div class="pre-bar"><i></i></div>
+  <div class="pre-stamp" id="preStamp">CLEARED</div>
+  <button class="pre-skip" id="preSkip" type="button">Skip — you'll miss nothing important</button>
+</div>
+
+<!-- NAV -->
+<header class="nav">
+  <a class="nav-mark" href="#top" aria-label="AS Scheduled — home">
+    <span class="mgm" aria-hidden="true"><span>AS</span></span>
+    AS SCHEDULED<span class="mono" style="font-size:10px;vertical-align:top">®</span>
+  </a>
+  <nav aria-label="Primary">
+    <ul class="nav-links">
+      <li><a href="#board">Departures</a></li>
+      <li><a href="#protocol">Protocol</a></li>
+      <li><a href="#record">Record</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="#apply" class="btn btn-peach js-apply">Apply</a></li>
+    </ul>
+  </nav>
+  <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</header>
+<div class="mnav" id="mnav">
+  <p class="lbl">Index</p>
+  <a href="#board">Departures</a>
+  <a href="#protocol">Protocol</a>
+  <a href="#record">Record</a>
+  <a href="#supply">Supply</a>
+  <a href="#faq">FAQ</a>
+  <a href="#apply" class="js-apply" style="color:#FFAD84">Apply →</a>
+</div>
+
+<main id="top">
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-ghost" aria-hidden="true">
+    <span class="col c1">AS SCHEDULED</span>
+    <span class="col c2">AS SCHEDULED</span>
+    <svg class="bird-w" viewBox="0 0 56 34"><path d="M4 18 C14 6 30 4 44 10 C36 11 30 14 27 19 C36 16 46 18 52 25 C43 22 35 24 30 30 C27 23 18 20 4 18 Z" fill="none" stroke="#FFAD84" stroke-width=".6"/></svg>
+  </div>
+  <div class="hero-meta lbl lbl-grey">
+    <span>SEASON 01 / IND</span>
+    <span>EST. 2026 — ROITCOVE VENTURES LLP</span>
+    <span>STATUS: BOARDING</span>
+  </div>
+  <div class="stamp-rot" aria-hidden="true">
+    <svg viewBox="0 0 130 130">
+      <defs><path id="circ" d="M65,65 m-50,0 a50,50 0 1,1 100,0 a50,50 0 1,1 -100,0"/></defs>
+      <text><textPath href="#circ">APPLICATION ONLY • 19 SEATS • NO APPEALS • </textPath></text>
+      <path class="bird-c" transform="translate(38,48) scale(.95)" d="M4 18 C14 6 30 4 44 10 C36 11 30 14 27 19 C36 16 46 18 52 25 C43 22 35 24 30 30 C27 23 18 20 4 18 Z"/>
+    </svg>
+  </div>
+  <h1 class="disp hero-h">THE FEST GETS YOU THERE.<br><span class="ln2">the city keeps you.</span></h1>
+  <p class="hero-sub">Six-day curated departures around India's biggest college fests. Travel, fest access, stays and every meal — handled. Nineteen seats per departure. <em>You apply, we choose.</em></p>
+  <div class="hero-cta">
+    <button class="btn btn-peach js-apply" type="button">Apply now — ₹500, refundable</button>
+    <a class="btn" href="#board">View departure board</a>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="tick" aria-hidden="true">
+  <div class="tick-in" id="tickIn">
+    <span><b>PUL-01</b> AIIMS DELHI — APPS OPEN</span><span><b>REN-02</b> IIT DELHI — APPS OPEN</span><span><b>ANT-03</b> IIT KANPUR — APPS OPEN</span><span><b>OAS-04</b> BITS PILANI — APPS OPEN</span><span>TRAVEL + FEST + STAY + ALL MEALS — INCLUDED</span><span>19 SEATS PER DEPARTURE</span><span>₹500 APPLICATION — REFUNDABLE</span><span>NO BOOKINGS. ONLY SELECTIONS.</span>
+  </div>
+</div>
+
+<!-- MANIFESTO -->
+<section class="sec mani">
+  <p class="sec-no rv">FILE 01 — STATEMENT</p>
+  <h2 class="disp rv" style="margin-top:22px">We take you to the fest.<br>We hand you the city after.<br><em>We choose the nineteen.</em></h2>
+  <p class="mani-foot lbl rv">That's the entire explanation you'll get.</p>
+</section>
+
+<!-- DEPARTURE BOARD -->
+<section class="board" id="board">
+  <div class="board-head sec-head" style="margin-bottom:0">
+    <h2 class="disp sec-h rv">Departure <span class="ser">Board</span></h2>
+    <p class="sec-no rv">SEASON 01 — 4 OF 13 FILES OPEN</p>
+  </div>
+  <div class="board-cols" aria-hidden="true">
+    <span>Code</span><span>Fest / Campus</span><span>Window</span><span>Seats / Crew</span><span>Fee</span><span>File</span>
+  </div>
+  <div id="boardRows"><!-- rendered from TRIPS[] --></div>
+  <noscript><p style="padding:24px var(--pad);font-family:var(--mono);font-size:13px">Departure board needs JavaScript. Write instead: applications@asscheduled.in</p></noscript>
+</section>
+
+<!-- FILES PENDING -->
+<section class="sec">
+  <div class="sec-head">
+    <h2 class="disp sec-h rv">Files <span class="ser">Pending</span></h2>
+    <p class="sec-no rv">9 DEPARTURES — SEALED UNTIL DATES CONFIRM</p>
+  </div>
+  <div class="soon-grid rv" id="soonGrid"><!-- rendered --></div>
+</section>
+
+<!-- PROTOCOL -->
+<section class="sec proto" id="protocol">
+  <div class="sec-head">
+    <h2 class="disp sec-h rv">The Protocol</h2>
+    <p class="sec-no rv">FILE 03 — HOW SELECTION WORKS</p>
+  </div>
+  <div class="proto-grid rv">
+    <div class="proto-step"><b>STEP 01</b><h3>Apply</h3><p>Nine questions, one photo, four honest minutes. A ₹500 application fee holds your file — fully refundable if you're not selected.</p></div>
+    <div class="proto-step"><b>STEP 02</b><h3>Review</h3><p>Every answer gets read by a human. No algorithm, no scoring sheet you can game. Decisions land within 72 hours of the window closing.</p></div>
+    <div class="proto-step"><b>STEP 03</b><h3>Decision</h3><p>Selected: your ₹500 adjusts against the trip fee; pay the balance within 48 hours. Not selected: automatic refund, 5–7 working days, no reasons given, no appeals.</p></div>
+    <div class="proto-step"><b>STEP 04</b><h3>Depart</h3><p>One WhatsApp group. One boarding hub. One Director, one Trip Captain, nineteen strangers, six days. Evening plans stay sealed until departure.</p></div>
+  </div>
+  <p class="proto-foot rv">Rejection says nothing about you. It says something about the other eighteen seats.</p>
+</section>
+
+<!-- RECORD -->
+<section class="sec" id="record">
+  <div class="sec-head">
+    <h2 class="disp sec-h rv">The Record</h2>
+    <p class="sec-no rv">FILE 04 — PRIOR OPERATIONS</p>
+  </div>
+  <div class="rec-grid">
+    <div class="rec-copy rv">
+      <h3 class="disp">One trip run.<br>Seventy moved.<br><em>Zero lost.</em></h3>
+      <p>Before the name, before this page: a seventy-person, multi-state run to Alcheringa at IIT Guwahati, extended eleven days deep into Meghalaya. Planned on spreadsheets, held together by nerve and a working phone.</p>
+      <p>It worked. Everyone came back with stories they still can't explain properly. That route returns as a Season 01 pending file — same road, better paperwork.</p>
+      <p class="lbl lbl-grey">We won't show you strangers' photos and call them ours. Season 01 fills this page.</p>
+    </div>
+    <div class="rec-file rv">
+      <span class="st st-ok">EXECUTED</span>
+      <p class="lbl">Case File — Trip 000 (Prototype)</p>
+      <dl class="rec-kv">
+        <dt>Fest</dt><dd>Alcheringa, IIT Guwahati</dd>
+        <dt>Headcount</dt><dd>70 travellers</dd>
+        <dt>Route</dt><dd>Multi-state → Guwahati → Meghalaya</dd>
+        <dt>Extension</dt><dd>11 days</dd>
+        <dt>Incidents</dt><dd>None worth filing</dd>
+      </dl>
+      <div class="rec-slots" aria-label="Photo evidence slots — Season 1 film photos go here">
+        <div class="slot">PHOTO EVIDENCE<br>INSERT 000_A.JPG</div>
+        <div class="slot">PHOTO EVIDENCE<br>INSERT 000_B.JPG</div>
+        <div class="slot">PHOTO EVIDENCE<br>INSERT 000_C.JPG</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NUMBERS -->
+<div class="nums">
+  <div class="num rv"><b>1</b><span>Trip run</span></div>
+  <div class="num rv"><b>70</b><span>Humans moved</span></div>
+  <div class="num rv"><b>11</b><span>Days, longest run</span></div>
+  <div class="num rv"><b>0</b><span>People lost</span></div>
+</div>
+
+<!-- ARCHIVE -->
+<section class="sec">
+  <div class="sec-head">
+    <h2 class="disp sec-h rv">Season 01 <span class="ser">Archive</span></h2>
+    <p class="sec-no rv">FILE 05 — EVIDENCE LOCKER</p>
+  </div>
+  <div class="arch-empty rv">
+    <span class="st st-grey">EMPTY BY DESIGN</span>
+    <p class="disp">Nothing here yet. Correct.</p>
+    <p style="max-width:46ch;font-size:14px">Film photos, voice notes, journals and whatever else survives — uploaded after each departure returns. No stock imagery. No borrowed campaigns. If it's on this page, it happened to us.</p>
+  </div>
+</section>
+
+<!-- SUPPLY -->
+<section class="sec" id="supply">
+  <div class="sec-head">
+    <h2 class="disp sec-h rv">Supply — <span class="ser">Drop 000</span></h2>
+    <p class="sec-no rv">FILE 06 — NOT FOR SALE YET</p>
+  </div>
+  <div class="sup-grid rv">
+    <div class="sup-tile"><h3>Hoodie</h3><div class="ph">SPEC PENDING</div><span class="lbl lbl-grey">Unlocks after PUL-01 returns</span></div>
+    <div class="sup-tile"><h3>Luggage Tag</h3><div class="ph">SPEC PENDING</div><span class="lbl lbl-grey">Issued to travellers first</span></div>
+    <div class="sup-tile"><h3>Trip Journal</h3><div class="ph">SPEC PENDING</div><span class="lbl lbl-grey">One per seat, on the bus</span></div>
+    <div class="sup-tile"><h3>Cap</h3><div class="ph">SPEC PENDING</div><span class="lbl lbl-grey">No visible branding. Obviously.</span></div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="sec faq" id="faq">
+  <div class="sec-head">
+    <h2 class="disp sec-h rv">Questions, <span class="ser">Filed</span></h2>
+    <p class="sec-no rv">FILE 07 — FREQUENTLY ASKED</p>
+  </div>
+  <div class="rv">
+    <details>
+      <summary>Why apply instead of book? <span class="mk">+</span></summary>
+      <p>Nineteen seats only work if the nineteen fit together. Booking fills buses; selection builds trips. We read every application, pick the group, and give no reasons for rejections. No appeals either. It keeps things honest.</p>
+    </details>
+    <details>
+      <summary>What happens to my ₹500? <span class="mk">+</span></summary>
+      <p><b>Not selected:</b> automatic refund to your payment source within 5–7 working days via Razorpay. <b>Selected:</b> the ₹500 adjusts against your trip fee. The fee exists so only people who mean it apply. It's a filter, not revenue.</p>
+    </details>
+    <details>
+      <summary>What's actually included? <span class="mk">+</span></summary>
+      <p><b>Everything that matters:</b> intercity travel from your boarding hub, both ways. Fest tickets. Five nights verified twin-share stay. All meals, three a day. Every transfer. Director plus Trip Captain on ground, first-aid and SOS protocol. You bring yourself, a bag, and ID. Full lists sit inside each case file on the board.</p>
+    </details>
+    <details>
+      <summary>How do I pay if selected? <span class="mk">+</span></summary>
+      <p>48-hour window after your selection email. Full payment or 50/50 split — second half due 21 days before departure. UPI, cards, netbanking via Razorpay. Miss the window and the seat moves to the waitlist. We keep schedules; it's in the name.</p>
+    </details>
+    <details>
+      <summary>I'd be coming alone. Weird? <span class="mk">+</span></summary>
+      <p>Most of the nineteen come solo. That's the design. If you already had the group, you wouldn't need us.</p>
+    </details>
+    <details>
+      <summary>Who's actually running this on ground? <span class="mk">+</span></summary>
+      <p>Every departure carries the Director and one dedicated Trip Captain — nineteen travellers, two crew. Verified stays, a written emergency protocol, guardian contact on file for every seat, and a captain whose entire job is making the schedule survive contact with reality.</p>
+    </details>
+    <details>
+      <summary>Who can apply? <span class="mk">+</span></summary>
+      <p>18–26. College students or recent graduates. Any college, any city, any course. A valid college ID or degree helps your file; a good answer to question four helps it more.</p>
+    </details>
+    <details>
+      <summary>What if I drop out after selection? <span class="mk">+</span></summary>
+      <p>Trip fee refunds by slab: more than 30 days out, 80%. Between 15 and 30 days, 50%. Under 15 days, nothing — the seat's already yours and empty. Full slabs live in the Refund Policy, footer, Paperwork.</p>
+    </details>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="sec cta" id="apply">
+  <p class="sec-no rv">FILE 08 — LAST PAGE FIRST</p>
+  <h2 class="disp rv" style="margin-top:20px">Nineteen seats.<br><span class="ser">One form.</span></h2>
+  <button class="btn js-apply rv" type="button">Open Form 7A — Apply</button>
+</section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="foot">
+  <div class="foot-top">
+    <div>
+      <svg class="foot-bird" viewBox="0 0 56 34" aria-hidden="true"><path d="M4 18 C14 6 30 4 44 10 C36 11 30 14 27 19 C36 16 46 18 52 25 C43 22 35 24 30 30 C27 23 18 20 4 18 Z" fill="#FFAD84"/></svg>
+      <p class="foot-mark">AS<br>SCHEDULED</p>
+      <p class="foot-line">Departure is the easy part.</p>
+    </div>
+    <div>
+      <h4>Index</h4>
+      <ul>
+        <li><a href="#board">Departure board</a></li>
+        <li><a href="#protocol">Protocol</a></li>
+        <li><a href="#record">The record</a></li>
+        <li><a href="#supply">Supply</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Elsewhere</h4>
+      <ul>
+        <li><a href="https://www.instagram.com/as.scheduled" target="_blank" rel="noopener">Instagram — @as.scheduled</a></li>
+        <li><a href="https://wa.me/919999999999" target="_blank" rel="noopener">WhatsApp updates</a></li>
+        <li><a href="mailto:applications@asscheduled.in">applications@asscheduled.in</a></li>
+      </ul>
+      <h4 style="margin-top:26px">Paperwork</h4>
+      <ul>
+        <li><button type="button" class="js-legal" data-pane="refund">Refund policy</button></li>
+        <li><button type="button" class="js-legal" data-pane="terms">Terms of travel</button></li>
+        <li><button type="button" class="js-legal" data-pane="privacy">Privacy</button></li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot-legal">
+    <span>© 2026 ROITCOVE VENTURES LLP · LLPIN ACZ-2215 · India</span>
+    <span>AS SCHEDULED® — Season 01</span>
+  </div>
+</footer>
+
+<!-- ================= FORM 7A — FULL-SCREEN APPLICATION ================= -->
+<div class="app" id="app" role="dialog" aria-modal="true" aria-label="Form 7A — Application">
+  <div class="app-top">
+    <span class="lbl"><b>FORM 7A</b> — APPLICATION FOR SELECTION</span>
+    <span class="lbl lbl-grey" id="appStepLbl">SECTION A</span>
+    <button class="app-close" id="appClose" type="button">Close file</button>
+  </div>
+  <div class="app-prog" aria-hidden="true"><i id="appProg"></i></div>
+  <div class="app-body" id="appBody">
+
+    <!-- 0 · INTRO -->
+    <section class="ascr on" data-scr="0">
+      <p class="qno">FORM 7A · SEASON 01</p>
+      <h2>Nineteen seats exist.<br>This form decides who sits in them.</h2>
+      <p class="qhint">NINE QUESTIONS · ONE PHOTO · ROUGHLY FOUR HONEST MINUTES · ₹500, REFUNDABLE</p>
+      <div class="afield">
+        <label for="fTrip">Departure applying for</label>
+        <select id="fTrip" class="a-tripsel" required></select>
+      </div>
+      <p class="qhint" style="margin-top:6px">Answers get read by a human. Short beats long. Honest beats impressive.</p>
+    </section>
+
+    <!-- 1 · IDENTITY -->
+    <section class="ascr" data-scr="1">
+      <p class="qno">SECTION A — PARTICULARS · 1/2</p>
+      <h2>State your particulars.</h2>
+      <p class="qhint">AS PER ID. WE CHECK AT BOARDING.</p>
+      <div class="afield"><label for="fName">Full name</label><input id="fName" type="text" autocomplete="name" placeholder="As it appears on your ID"><span class="aerr">Name — required.</span></div>
+      <div class="a2">
+        <div class="afield"><label for="fAge">Age (18–26)</label><input id="fAge" type="number" min="18" max="26" placeholder="21"><span class="aerr">18–26 only. Rules are rules.</span></div>
+        <div class="afield"><label for="fCity">City you live in</label><input id="fCity" type="text" autocomplete="address-level2" placeholder="e.g. Bhubaneswar"><span class="aerr">City — required.</span></div>
+      </div>
+    </section>
+
+    <!-- 2 · CONTACT -->
+    <section class="ascr" data-scr="2">
+      <p class="qno">SECTION A — PARTICULARS · 2/2</p>
+      <h2>Where decisions find you.</h2>
+      <p class="qhint">SELECTION EMAIL + WHATSAPP GROUP. NOTHING ELSE, EVER.</p>
+      <div class="a2">
+        <div class="afield"><label for="fPhone">Phone (WhatsApp)</label><input id="fPhone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="10 digits"><span class="aerr">10 digits. Indian number.</span></div>
+        <div class="afield"><label for="fEmail">Email</label><input id="fEmail" type="email" autocomplete="email" placeholder="you@somewhere.in"><span class="aerr">A real one. Decisions land here.</span></div>
+      </div>
+      <div class="a2">
+        <div class="afield"><label for="fIg">Instagram handle</label><input id="fIg" type="text" placeholder="without the @"><span class="aerr">Handle — required. We will look.</span></div>
+        <div class="afield"><label for="fCollege">College & course</label><input id="fCollege" type="text" placeholder="e.g. IIT Delhi, B.Tech CSE"><span class="aerr">College — required.</span></div>
+      </div>
+    </section>
+
+    <!-- 3..9 · QUESTIONS -->
+    <section class="ascr" data-scr="3">
+      <p class="qno">SECTION B — QUESTION 1 OF 7</p>
+      <h2>What did you actually do last Saturday?</h2>
+      <p class="qhint">"ACTUALLY" IS DOING WORK IN THAT SENTENCE.</p>
+      <textarea id="q1" maxlength="240" placeholder="Start typing…"></textarea>
+      <div class="acnt">0 / 240</div><span class="aerr">Answer it. Honesty counts extra.</span>
+    </section>
+    <section class="ascr" data-scr="4">
+      <p class="qno">SECTION B — QUESTION 2 OF 7</p>
+      <h2>Yourself, in exactly three words.</h2>
+      <p class="qhint">THREE. NOT FOUR. WE COUNT.</p>
+      <input id="q2" type="text" maxlength="60" placeholder="word word word">
+      <span class="aerr">That wasn't three words.</span>
+    </section>
+    <section class="ascr" data-scr="5">
+      <p class="qno">SECTION B — QUESTION 3 OF 7</p>
+      <h2>Why this departure, specifically?</h2>
+      <p class="qhint">"SOUNDS FUN" GETS FILED UNDER: EVERYONE.</p>
+      <textarea id="q3" maxlength="240" placeholder="Start typing…"></textarea>
+      <div class="acnt">0 / 240</div><span class="aerr">Required.</span>
+    </section>
+    <section class="ascr" data-scr="6">
+      <p class="qno">SECTION B — QUESTION 4 OF 7</p>
+      <h2>What are you genuinely bad at?</h2>
+      <p class="qhint">EVERYONE IS BAD AT SOMETHING. LIARS ARE BAD AT TWO THINGS.</p>
+      <textarea id="q4" maxlength="240" placeholder="Start typing…"></textarea>
+      <div class="acnt">0 / 240</div><span class="aerr">Required.</span>
+    </section>
+    <section class="ascr" data-scr="7">
+      <p class="qno">SECTION B — QUESTION 5 OF 7</p>
+      <h2>If one guest were allowed, who comes — and why them?</h2>
+      <p class="qhint">NOBODY EXTRA GETS A SEAT. WE JUST LEARN A LOT FROM THE ANSWER.</p>
+      <textarea id="q5" maxlength="240" placeholder="Start typing…"></textarea>
+      <div class="acnt">0 / 240</div><span class="aerr">Required.</span>
+    </section>
+    <section class="ascr" data-scr="8">
+      <p class="qno">SECTION B — QUESTION 6 OF 7</p>
+      <h2>What kind of people drain you?</h2>
+      <p class="qhint">SEATING CHART RESEARCH. BE PRECISE.</p>
+      <textarea id="q6" maxlength="240" placeholder="Start typing…"></textarea>
+      <div class="acnt">0 / 240</div><span class="aerr">Required.</span>
+    </section>
+    <section class="ascr" data-scr="9">
+      <p class="qno">SECTION B — QUESTION 7 OF 7</p>
+      <h2>Six days end. What should eighteen strangers remember about you?</h2>
+      <p class="qhint">LAST QUESTION. MAKE IT COUNT.</p>
+      <textarea id="q7" maxlength="240" placeholder="Start typing…"></textarea>
+      <div class="acnt">0 / 240</div><span class="aerr">Required.</span>
+    </section>
+
+    <!-- 10 · PHOTO -->
+    <section class="ascr" data-scr="10">
+      <p class="qno">SECTION B — EXHIBIT A</p>
+      <h2>One recent photo. Actually you.</h2>
+      <p class="qhint">JPG / PNG · UNDER 5MB · NO GROUP SHOTS, WE WON'T GUESS</p>
+      <label class="a-file" for="fPhoto"><span id="photoLbl">Tap to attach — or drop it here</span><input id="fPhoto" type="file" accept="image/*"></label>
+      <div class="a-preview" id="photoPrev"><img alt="Your attached photo" id="photoImg"></div>
+      <span class="aerr">Optional in preview — mandatory before decisions. Attach it.</span>
+    </section>
+
+    <!-- 11 · DOSSIER -->
+    <section class="ascr" data-scr="11">
+      <p class="qno">SECTION C — YOUR DOSSIER</p>
+      <h2>Read it once. This is what the panel sees.</h2>
+      <p class="qhint">TAP EDIT TO FIX ANYTHING. THEN PROCEED.</p>
+      <div class="doss"><span class="st st-blue">UNVERIFIED</span><dl id="dossList"></dl></div>
+    </section>
+
+    <!-- 12 · FEE -->
+    <section class="ascr" data-scr="12">
+      <p class="qno">SECTION D — APPLICATION FEE</p>
+      <h2>₹500 holds your file.<br><span style="color:var(--peach-2)">All of it comes back if we say no.</span></h2>
+      <p class="qhint">PROCESSED BY RAZORPAY. WE NEVER SEE OR STORE CARD DETAILS.</p>
+      <div class="ledger">
+        <div class="lrow"><span>Application fee — Form 7A</span><span>₹500</span></div>
+        <div class="lrow"><span>If not selected → automatic refund, 5–7 working days</span><span><em>−₹500</em></span></div>
+        <div class="lrow"><span>If selected → adjusts against trip fee</span><span><em>−₹500</em></span></div>
+        <div class="lrow"><span>Worst case, net cost of applying</span><span>₹0</span></div>
+      </div>
+      <p class="qhint">THE FEE FILTERS SPAM, NOT PEOPLE. IT IS NOT REVENUE.</p>
+    </section>
+
+    <!-- 13 · DONE -->
+    <section class="ascr a-done" data-scr="13">
+      <span class="st">LODGED</span>
+      <h2>Application filed.<br>Now we read. You wait.</h2>
+      <p class="ref" id="fRef">REF: —</p>
+      <ul class="tl">
+        <li><span class="dot on"></span><span><b>NOW</b>File lodged, fee held. Confirmation hits your email.</span></li>
+        <li><span class="dot"></span><span><b>REVIEW</b>A human reads all nine answers. No algorithm.</span></li>
+        <li><span class="dot"></span><span><b>WITHIN 72H OF WINDOW CLOSE</b>Decision by email. Selected or refunded. No third option.</span></li>
+        <li><span class="dot"></span><span><b>IF SELECTED</b>48-hour payment window opens. Then: one WhatsApp group, one boarding hub, six days.</span></li>
+      </ul>
+    </section>
+  </div>
+  <div class="app-nav">
+    <button class="btn" id="aBack" type="button" style="visibility:hidden">← Back</button>
+    <span class="khint">PRESS <b>ENTER ⏎</b> TO CONTINUE</span>
+    <button class="btn btn-peach" id="aNext" type="button">Begin →</button>
+  </div>
+</div>
+
+<!-- ================= LEGAL SHEET ================= -->
+<div class="legal" id="legal" role="dialog" aria-modal="true" aria-label="Paperwork">
+  <div class="legal-bg" data-lclose></div>
+  <div class="legal-sheet">
+    <div class="legal-head">
+      <h2 class="disp">Paperwork</h2>
+      <button class="app-close" data-lclose type="button">Close</button>
+    </div>
+    <div class="legal-tabs">
+      <button type="button" data-pane="refund" class="on">Refund Policy</button>
+      <button type="button" data-pane="terms">Terms of Travel</button>
+      <button type="button" data-pane="privacy">Privacy</button>
+    </div>
+    <div class="legal-body">
+      <div class="lpane on" data-pane="refund">
+        <h3>Application fee — ₹500</h3>
+        <p>Fully refundable. Not selected: automatic refund to your original payment method within 5–7 working days, processed via Razorpay. Selected: the ₹500 adjusts against your trip fee. No action needed from you in either case.</p>
+        <h3>Trip fee — after selection</h3>
+        <ul>
+          <li>Cancellation more than 30 days before departure: 80% refund.</li>
+          <li>15 to 30 days before departure: 50% refund.</li>
+          <li>Under 15 days: no refund — your seat is held and cannot be resold in time.</li>
+          <li>Departure cancelled by us for any reason: 100% refund, including the ₹500, within 7 working days.</li>
+        </ul>
+        <h3>Fest force majeure</h3>
+        <p>If a fest cancels or shifts dates, the departure shifts with it. You choose: move with the new dates, transfer to any open departure, or take a full refund.</p>
+        <p class="lnote">Refund timelines depend on your bank once Razorpay releases funds. Summary only — the signed terms at payment govern.</p>
+      </div>
+      <div class="lpane" data-pane="terms">
+        <h3>Eligibility & ID</h3>
+        <p>18–26 years. Government ID plus college ID or degree checked at boarding. Details that don't match your application void the seat, no refund.</p>
+        <h3>Conduct</h3>
+        <p>The Trip Captain's call is final on the ground. Behaviour that endangers the group — yours or anyone's safety — ends your trip on the spot, at your own cost home. Illegal substances end it faster.</p>
+        <h3>Schedule</h3>
+        <p>Published itineraries are the plan; weather, fests and India get votes too. Equivalent substitutions may occur. Evening plans stay sealed until departure by design.</p>
+        <h3>Liability</h3>
+        <p>We run verified stays, licensed transport, a written emergency protocol and carry a first-aid kit plus a charged phone. Personal belongings remain your responsibility. Travel insurance is offered at payment; take it.</p>
+        <p class="lnote">Summary only — the signed terms issued with your selection email govern.</p>
+      </div>
+      <div class="lpane" data-pane="privacy">
+        <h3>What we collect</h3>
+        <p>What you type into Form 7A: particulars, contact details, nine answers, one photo. Payment runs entirely inside Razorpay — card and UPI details never touch our servers.</p>
+        <h3>What we do with it</h3>
+        <p>Selection. Emergency contact during the trip. Nothing else. No sale, no sharing, no ad targeting, no newsletter you didn't ask for.</p>
+        <h3>Retention</h3>
+        <p>Rejected applications: deleted within 90 days of refund. Selected travellers: kept for the season for operations and legal compliance, then archived.</p>
+        <h3>Your rights</h3>
+        <p>Write to applications@asscheduled.in for a copy or deletion of your data. We answer within 7 working days.</p>
+        <p class="lnote">Controller: ROITCOVE VENTURES LLP · LLPIN ACZ-2215 · India.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   TEAM HANDOFF MAP — read before touching anything
+   1. RAZORPAY  → submitApplication(): swap stub for Checkout.
+      Order server-side, amount 50000 paise, key from env.
+   2. BACKEND   → POST buildPayload() to /api/applications
+      → Supabase `applications`. RLS: anon insert-only.
+   3. EMAILS    → Resend: lodged / selected / rejected
+      (rejected fires Razorpay refund API first).
+   4. ANALYTICS → PostHog snippet in <head>; events wired:
+      app_open, app_screen, app_lodged, legal_open.
+   5. INTRO     → add sessionStorage skip-on-repeat in prod.
+   6. SOCIAL    → swap IG handle + WhatsApp number in footer.
+   ============================================================ */
+
+/* ---------------- CONFIG — trips edit here only ---------------- */
+const TRIPS = [
+  {
+    id:"PUL-01", fest:"PULSE", campus:"AIIMS DELHI", city:"NEW DELHI",
+    win:"SEP 2026 — TRACKS FEST ANNOUNCEMENT", days:6, seats:19, filled:0,
+    price:14999, close:"2026-08-20T23:59:00+05:30", status:"BOARDING",
+    stayBase:"South Delhi, verified 3★ twin-share — exact property named in your selection file",
+    itin:[
+      {n:"01",t:"ARRIVAL — ROLL CALL",blocks:[
+        ["BY 15:00","Boarding hubs converge on Delhi. AC travel, seats assigned, strangers pretending to nap."],
+        ["17:00","Check-in, South Delhi base. Keys, kit, trip journal issued."],
+        ["19:30","Briefing dinner. Nineteen names, two crew, one schedule. Phones exchanged, excuses surrendered."],
+        ["22:00","Rooftop, first night. Nothing planned. That's the plan."]],
+        stay:"NIGHT 01 — base hotel, South Delhi"},
+      {n:"02",t:"PULSE — DAY ONE",blocks:[
+        ["09:00","Breakfast at base. Non-negotiable; the day is long."],
+        ["11:00","AIIMS campus entry — informals, stalls, comps circuit. Move as a pack or don't; Captain tracks both."],
+        ["17:00","Regroup, refuel. Dinner near campus, table for twenty-one."],
+        ["20:00","Pronite one. Front-third of the crowd or nothing."]],
+        stay:"NIGHT 02 — base hotel, South Delhi"},
+      {n:"03",t:"PULSE — FINALS NIGHT",blocks:[
+        ["10:30","Slow breakfast. Recovery is scheduled too."],
+        ["12:30","Pulse finals — comps, fashion walk, the good chaos."],
+        ["19:30","Headline night. Whoever it is, you're close enough to argue setlists after."],
+        ["00:30","Late run: parathas somewhere that never closes. Sealed location."]],
+        stay:"NIGHT 03 — base hotel, South Delhi"},
+      {n:"04",t:"OLD DELHI LEDGER",blocks:[
+        ["08:30","Metro to Chandni Chowk before the city fully wakes."],
+        ["09:30","Food ledger, executed in order: nihari, bedmi, daulat ki chaat, jalebi. Vegetarian line runs parallel, equally serious."],
+        ["13:00","Jama Masjid steps. Sit. Look. No commentary provided."],
+        ["16:30","Sunder Nursery till golden hour. Film cameras out."],
+        ["20:00","Dinner, Nizamuddin side. Evening plan: sealed."]],
+        stay:"NIGHT 04 — base hotel, South Delhi"},
+      {n:"05",t:"SOUTH SIDE — LODHI TO CP",blocks:[
+        ["10:00","Lodhi Garden and Lodhi Art District walls. Shoot everything."],
+        ["13:00","Khan Market lunch — one splurge, budget protected elsewhere."],
+        ["16:00","Hauz Khas fort, lake, ruins at sundown."],
+        ["20:30","Connaught Place after dark. Inner circle on foot, midnight ice cream mandatory."]],
+        stay:"NIGHT 05 — base hotel, South Delhi"},
+      {n:"06",t:"DEPARTURE, AS SCHEDULED",blocks:[
+        ["07:30","Majnu ka Tilla breakfast run — laphing, butter tea, last film frames."],
+        ["11:00","Pack-out, journal page due, group photo nobody smiles properly in."],
+        ["13:00","Return travel to boarding hubs. Six days, on record."]],
+        stay:"— return leg, AC travel to hubs"}
+    ],
+    inc:["Intercity travel, both ways — boarding hubs announced post-selection","Pulse fest access all days","5 nights verified 3★ stay, twin-share","All meals — breakfast, lunch, dinner, daily","Every local transfer and metro card","Director + dedicated Trip Captain on ground","First-aid, SOS protocol, guardian contact on file","Trip journal, issued day one"],
+    exc:["Sleep — optional, statistically unlikely","Personal shopping and merch damage","Travel insurance (offered at payment — take it)","Laundry, room service ambitions","Your excuses on day six","Anything the Trip Captain vetoes"]
+  },
+  {
+    id:"REN-02", fest:"RENDEZVOUS", campus:"IIT DELHI", city:"NEW DELHI",
+    win:"OCT 2026 — TRACKS FEST ANNOUNCEMENT", days:6, seats:19, filled:0,
+    price:15999, close:"2026-09-20T23:59:00+05:30", status:"BOARDING",
+    stayBase:"Hauz Khas side, verified 3★ twin-share — walking-ish distance to IIT gate",
+    itin:[
+      {n:"01",t:"ARRIVAL — ROLL CALL",blocks:[
+        ["BY 15:00","Boarding hubs converge on Delhi. AC travel, both ways covered."],
+        ["17:00","Check-in near Hauz Khas. Kit and journal issued."],
+        ["19:30","Briefing dinner. The schedule gets read aloud once. Only once."],
+        ["21:30","Deer Park night walk. Delhi at its quietest, briefly."]],
+        stay:"NIGHT 01 — base hotel, Hauz Khas side"},
+      {n:"02",t:"RENDEZVOUS — DAY ONE",blocks:[
+        ["09:00","Breakfast, then IIT Delhi gates. Campus circuit, comps, informals."],
+        ["14:00","Lunch inside — mess-adjacent, character-building."],
+        ["17:00","Golden hour on campus lawns. The good light is scheduled."],
+        ["20:00","Pronite one. Position: close."]],
+        stay:"NIGHT 02 — base hotel, Hauz Khas side"},
+      {n:"03",t:"RENDEZVOUS — HEADLINE NIGHT",blocks:[
+        ["10:30","Late breakfast. Earned."],
+        ["12:30","Finals circuit — battle rounds, fashion, whatever survives the schedule."],
+        ["19:30","Headline act. Full send."],
+        ["00:30","Post-show food run. Location sealed, quality guaranteed."]],
+        stay:"NIGHT 03 — base hotel, Hauz Khas side"},
+      {n:"04",t:"MEHRAULI FILE",blocks:[
+        ["09:30","Mehrauli Archaeological Park — ruins older than every problem you have."],
+        ["12:30","Champa Gali lanes: coffee, film rolls, unreasonable café orders."],
+        ["16:30","Qutub complex at slant light."],
+        ["20:00","Dinner, then a sealed evening plan. Wear something decent."]],
+        stay:"NIGHT 04 — base hotel, Hauz Khas side"},
+      {n:"05",t:"NORTH SIDE — CAMPUS TO MIDNIGHT",blocks:[
+        ["10:30","North Campus + Kamla Nagar — the other college universe, studied from a safe distance."],
+        ["14:00","Majnu ka Tilla lunch: laphing, shapta, butter tea."],
+        ["17:30","Civil Lines drift, old bungalow streets."],
+        ["21:00","Connaught Place inner circle after dark. Midnight ice cream, standard issue."]],
+        stay:"NIGHT 05 — base hotel, Hauz Khas side"},
+      {n:"06",t:"DEPARTURE, AS SCHEDULED",blocks:[
+        ["07:00","Sunder Nursery sunrise — last frames, quiet ones."],
+        ["10:30","Pack-out, journal page due, the group photo."],
+        ["13:00","Return travel to boarding hubs. File closes."]],
+        stay:"— return leg, AC travel to hubs"}
+    ],
+    inc:["Intercity travel, both ways — boarding hubs announced post-selection","Rendezvous fest access all days","5 nights verified 3★ stay, twin-share","All meals — three a day, daily","Every local transfer and metro card","Director + dedicated Trip Captain on ground","First-aid, SOS protocol, guardian contact on file","Trip journal, issued day one"],
+    exc:["Sleep — see day three","Personal shopping and merch damage","Travel insurance (offered at payment — take it)","Laundry and other fantasies","Your excuses on day six","Anything the Trip Captain vetoes"]
+  },
+  {
+    id:"ANT-03", fest:"ANTARAGNI", campus:"IIT KANPUR", city:"KANPUR + LUCKNOW",
+    win:"OCT–NOV 2026 — TRACKS FEST ANNOUNCEMENT", days:6, seats:19, filled:0,
+    price:16999, close:"2026-10-01T23:59:00+05:30", status:"BOARDING",
+    stayBase:"Kanpur nights 1–3 near IIT; Lucknow nights 4–5, Hazratganj side — both verified, twin-share",
+    itin:[
+      {n:"01",t:"ARRIVAL — KANPUR BASE",blocks:[
+        ["BY 15:00","Boarding hubs converge on Kanpur. AC travel, both ways covered."],
+        ["17:00","Check-in near IIT Kanpur. Kit, journal, ground rules."],
+        ["19:30","Briefing dinner. Antaragni map studied like an exam nobody will pass."]],
+        stay:"NIGHT 01 — base hotel, Kanpur"},
+      {n:"02",t:"ANTARAGNI — DAY ONE",blocks:[
+        ["09:00","Breakfast, campus entry. One of India's oldest cultural fests — comps, quizzes, dram circuit."],
+        ["14:00","Lunch inside campus. Regroup at the flagpole, obviously."],
+        ["20:00","Pronite one. Kanpur shows up loud."]],
+        stay:"NIGHT 02 — base hotel, Kanpur"},
+      {n:"03",t:"ANTARAGNI — FINALS NIGHT",blocks:[
+        ["10:30","Recovery breakfast."],
+        ["12:30","Finals day — battle of bands, fashion walk, closing comps."],
+        ["19:30","Headline night. Last one in Kanpur, act accordingly."]],
+        stay:"NIGHT 03 — base hotel, Kanpur"},
+      {n:"04",t:"THE LUCKNOW LEG",blocks:[
+        ["09:00","Check-out, AC transfer to Lucknow — 90-ish minutes, expressway."],
+        ["11:30","Bara Imambara + the bhulbhulaiya labyrinth. Getting lost: scheduled."],
+        ["14:00","Chowk lunch — galouti at the old houses; vegetarian line equally historic."],
+        ["17:30","Rumi Darwaza to Gomti riverfront at dusk."],
+        ["20:30","Hazratganj evening. Sealed plan follows."]],
+        stay:"NIGHT 04 — hotel, Hazratganj side, Lucknow"},
+      {n:"05",t:"LUCKNOW — SLOW FILE",blocks:[
+        ["10:00","Residency ruins, quiet morning, film light."],
+        ["13:00","Tunday and company — the lunch this leg exists for."],
+        ["16:00","Chikankari lanes; buy one thing, argue about three."],
+        ["19:00","Ganjing till late. Kulfi as punctuation."]],
+        stay:"NIGHT 05 — hotel, Hazratganj side, Lucknow"},
+      {n:"06",t:"DEPARTURE, AS SCHEDULED",blocks:[
+        ["08:30","Last breakfast, pack-out, journal page due."],
+        ["11:00","Group photo at Rumi Darwaza — the cliché is mandatory."],
+        ["13:00","Return travel to boarding hubs. File closes."]],
+        stay:"— return leg, AC travel to hubs"}
+    ],
+    inc:["Intercity travel, both ways — boarding hubs announced post-selection","Antaragni fest access all days","5 nights verified stay, twin-share — Kanpur + Lucknow","All meals — three a day, including the famous ones","Kanpur–Lucknow transfer and every local move","Director + dedicated Trip Captain on ground","First-aid, SOS protocol, guardian contact on file","Trip journal, issued day one"],
+    exc:["Sleep — Kanpur pronites disagree with it","Chikankari budget overruns","Travel insurance (offered at payment — take it)","Laundry, ironing dreams","Your excuses on day six","Anything the Trip Captain vetoes"]
+  },
+  {
+    id:"OAS-04", fest:"OASIS", campus:"BITS PILANI", city:"PILANI + JAIPUR",
+    win:"OCT–NOV 2026 — TRACKS FEST ANNOUNCEMENT", days:6, seats:19, filled:0,
+    price:24999, close:"2026-10-01T23:59:00+05:30", status:"BOARDING",
+    stayBase:"Pilani nights 1–3 fest-adjacent verified stay; night 4 heritage haveli, Shekhawati; night 5 Jaipur, walled-city side",
+    itin:[
+      {n:"01",t:"ASSEMBLY — THE DESERT RUN",blocks:[
+        ["BY 09:00","Assembly at Delhi hub (travel to Delhi from other hubs covered). Private AC coach rolls."],
+        ["13:00","Highway lunch stop, Rajasthan begins looking like Rajasthan."],
+        ["16:00","Pilani check-in, fest-adjacent stay. Kit and journal issued."],
+        ["19:30","Briefing dinner under actual stars. City people confused, briefly."]],
+        stay:"NIGHT 01 — fest-adjacent verified stay, Pilani"},
+      {n:"02",t:"OASIS — DAY ONE",blocks:[
+        ["09:00","Breakfast, BITS campus entry. Oasis: the cult one."],
+        ["12:00","Comps circuit — quizzing royalty, dram, the works."],
+        ["20:00","Pronite one. Desert cold, crowd hot; jacket issued in kit."]],
+        stay:"NIGHT 02 — fest-adjacent verified stay, Pilani"},
+      {n:"03",t:"OASIS — HEADLINE NIGHT",blocks:[
+        ["10:30","Slow morning. Campus wander, clock tower shots."],
+        ["13:00","Finals afternoon — battle rounds, fashion, closing madness."],
+        ["19:30","Headline night at Oasis. The reason the price tag exists."],
+        ["01:00","Maggi point pilgrimage. Non-optional."]],
+        stay:"NIGHT 03 — fest-adjacent verified stay, Pilani"},
+      {n:"04",t:"SHEKHAWATI — PAINTED TOWNS",blocks:[
+        ["09:00","Coach to Mandawa — open-air gallery of fresco havelis."],
+        ["11:00","Haveli walk: hundred-year-old walls, absurdly good light."],
+        ["14:00","Rooftop lunch over the old town."],
+        ["16:00","Nawalgarh stop, more frescoes, fewer tourists."],
+        ["19:00","Check-in: heritage haveli stay. Dinner in the courtyard, sealed evening after."]],
+        stay:"NIGHT 04 — heritage haveli, Shekhawati"},
+      {n:"05",t:"JAIPUR — THE PINK FILE",blocks:[
+        ["08:30","Coach to Jaipur."],
+        ["11:00","Amber Fort — ramparts, mirror hall, one thousand photos."],
+        ["14:00","Walled-city lunch, then Hawa Mahal from the café across."],
+        ["17:00","Nahargarh at sunset — the whole pink city underneath."],
+        ["20:30","Bapu Bazaar drift, lassi, last-night energy. Sealed plan follows."]],
+        stay:"NIGHT 05 — hotel, walled-city side, Jaipur"},
+      {n:"06",t:"DEPARTURE, AS SCHEDULED",blocks:[
+        ["08:00","Patrika Gate frames, breakfast, pack-out. Journal page due."],
+        ["11:00","Coach to Delhi hub; onward travel to boarding hubs covered."],
+        ["18:00","File closes. Six days, three worlds, on record."]],
+        stay:"— return leg, AC coach + onward travel"}
+    ],
+    inc:["Travel throughout, both ways — Delhi assembly + private AC coach across Rajasthan","Oasis fest access all days","5 nights stay — Pilani + heritage haveli + Jaipur, twin-share","All meals — three a day, courtyard dinners included","All fort and monument entries listed","Director + dedicated Trip Captain on ground","First-aid, SOS protocol, guardian contact on file","Trip journal + desert-night jacket in kit"],
+    exc:["Sleep — Oasis pronites plus desert stars, choose","Bazaar damage in Jaipur","Travel insurance (offered at payment — take it)","Camel opinions","Your excuses on day six","Anything the Trip Captain vetoes"]
+  }
+];
+const SOON = [
+  ["THOMSO","IIT ROORKEE"],["MOOD INDIGO","IIT BOMBAY"],["ALCHERINGA","IIT GUWAHATI"],
+  ["SAARANG","IIT MADRAS"],["SUNBURN","GOA"],["WAVES","BITS GOA"],
+  ["SPRING FEST","IIT KHARAGPUR"],["RIVIERA","VIT VELLORE"],["UNMAAD","IIM BANGALORE"]
+];
+
+/* ---------------- helpers ---------------- */
+const INR = n => "₹" + n.toLocaleString("en-IN");
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const track = (ev,p) => { if (window.posthog) posthog.capture(ev,p||{}); };
+
+/* ---------------- PRELOADER (7s, skippable at 1.5s) ---------------- */
+(function intro(){
+  const pre = $("#pre"), skip = $("#preSkip"), stamp = $("#preStamp");
+  const lines = $$("#preLines div");
+  const end = () => { pre.classList.add("done"); pre.setAttribute("aria-hidden","true"); };
+  if (reduced) { end(); return; }
+  const timers = [];
+  lines.forEach((l,i)=> timers.push(setTimeout(()=> l.classList.add("in"), 500 + i*950)));
+  timers.push(setTimeout(()=> skip.classList.add("show"), 1500));
+  timers.push(setTimeout(()=> stamp.classList.add("hit"), 6100));
+  timers.push(setTimeout(end, 7000));
+  skip.addEventListener("click", ()=>{ timers.forEach(clearTimeout); end(); });
+})();
+
+/* ---------------- ANCHOR FIX — works inside sandboxed previews ---------------- */
+document.addEventListener("click", e => {
+  const a = e.target.closest('a[href^="#"]');
+  if (!a) return;
+  const id = a.getAttribute("href");
+  if (id === "#" || a.classList.contains("js-apply")) return;
+  const t = document.querySelector(id);
+  if (!t) return;
+  e.preventDefault();
+  $("#mnav").classList.remove("open");
+  $("#burger").setAttribute("aria-expanded","false");
+  document.body.classList.remove("locked");
+  t.scrollIntoView({behavior: reduced ? "auto" : "smooth", block:"start"});
+  t.setAttribute("tabindex","-1"); t.focus({preventScroll:true});
+});
+
+/* ---------------- BOARD RENDER ---------------- */
+function renderBoard(){
+  $("#boardRows").innerHTML = TRIPS.map(t => `
+    <article class="card" id="card-${t.id}">
+      <button class="card-row" type="button" aria-expanded="false" data-toggle="${t.id}">
+        <span class="card-code">${t.id}</span>
+        <span class="card-fest">${t.fest}<br><span class="lbl lbl-grey" style="font-family:var(--mono)">${t.campus} — ${t.city}</span></span>
+        <span class="card-cell">${t.win}<br><span class="cd" data-close-at="${t.close}">—</span></span>
+        <span class="card-cell">${t.seats - t.filled} / ${t.seats} SEATS OPEN<br><span class="lbl-grey">CREW: DIRECTOR + CAPTAIN</span></span>
+        <span class="card-price">${INR(t.price)}<small>${t.days} DAYS · EVERYTHING INCLUDED</small></span>
+        <span class="card-act"><span class="st${t.status==="BOARDING"?"":" st-blue"}">${t.status}</span><span class="card-open-ind">CASE FILE</span></span>
+      </button>
+      <div class="card-x">
+        <div class="card-x-in">
+          <div class="card-chips">
+            <span class="chip hot">TRAVEL BOTH WAYS — INCLUDED</span>
+            <span class="chip">FEST TICKETS — INCLUDED</span>
+            <span class="chip">ALL MEALS 3/DAY — INCLUDED</span>
+            <span class="chip">5 NIGHTS TWIN-SHARE</span>
+            <span class="chip">DIRECTOR + TRIP CAPTAIN</span>
+          </div>
+          <h4>Six-day manifest — evenings marked sealed stay sealed</h4>
+          <div class="days">
+            ${t.itin.map((d,i)=>`
+            <details class="day"${i===0?" open":""}>
+              <summary><span class="day-no">D${d.n}</span><span class="day-t">${d.t}</span><span class="day-mk">+</span></summary>
+              <div class="day-in">
+                ${d.blocks.map(b=>`<div class="blk"><b>${b[0]}</b><span>${b[1]}</span></div>`).join("")}
+                <p class="day-stay"><b>STAY —</b> ${d.stay}</p>
+              </div>
+            </details>`).join("")}
+          </div>
+          <p class="day-stay" style="margin:-14px 0 34px"><b>BASE —</b> ${t.stayBase}</p>
+          <div class="incx">
+            <div><h4>Included — all of it</h4><ul class="inc">${t.inc.map(i=>`<li>${i}</li>`).join("")}</ul></div>
+            <div><h4>Not included</h4><ul class="inc ex">${t.exc.map(i=>`<li>${i}</li>`).join("")}</ul></div>
+          </div>
+          <div class="card-x-meta">
+            <button class="btn btn-peach js-apply" data-trip="${t.id}" type="button">Apply — ${t.id}</button>
+            <span class="card-x-note">₹500 application, refundable · <span class="cd" data-close-at="${t.close}">—</span></span>
+          </div>
+        </div>
+      </div>
+    </article>`).join("");
+  $("#soonGrid").innerHTML = SOON.map(s => `
+    <div class="soon-tile"><h3>${s[0]}</h3>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+        <span class="lbl lbl-grey">${s[1]}</span><span class="st st-grey" style="font-size:9px">FILE PENDING</span>
+      </div>
+    </div>`).join("");
+}
+renderBoard();
+
+document.addEventListener("click", e => {
+  const btn = e.target.closest("[data-toggle]");
+  if (!btn) return;
+  const card = $("#card-" + btn.dataset.toggle);
+  const open = card.classList.toggle("open");
+  btn.setAttribute("aria-expanded", open);
+});
+
+/* ---------------- COUNTDOWNS ---------------- */
+function tickCds(){
+  const now = Date.now();
+  $$(".cd").forEach(el => {
+    const t = new Date(el.dataset.closeAt).getTime() - now;
+    if (t <= 0) { el.innerHTML = "<b>APPS CLOSED</b>"; return; }
+    const d = Math.floor(t/864e5), h = Math.floor(t%864e5/36e5), m = Math.floor(t%36e5/6e4);
+    el.innerHTML = `APPS CLOSE <b>${d}D ${h}H ${m}M</b>`;
+  });
+}
+tickCds(); setInterval(tickCds, 30000);
+
+/* ---------------- BURGER ---------------- */
+$("#burger").addEventListener("click", ()=>{
+  const open = $("#mnav").classList.toggle("open");
+  $("#burger").setAttribute("aria-expanded", open);
+  document.body.classList.toggle("locked", open);
+});
+
+/* ---------------- REVEALS ---------------- */
+if (!reduced && "IntersectionObserver" in window){
+  const io = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting){ x.target.classList.add("on"); io.unobserve(x.target); } }), {threshold:.12});
+  $$(".rv").forEach(el => io.observe(el));
+} else { $$(".rv").forEach(el => el.classList.add("on")); }
+
+/* ================= FORM 7A ENGINE ================= */
+const app = $("#app"), N = 14;
+let scr = 0, dirty = false, lastFocus = null;
+const stepLbl = i => i===0?"INTRO":(i<=2?"SECTION A — PARTICULARS":(i<=9?"SECTION B — QUESTIONS":(i===10?"SECTION B — EXHIBIT A":(i===11?"SECTION C — DOSSIER":(i===12?"SECTION D — FEE":"FILED")))));
+function goScr(i){
+  scr = i;
+  $$(".ascr").forEach(s => s.classList.toggle("on", +s.dataset.scr === i));
+  $("#appProg").style.width = (i/(N-1)*100) + "%";
+  $("#appStepLbl").textContent = stepLbl(i);
+  $("#aBack").style.visibility = (i===0 || i===13) ? "hidden" : "visible";
+  const nx = $("#aNext");
+  nx.textContent = i===0 ? "Begin →" : i===11 ? "Looks right →" : i===12 ? "Pay ₹500 & lodge — Razorpay" : i===13 ? "Close file" : "Next →";
+  $(".khint").style.visibility = (i===13||i===11||i===12) ? "hidden" : "visible";
+  const first = $$(".ascr")[i].querySelector("textarea, input:not([type=file]), select");
+  if (first) setTimeout(()=> first.focus(), reduced?0:180);
+  const body = $("#appBody"); body.scrollTop = 0;
+  track("app_screen",{screen:i});
+}
+function openApp(tripId){
+  lastFocus = document.activeElement;
+  $("#fTrip").innerHTML = TRIPS.map(t => `<option value="${t.id}" ${t.id===tripId?"selected":""}>${t.id} — ${t.fest}, ${t.city} · ${INR(t.price)} · ${t.seats-t.filled} seats open</option>`).join("");
+  app.classList.add("open"); document.body.classList.add("locked");
+  dirty = false; goScr(0); track("app_open",{trip:tripId||"none"});
+}
+function closeApp(force){
+  if (dirty && scr>0 && scr<13 && !force){
+    if (!confirm("Close Form 7A? Your answers on this device will be lost.")) return;
+  }
+  app.classList.remove("open"); document.body.classList.remove("locked");
+  if (lastFocus) lastFocus.focus();
+}
+document.addEventListener("click", e => {
+  const a = e.target.closest(".js-apply");
+  if (a){ e.preventDefault(); openApp(a.dataset.trip); }
+});
+$("#appClose").addEventListener("click", ()=> closeApp(false));
+
+/* validation */
+const err = (sel, bad) => { const el = $(sel); const box = el.closest(".afield") || el.closest(".ascr"); box.classList.toggle("err", !!bad); return !!bad; };
+const V = {
+  1(){ let b=false;
+      b = err("#fName", !$("#fName").value.trim()) || b;
+      const a = +$("#fAge").value; b = err("#fAge", !(a>=18 && a<=26)) || b;
+      b = err("#fCity", !$("#fCity").value.trim()) || b; return !b; },
+  2(){ let b=false;
+      b = err("#fPhone", !/^\d{10}$/.test($("#fPhone").value.replace(/\D/g,""))) || b;
+      b = err("#fEmail", !/.+@.+\..+/.test($("#fEmail").value)) || b;
+      b = err("#fIg", !$("#fIg").value.trim()) || b;
+      b = err("#fCollege", !$("#fCollege").value.trim()) || b; return !b; },
+  3(){ return !err("#q1", !$("#q1").value.trim()); },
+  4(){ const w = $("#q2").value.trim().split(/\s+/).filter(Boolean); return !err("#q2", w.length!==3); },
+  5(){ return !err("#q3", !$("#q3").value.trim()); },
+  6(){ return !err("#q4", !$("#q4").value.trim()); },
+  7(){ return !err("#q5", !$("#q5").value.trim()); },
+  8(){ return !err("#q6", !$("#q6").value.trim()); },
+  9(){ return !err("#q7", !$("#q7").value.trim()); },
+  10(){ return true; } /* photo optional in preview; enforce server-side */
+};
+function buildPayload(){
+  const t = TRIPS.find(x => x.id === $("#fTrip").value);
+  return {
+    trip: t.id, trip_fest: t.fest, trip_price: t.price,
+    name: $("#fName").value.trim(), age:+$("#fAge").value,
+    city: $("#fCity").value.trim(), college: $("#fCollege").value.trim(),
+    phone: $("#fPhone").value.replace(/\D/g,""), email: $("#fEmail").value.trim(),
+    instagram: $("#fIg").value.trim().replace(/^@/,""),
+    answers: {
+      saturday:$("#q1").value.trim(), three_words:$("#q2").value.trim(),
+      why:$("#q3").value.trim(), bad_at:$("#q4").value.trim(),
+      plus_one:$("#q5").value.trim(), drains_you:$("#q6").value.trim(),
+      remember:$("#q7").value.trim()
+    },
+    photo_name: ($("#fPhoto").files[0]||{}).name || null,
+    fee: {amount:500, currency:"INR", refundable:true},
+    ts: new Date().toISOString()
+  };
+}
+function renderDossier(){
+  const p = buildPayload();
+  const row = (k,v,goto) => `<dt>${k}</dt><dd>${v}<span class="edit" data-goto="${goto}">edit</span></dd>`;
+  $("#dossList").innerHTML =
+    row("Departure", p.trip + " — " + p.trip_fest, 0) +
+    row("Name / Age", p.name + ", " + p.age, 1) +
+    row("City", p.city, 1) +
+    row("College", p.college, 2) +
+    row("Contact", p.phone + " · " + p.email, 2) +
+    row("Instagram", "@" + p.instagram, 2) +
+    row("Last Saturday", "<em>" + p.answers.saturday + "</em>", 3) +
+    row("Three words", "<em>" + p.answers.three_words + "</em>", 4) +
+    row("Why this one", "<em>" + p.answers.why + "</em>", 5) +
+    row("Bad at", "<em>" + p.answers.bad_at + "</em>", 6) +
+    row("Plus one", "<em>" + p.answers.plus_one + "</em>", 7) +
+    row("Drained by", "<em>" + p.answers.drains_you + "</em>", 8) +
+    row("Remember", "<em>" + p.answers.remember + "</em>", 9) +
+    row("Photo", p.photo_name || "not attached yet", 10);
+}
+document.addEventListener("click", e => {
+  const ed = e.target.closest("[data-goto]");
+  if (ed) goScr(+ed.dataset.goto);
+});
+function submitApplication(){
+  const payload = buildPayload();
+  /* RAZORPAY STUB — team: create order server-side, open Checkout,
+     on payment.success → POST payload to /api/applications → goScr(13). */
+  console.log("APPLICATION PAYLOAD →", payload);
+  $("#fRef").textContent = "REF: AS-S1-" + Date.now().toString(36).toUpperCase();
+  goScr(13); dirty = false;
+  track("app_lodged",{trip:payload.trip});
+}
+$("#aNext").addEventListener("click", ()=>{
+  if (scr===13){ closeApp(true); return; }
+  if (scr===12){ submitApplication(); return; }
+  if (scr===11){ goScr(12); return; }
+  if (scr===10){ renderDossier(); goScr(11); return; }
+  if (V[scr] && !V[scr]()) return;
+  if (scr===0){ dirty = true; }
+  goScr(scr+1);
+});
+$("#aBack").addEventListener("click", ()=> goScr(Math.max(0, scr-1)));
+/* keyboard: Enter advances everywhere in Form 7A (Shift+Enter = newline) */
+app.addEventListener("keydown", e => {
+  if (e.key !== "Enter" || e.shiftKey) return;
+  if (scr===12 || scr===13) return;
+  e.preventDefault(); $("#aNext").click();
+});
+document.addEventListener("keydown", e => {
+  if (e.key !== "Escape") return;
+  if (app.classList.contains("open")) closeApp(false);
+  else if ($("#legal").classList.contains("open")) toggleLegal(false);
+  else if ($("#mnav").classList.contains("open")) $("#burger").click();
+});
+/* counters + photo preview */
+$$(".ascr textarea[maxlength]").forEach(t => { dirty = dirty;
+  t.addEventListener("input", ()=>{
+    dirty = true;
+    const c = t.parentElement.querySelector(".acnt");
+    if (c) c.textContent = t.value.length + " / " + t.getAttribute("maxlength");
+  });
+});
+$$(".ascr input").forEach(i => i.addEventListener("input", ()=> dirty = true));
+$("#fPhoto").addEventListener("change", e => {
+  const f = e.target.files[0];
+  $("#photoLbl").textContent = f ? ("ATTACHED — " + f.name) : "Tap to attach — or drop it here";
+  if (f && f.type.startsWith("image/")){
+    const r = new FileReader();
+    r.onload = ev => { $("#photoImg").src = ev.target.result; $("#photoPrev").classList.add("show"); };
+    r.readAsDataURL(f);
+  } else $("#photoPrev").classList.remove("show");
+});
+
+/* ================= LEGAL SHEET ================= */
+const legal = $("#legal");
+function toggleLegal(open, pane){
+  legal.classList.toggle("open", open);
+  document.body.classList.toggle("locked", open);
+  if (open && pane) setPane(pane);
+  if (open) track("legal_open",{pane:pane||"refund"});
+}
+function setPane(p){
+  $$(".legal-tabs button").forEach(b => b.classList.toggle("on", b.dataset.pane===p));
+  $$(".lpane").forEach(x => x.classList.toggle("on", x.dataset.pane===p));
+}
+document.addEventListener("click", e => {
+  const j = e.target.closest(".js-legal");
+  if (j){ toggleLegal(true, j.dataset.pane); return; }
+  if (e.target.closest("[data-lclose]")){ toggleLegal(false); return; }
+  const tab = e.target.closest(".legal-tabs button");
+  if (tab) setPane(tab.dataset.pane);
+});
+</script>
+</body>
+</html>

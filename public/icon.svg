@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="AS Scheduled">
+  <!-- Canonical bird glyph (docs/SPEC.md §2), peach on navy, padded for maskable safe zone. -->
+  <rect width="512" height="512" fill="#12234F"/>
+  <g transform="translate(116 190) scale(5)">
+    <path d="M4 18 C14 6 30 4 44 10 C36 11 30 14 27 19 C36 16 46 18 52 25 C43 22 35 24 30 30 C27 23 18 20 4 18 Z" fill="#FFAD84"/>
+  </g>
+</svg>

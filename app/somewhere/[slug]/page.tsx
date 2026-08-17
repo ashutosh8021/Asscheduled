@@ -1,0 +1,299 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import Shell from "@/components/as/Shell";
+import Reveal from "@/components/as/Reveal";
+import Slot from "@/components/as/Slot";
+import Accordion from "@/components/as/Accordion";
+import ApplyButton from "@/components/as/ApplyButton";
+import DepartureHero from "@/components/as/DepartureHero";
+import { DETAIL } from "@/lib/copy";
+import { DEPARTURES, getDeparture, inr } from "@/lib/departures";
+import { abs } from "@/lib/site";
+
+/* Experience detail — comps (7) and (8). One template, both departures;
+   everything on the page comes from lib/departures.ts. */
+
+export function generateStaticParams() {
+  return DEPARTURES.map((d) => ({ slug: d.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const d = getDeparture(slug);
+  if (!d) return { title: "Not found · AS SCHEDULED" };
+
+  const title = `${d.titleTop} x ${d.titleBottom} — ${d.days} days · AS SCHEDULED`;
+  return {
+    title,
+    description: d.intro[1],
+    alternates: { canonical: abs(`/somewhere/${d.slug}`) },
+    openGraph: { title, description: d.intro[0], url: abs(`/somewhere/${d.slug}`) },
+  };
+}
+
+export default async function DeparturePage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const d = getDeparture(slug);
+  if (!d) notFound();
+
+  return (
+    /* overHero: the header floats transparent over the full-screen
+       photography until it has scrolled past. */
+    <Shell overHero>
+      <article>
+        {/* ---------- FULL-SCREEN HERO ----------
+            The campus frame first, then every other frame we hold for
+            this departure, cross-fading one after another. */}
+        <DepartureHero frames={d.wide} hint={d.campus}>
+          <p className="s-eyebrow" style={{ color: "var(--s-butter)" }}>
+            {d.fest} — {d.campus}
+          </p>
+
+          <h1 className="s-h2" style={{ marginTop: 16, fontSize: "clamp(36px,6.2vw,86px)" }}>
+            {d.titleTop}
+            <br />
+            <span
+              style={{
+                fontFamily: "var(--s-ital)",
+                fontStyle: "italic",
+                textTransform: "lowercase",
+              }}
+            >
+              x{" "}
+            </span>
+            {d.titleBottom}
+            <span className="s-dot">.</span>
+          </h1>
+
+          <div className="s-dp-meta" style={{ marginTop: 24 }}>
+            <span className="s-chip s-chip-over">
+              {d.days} DAYS · {d.nights} NIGHTS
+            </span>
+            <span className="s-chip s-chip-over">+{d.batches.length} BATCHES</span>
+            <span className="s-chip s-chip-over">{d.range}</span>
+          </div>
+        </DepartureHero>
+
+        {/* ---------- INTRO + BOOKING PANEL ---------- */}
+        <section className="s-wrap s-sec-tight">
+          <div className="s-split s-split-top">
+            <Reveal>
+              <h2 className="s-h3" style={{ color: "var(--s-rust)" }}>
+                {DETAIL.introTitle}
+              </h2>
+
+              {d.intro.map((p, i) => (
+                <p key={p} className="s-body" style={{ marginTop: i === 0 ? 20 : 16 }}>
+                  {p}
+                </p>
+              ))}
+
+              <span className="s-tick" style={{ display: "block", marginTop: 26 }} />
+            </Reveal>
+
+            <Reveal delay={1}>
+              <div className="s-panel">
+                <p className="s-panel-h">🗓 {DETAIL.datesLabel}</p>
+
+                <div style={{ marginTop: 14 }}>
+                  {d.batches.map((b) => (
+                    <p key={b.label} style={{ fontSize: 14, padding: "6px 0" }}>
+                      {b.label}
+                    </p>
+                  ))}
+                </div>
+
+                <hr className="s-rule" style={{ margin: "18px 0" }} />
+
+                <p className="s-eyebrow s-eyebrow-grey">{DETAIL.fromLabel}</p>
+                <p
+                  style={{
+                    fontFamily: "var(--s-mono)",
+                    fontSize: "clamp(30px,3.6vw,46px)",
+                    fontWeight: 600,
+                    letterSpacing: "-0.01em",
+                    margin: "6px 0 20px",
+                  }}
+                >
+                  {inr(d.price)}
+                </p>
+
+                <ApplyButton label={DETAIL.applyCta} event={d.id} full />
+
+                {/* A real remaining count when one is confirmed; the
+                    comp's line when it is not. Never a fake number. */}
+                <p className="s-hint" style={{ marginTop: 14 }}>
+                  ⚡{" "}
+                  {d.spotsLeft !== null
+                    ? `${d.spotsLeft} SPOTS LEFT`
+                    : DETAIL.spotsFallback}
+                </p>
+              </div>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* ---------- INCLUDED / EXCLUDED ---------- */}
+        <section className="s-wrap s-sec-tight">
+          <div className="s-split s-split-even">
+            <Reveal>
+              <div className="s-panel" style={{ height: "100%" }}>
+                <p className="s-panel-h">{DETAIL.includedLabel}</p>
+                <p className="s-panel-sub">{DETAIL.includedSub}</p>
+                <ul className="s-list s-list-yes">
+                  {d.included.map((i) => (
+                    <li key={i}>
+                      <span aria-hidden="true">✓</span>
+                      <span>{i}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </Reveal>
+
+            <Reveal delay={1}>
+              <div className="s-panel" style={{ height: "100%" }}>
+                <p className="s-panel-h">{DETAIL.excludedLabel}</p>
+                <p className="s-panel-sub">{DETAIL.excludedSub}</p>
+                <ul className="s-list">
+                  {d.excluded.map((i) => (
+                    <li key={i}>
+                      <span aria-hidden="true">✕</span>
+                      <span>{i}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* ---------- ITINERARY + BROCHURE ---------- */}
+        <section className="s-wrap s-sec-tight">
+          <div className="s-split s-split-even">
+            <Reveal>
+              <div className="s-panel" style={{ height: "100%" }}>
+                <div style={{ display: "flex", alignItems: "baseline", gap: 14, flexWrap: "wrap" }}>
+                  <p className="s-panel-h">{DETAIL.itineraryLabel}</p>
+                  <p className="s-hint">{DETAIL.itinerarySub}</p>
+                </div>
+
+                <div style={{ marginTop: 12 }}>
+                  <Accordion
+                    idPrefix={`itin-${d.slug}`}
+                    items={d.itinerary.map((day) => ({
+                      n: day.n,
+                      meta: day.date,
+                      title: day.title,
+                      body: day.detail ?? (
+                        /* The comps show day titles only. Rather than
+                           invent a schedule, say so. */
+                        <span className="s-hint">
+                          Detail for this day is not published yet.
+                        </span>
+                      ),
+                    }))}
+                  />
+                </div>
+              </div>
+            </Reveal>
+
+            <Reveal delay={1}>
+              <div
+                className="s-panel"
+                style={{
+                  background: "var(--s-ink)",
+                  borderColor: "var(--s-ink)",
+                  color: "var(--s-paper)",
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <h2 className="s-h3" style={{ fontSize: "clamp(19px,2.1vw,28px)" }}>
+                  {DETAIL.brochureTitle[0]}
+                  <br />
+                  {DETAIL.brochureTitle[1]}{" "}
+                  <span style={{ color: "var(--s-rust-soft)" }}>{DETAIL.brochureTitleMark}</span>
+                </h2>
+
+                <div style={{ marginTop: 26 }}>
+                  {d.brochure ? (
+                    <a href={d.brochure} className="s-btn" download>
+                      ⬇ {DETAIL.brochureCta}
+                    </a>
+                  ) : (
+                    /* No PDF exists yet. A dead download button is worse
+                       than an honest line — TODO(mannat): supply it. */
+                    <p className="s-hint" style={{ color: "rgba(247,241,232,.6)" }}>
+                      {DETAIL.brochureCta} — not published yet.
+                    </p>
+                  )}
+                </div>
+
+                <div
+                  style={{
+                    marginTop: "auto",
+                    paddingTop: 30,
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr",
+                    gap: 12,
+                  }}
+                >
+                  {/* The frames the mosaic above did not use. */}
+                  {d.mosaic.slice(-2).map((m) => (
+                    <div key={`b-${m.label}`} style={{ position: "relative", aspectRatio: "4/5" }}>
+                      <Slot slot={m} dark sizes="20vw" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* ---------- CLOSING ---------- */}
+        <section
+          className="s-wrap"
+          style={{ paddingTop: "clamp(40px,6vw,80px)", paddingBottom: "clamp(64px,9vw,120px)" }}
+        >
+          <hr className="s-rule" style={{ marginBottom: "clamp(34px,5vw,56px)" }} />
+
+          <Reveal>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: 30,
+                flexWrap: "wrap",
+              }}
+            >
+              <div>
+                <p className="s-h2" style={{ color: "var(--s-rust)", fontSize: "clamp(26px,3.4vw,44px)" }}>
+                  {DETAIL.closingAlt[0]}
+                </p>
+                <p className="s-h2" style={{ color: "var(--s-rust)", fontSize: "clamp(26px,3.4vw,44px)" }}>
+                  {DETAIL.closingAlt[1]}
+                </p>
+              </div>
+
+              <div style={{ display: "flex", alignItems: "center", gap: 22, flexWrap: "wrap" }}>
+                <span className="s-stamp">
+                  {DETAIL.stamp[0]}
+                  <br />
+                  {DETAIL.stamp[1]}
+                </span>
+                <ApplyButton label={DETAIL.applyCta} event={d.id} />
+              </div>
+            </div>
+          </Reveal>
+        </section>
+      </article>
+    </Shell>
+  );
+}
