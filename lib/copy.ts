@@ -160,6 +160,7 @@ export const SOMEWHERE = {
   ],
 
   priceLabel: "PRICE (ALL INCLUSIVE)",
+  pricePer: "/ person",
   priceIncludes: ["Travel", "Stay", "Food", "Event Access", "Crew"],
 
   closingWord: "ANYWAY.",

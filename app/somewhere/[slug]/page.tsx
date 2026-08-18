@@ -6,8 +6,8 @@ import Slot from "@/components/as/Slot";
 import Accordion from "@/components/as/Accordion";
 import ApplyButton from "@/components/as/ApplyButton";
 import DepartureHero from "@/components/as/DepartureHero";
-import { DETAIL } from "@/lib/copy";
-import { DEPARTURES, getDeparture, inr } from "@/lib/departures";
+import { DETAIL, SOMEWHERE } from "@/lib/copy";
+import { DEPARTURES, getDeparture, priceRange } from "@/lib/departures";
 import { abs } from "@/lib/site";
 
 /* Experience detail — comps (7) and (8). One template, both departures;
@@ -119,7 +119,8 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
                     margin: "6px 0 20px",
                   }}
                 >
-                  {inr(d.price)}
+                  {priceRange(d)}
+                  <span className="s-price-per">{SOMEWHERE.pricePer}</span>
                 </p>
 
                 <ApplyButton label={DETAIL.applyCta} event={d.id} full />

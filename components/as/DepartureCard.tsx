@@ -4,7 +4,7 @@ import Link from "next/link";
 import Slot from "./Slot";
 import Tilt from "./Tilt";
 import { SOMEWHERE } from "@/lib/copy";
-import { inr, type Departure } from "@/lib/departures";
+import { priceRange, type Departure } from "@/lib/departures";
 
 /* Two card shapes, both from the comps:
 
@@ -71,7 +71,8 @@ export default function DepartureCard({ d, variant = "poster", priority = false 
               {SOMEWHERE.priceLabel}
             </p>
             <p className="s-h3" style={{ fontFamily: "var(--s-mono)", fontWeight: 600 }}>
-              {inr(d.price)}
+              {priceRange(d)}
+              <span className="s-price-per">{SOMEWHERE.pricePer}</span>
             </p>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginTop: 12 }}>
               {SOMEWHERE.priceIncludes.map((p) => (

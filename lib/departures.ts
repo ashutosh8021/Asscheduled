@@ -64,6 +64,9 @@ export interface Departure {
   days: number;
   nights: number;
   price: number;
+  /** Upper bound when a departure spans package tiers. Omitted for a
+   *  single flat price, in which case only `price` is shown. */
+  priceMax?: number;
   /** Genuine remaining count. null when not confirmed — the UI then
    *  shows "Spots are limited. Vibes are unlimited." instead of a number.
    *  TODO(mannat): wire real availability before launch. */
@@ -263,7 +266,8 @@ export const DEPARTURES: Departure[] = [
     ],
     days: 8,
     nights: 7,
-    price: 12499,
+    price: 8499,
+    priceMax: 24499,
     /* The Thomso comp states this outright. */
     spotsLeft: 13,
     intro: [
@@ -399,4 +403,17 @@ export function inr(n: number): string {
  */
 export function shortPrice(n: number): string {
   return `From ${inr(n)}`;
+}
+
+/**
+ * The price as shown on cards and detail pages.
+ *
+ * "₹16,499" for a flat price, "₹8,499 – ₹24,499" where the departure
+ * spans tiers. The homepage keeps using shortPrice, since "From" already
+ * says the low end of a range.
+ */
+export function priceRange(d: Pick<Departure, "price" | "priceMax">): string {
+  return d.priceMax && d.priceMax !== d.price
+    ? `${inr(d.price)} – ${inr(d.priceMax)}`
+    : inr(d.price);
 }
