@@ -390,7 +390,13 @@ export function inr(n: number): string {
   return `₹${n.toLocaleString("en-IN", { maximumFractionDigits: 0 })}`;
 }
 
-/** The homepage card writes the price as "From 15.9". */
+/**
+ * The price on a homepage card.
+ *
+ * The comp wrote this as "From 15.9" — no symbol, no unit — which reads
+ * as ₹15.90 as easily as ₹15,999, and rounding ₹16,499 to "16.5" states
+ * a price ₹1 above the real one. Shows the actual figure instead.
+ */
 export function shortPrice(n: number): string {
-  return `From ${(n / 1000).toFixed(1)}`;
+  return `From ${inr(n)}`;
 }
