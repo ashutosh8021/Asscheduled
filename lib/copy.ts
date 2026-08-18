@@ -223,6 +223,10 @@ export const CONTACT = {
   bodyMark: "We're listening.",
   note: ["WE READ", "EVERYTHING."],
   emailLabel: "EMAIL US",
+  phoneLabel: "CALL US",
+  /* Contact page only — deliberately not in the footer, where they
+     would appear on every page and attract far more cold calls. */
+  phones: ["7400829921", "8969214005"],
 
   formTitle: "TELL US WHAT'S UNSCHEDULED",
   fields: {

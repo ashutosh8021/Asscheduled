@@ -76,6 +76,37 @@ export default function ContactPage() {
               </p>
             </div>
 
+              <div style={{ marginTop: 26 }}>
+                <span
+                  className="s-eyebrow"
+                  style={{
+                    background: "var(--s-ink-2)",
+                    color: "var(--s-bone)",
+                    padding: "6px 12px",
+                  }}
+                >
+                  {CONTACT.phoneLabel}
+                </span>
+                <div style={{ marginTop: 14, display: "flex", gap: 22, flexWrap: "wrap" }}>
+                  {CONTACT.phones.map((n) => (
+                    <a
+                      key={n}
+                      /* tel: carries the country code so it dials from
+                         anywhere; the label keeps the familiar spacing. */
+                      href={`tel:+91${n}`}
+                      style={{
+                        fontSize: "clamp(15px,1.7vw,20px)",
+                        borderBottom: "1px solid var(--s-rust)",
+                        paddingBottom: 3,
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      +91 {n.slice(0, 5)} {n.slice(5)}
+                    </a>
+                  ))}
+                </div>
+              </div>
+
             <div style={{ marginTop: 34 }}>
               <p className="s-ital" style={{ fontSize: 15, color: "var(--s-grey)" }}>
                 {CONTACT.note[0]} {CONTACT.note[1]}
