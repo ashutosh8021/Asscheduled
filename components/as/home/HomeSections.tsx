@@ -6,22 +6,15 @@ import Slot from "../Slot";
 import Tilt from "../Tilt";
 import { useModal } from "../ModalProvider";
 import { HOME } from "@/lib/copy";
-import { DEPARTURES, shortPrice, type Slot as SlotData } from "@/lib/departures";
+import { GALLERY_ALL, GALLERY_WIDE } from "@/lib/gallery";
+import { DEPARTURES, shortPrice } from "@/lib/departures";
 
 /* Homepage body, in the comp's order:
    editorial brand moment → NOW SCHEDULED rail → gallery strip → final CTA. */
 
-/* The gallery strip has no approved photography. Six labelled slots
-   hold the exact geometry so real frames drop straight in.
-   TODO(mannat): Season 1 film photos. */
-const STRIP: SlotData[] = [
-  { src: null, alt: "Group on a ridge at sunset", label: "STRIP 01" },
-  { src: null, alt: "Coast road, morning", label: "STRIP 02" },
-  { src: null, alt: "Fest ground at dusk", label: "STRIP 03" },
-  { src: null, alt: "Prayer flags, high pass", label: "STRIP 04" },
-  { src: null, alt: "Bonfire, last night", label: "STRIP 05" },
-  { src: null, alt: "Shared table, long lunch", label: "STRIP 06" },
-];
+/* "A few from our previous trips" — so these must be exactly that.
+   Real frames from trips that ran; see lib/gallery.ts. */
+const STRIP = GALLERY_ALL.slice(0, 8);
 
 export default function HomeSections() {
   const { openApply } = useModal();
@@ -57,14 +50,9 @@ export default function HomeSections() {
           <Reveal delay={1}>
             <Tilt max={4} lift={8}>
               <Slot
-                slot={{
-                  src: null,
-                  alt: "Group watching the sun go down over the water",
-                  label: "EDITORIAL — BRAND MOMENT",
-                }}
+                slot={GALLERY_WIDE[0]}
                 className="s-gal-tile"
                 sizes="(max-width: 900px) 100vw, 48vw"
-                hint="16:10 · SEASON 1 FILM"
               />
             </Tilt>
           </Reveal>
@@ -195,14 +183,9 @@ export default function HomeSections() {
       <section style={{ position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", inset: 0 }}>
           <Slot
-            slot={{
-              src: null,
-              alt: "Group heading into the water at the end of a trip",
-              label: "FINAL CTA — FULL BLEED",
-            }}
+            slot={GALLERY_WIDE[1]}
             sizes="100vw"
             dark
-            hint="21:9 · SEASON 1 FILM"
           />
           <div
             style={{

@@ -1,0 +1,210 @@
+/* ============================================================
+   ADMIN — internal tool, not the brand.
+
+   Deliberately plain: dense, high-contrast, fast to scan. The
+   editorial design language belongs on the public site; this is a
+   worklist you read a hundred applications in.
+   ============================================================ */
+
+.a-root {
+  min-height: 100vh;
+  background: #14161a;
+  color: #e6e8ec;
+  font-family: var(--s-mono), ui-monospace, Menlo, monospace;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.a-wrap { max-width: 1400px; margin: 0 auto; padding: 0 clamp(14px, 3vw, 32px); }
+
+/* ---------- top bar ---------- */
+.a-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 14px 0;
+  border-bottom: 1px solid #262a31;
+  margin-bottom: 22px;
+}
+.a-bar-title { font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; font-size: 13px; }
+.a-bar-who { margin-left: auto; color: #8b93a1; font-size: 12px; }
+
+.a-btn {
+  font: inherit;
+  padding: 7px 13px;
+  background: #22262e;
+  color: #e6e8ec;
+  border: 1px solid #333944;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.a-btn:hover { background: #2b303a; border-color: #454d5c; }
+.a-btn[disabled] { opacity: 0.5; cursor: default; }
+.a-btn-primary { background: #BE452A; border-color: #BE452A; color: #fff; }
+.a-btn-primary:hover { background: #a63a22; border-color: #a63a22; }
+
+/* ---------- tabs and filters ---------- */
+.a-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+.a-tab {
+  padding: 7px 13px;
+  background: none;
+  border: 1px solid #2c313a;
+  color: #9aa2b1;
+  text-decoration: none;
+  font: inherit;
+  cursor: pointer;
+}
+.a-tab:hover { color: #e6e8ec; border-color: #454d5c; }
+.a-tab[data-on="true"] { background: #e6e8ec; color: #14161a; border-color: #e6e8ec; font-weight: 600; }
+.a-tab-count { opacity: 0.65; margin-left: 6px; }
+
+/* ---------- table ---------- */
+.a-scroll { overflow-x: auto; border: 1px solid #262a31; }
+.a-table { width: 100%; border-collapse: collapse; min-width: 900px; }
+.a-table th {
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #8b93a1;
+  padding: 10px 12px;
+  border-bottom: 1px solid #262a31;
+  background: #191c21;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.a-table td { padding: 11px 12px; border-bottom: 1px solid #21252b; vertical-align: top; }
+.a-table tr:hover td { background: #191c21; }
+.a-nowrap { white-space: nowrap; }
+.a-dim { color: #8b93a1; }
+.a-strong { font-weight: 600; }
+
+/* the "why they applied" cell — long free text, clamped until hovered */
+.a-why { max-width: 340px; color: #b9c0cb; }
+
+.a-pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border: 1px solid currentColor;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.a-pill[data-s="new"] { color: #ffb454; }
+.a-pill[data-s="reviewing"] { color: #6fb3ff; }
+.a-pill[data-s="accepted"] { color: #57c98a; }
+.a-pill[data-s="declined"] { color: #8b93a1; }
+
+.a-actions { display: flex; gap: 5px; flex-wrap: wrap; }
+.a-actions .a-btn { padding: 4px 9px; font-size: 11px; }
+
+.a-empty { padding: 44px 16px; text-align: center; color: #8b93a1; }
+
+/* ---------- expanded record ----------
+   The table shows what you scan by; this shows everything that was
+   submitted, so nothing collected is invisible in here. */
+.a-row-toggle {
+  font: inherit;
+  background: none;
+  border: 1px solid #333944;
+  color: #9aa2b1;
+  cursor: pointer;
+  padding: 3px 8px;
+  font-size: 11px;
+  line-height: 1.4;
+}
+.a-row-toggle:hover { color: #e6e8ec; border-color: #454d5c; }
+.a-detail-cell { background: #12151a !important; padding: 0 !important; }
+.a-detail {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 2px 28px;
+  padding: 18px 14px 20px;
+}
+.a-detail div { padding: 5px 0; min-width: 0; }
+.a-detail dt {
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #7d8593;
+  margin-bottom: 3px;
+}
+.a-detail dd {
+  margin: 0;
+  color: #e6e8ec;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+/* Free-text answers get the full width rather than a narrow column. */
+.a-detail .a-detail-wide { grid-column: 1 / -1; }
+.a-detail a { color: #8ab4ff; }
+
+/* ---------- login ----------
+   Light and plain, unlike the dark worklist behind it. Nothing here
+   identifies the site beyond the wordmark: an unlisted page that
+   announces what it guards is just a signpost for anyone probing. */
+.a-login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: #f4f5f7;
+  font-family: var(--s-mono), ui-monospace, Menlo, monospace;
+  color: #14161a;
+}
+.a-login-card {
+  width: 100%;
+  max-width: 380px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(16, 20, 28, 0.08), 0 12px 32px -12px rgba(16, 20, 28, 0.18);
+  padding: 38px 34px 34px;
+}
+.a-login-logo { display: block; margin: 0 auto 26px; height: 22px; width: auto; }
+.a-login-h {
+  font-family: var(--s-heavy), system-ui, sans-serif;
+  font-size: 22px;
+  letter-spacing: 0.01em;
+  text-align: center;
+  margin-bottom: 22px;
+}
+.a-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+.a-input {
+  font: inherit;
+  font-size: 14px;
+  padding: 13px 14px;
+  background: #fff;
+  border: 1px solid #d8dce2;
+  color: #14161a;
+  border-radius: 8px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.a-input::placeholder { color: #9aa2b1; }
+.a-input:focus {
+  outline: none;
+  border-color: var(--s-forest, #143a30);
+  box-shadow: 0 0 0 3px rgba(20, 58, 48, 0.1);
+}
+.a-login-btn {
+  width: 100%;
+  font: inherit;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  padding: 14px;
+  margin-top: 8px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--s-forest, #143a30);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.a-login-btn:hover { background: #0d2a22; }
+.a-login-btn[disabled] { opacity: 0.6; cursor: default; }
+.a-err { color: #c0392b; font-size: 12.5px; margin-top: 12px; text-align: center; }
+.a-note { color: #8b93a1; font-size: 12px; margin-top: 18px; line-height: 1.6; text-align: center; }

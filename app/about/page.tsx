@@ -4,6 +4,7 @@ import Reveal from "@/components/as/Reveal";
 import Slot from "@/components/as/Slot";
 import ApplyButton from "@/components/as/ApplyButton";
 import { ABOUT, MANIFESTO, TESTIMONIALS } from "@/lib/copy";
+import { GALLERY_WIDE, F } from "@/lib/gallery";
 import { abs } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -41,13 +42,8 @@ export default function AboutPage() {
             <div style={{ position: "relative" }}>
               <div style={{ position: "relative", aspectRatio: "4 / 3" }}>
                 <Slot
-                  slot={{
-                    src: null,
-                    alt: "Crowd at a college fest, hands up",
-                    label: "ABOUT — FEST CROWD",
-                  }}
+                  slot={GALLERY_WIDE[3]}
                   sizes="(max-width:900px) 100vw, 48vw"
-                  hint="4:3 · SEASON 1 FILM"
                 />
               </div>
 
@@ -273,14 +269,9 @@ export default function AboutPage() {
             <Reveal delay={1}>
               <div style={{ position: "relative", aspectRatio: "4 / 3" }}>
                 <Slot
-                  slot={{
-                    src: null,
-                    alt: "Pro-night crowd, flares up",
-                    label: "MANIFESTO — PRO NIGHT",
-                  }}
+                  slot={F.proniteStage}
                   dark
                   sizes="(max-width:900px) 100vw, 48vw"
-                  hint="4:3 · SEASON 1 FILM"
                 />
               </div>
             </Reveal>
@@ -442,16 +433,7 @@ export default function AboutPage() {
       {/* ---------- FINAL CTA ---------- */}
       <section style={{ position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", inset: 0 }}>
-          <Slot
-            slot={{
-              src: null,
-              alt: "Group on a ridge at sunrise",
-              label: "ABOUT — FINAL CTA",
-            }}
-            sizes="100vw"
-            dark
-            hint="21:9 · SEASON 1 FILM"
-          />
+          <Slot slot={GALLERY_WIDE[2]} sizes="100vw" dark />
           <div
             style={{
               position: "absolute",

@@ -38,7 +38,7 @@ export const HOME = {
   nowTitle: "The next few things we are getting into.",
   nowCta: "VIEW UPCOMING ALL",
 
-  galleryTitle: "GALLERY",
+  galleryTitle: "SOMEONE",
   gallerySub: "a few from our previous trips",
 
   finalTitle: "STILL HERE ?",
@@ -201,7 +201,8 @@ export const GALLERY = {
   heroTitle: "SOMEWHERE",
   heroSub: "Wish you were here.",
   heroBody: ["A look inside the trips,", "the nights and the people who actually went."],
-  heroCta: "TAKE A LOOK",
+  /* One call to action, not two — "TAKE A LOOK" and "OPEN THE ARCHIVE"
+     both scrolled to the same place. */
   heroLink: "OPEN THE ARCHIVE",
 
   title: ["SOMEWHERE", "RECENTLY"],
@@ -470,7 +471,9 @@ export const FOOTER = {
 
 export const NAV = [
   { t: "SOMEWHERE", href: "/somewhere" },
-  { t: "GALLERY", href: "/gallery" },
+  /* Label only: the route stays /gallery so shared links and the
+     sitemap keep working. */
+  { t: "SOMEONE", href: "/gallery" },
   { t: "ABOUT", href: "/about" },
 ] as const;
 

@@ -703,18 +703,164 @@
 .s-gal-grid > *:nth-child(6n + 1) { grid-column: span 2; }
 @media (max-width: 720px) { .s-gal-grid > *:nth-child(6n + 1) { grid-column: span 1; } }
 
-/* the scattered polaroid field from the gallery comp */
-.s-scatter { position: relative; min-height: clamp(520px, 74vh, 800px); }
+/* ------------------------------------------------------------
+   THE TRIPS — one section per trip that actually ran
+   ------------------------------------------------------------ */
+.s-trip-head {
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(14px, 2.4vw, 30px);
+  flex-wrap: wrap;
+  padding-bottom: 18px;
+  margin-bottom: clamp(16px, 2.4vw, 26px);
+  border-bottom: 1px solid var(--s-line);
+}
+/* The index sits large and quiet, like a plate number on a contact
+   sheet — it numbers the trip without competing with its name. */
+.s-trip-num {
+  font-family: var(--s-heavy);
+  font-size: clamp(34px, 5.4vw, 74px);
+  line-height: 0.8;
+  color: var(--s-line);
+  letter-spacing: -0.02em;
+}
+.s-trip-id { min-width: 0; }
+.s-trip-title {
+  font-family: var(--s-heavy);
+  font-size: clamp(26px, 4.2vw, 58px);
+  line-height: 0.92;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  margin-bottom: 7px;
+}
+.s-trip-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-left: auto; padding-bottom: 4px; }
+
+.s-trip-cover { position: relative; aspect-ratio: 16 / 9; margin-bottom: 10px; }
+
+.s-trip-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+  gap: 10px;
+}
+.s-trip-tile {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+}
+/* Landscape frames take two columns and their own ratio — a 16:9 sign
+   squeezed into a portrait tile loses both its ends. */
+.s-trip-tile[data-wide="true"] { grid-column: span 2; aspect-ratio: 16 / 9; }
+/* The image scales inside a fixed frame, so the grid never reflows. */
+.s-trip-tile .s-slot > img { transition: transform 0.7s var(--s-bez); }
+.s-trip-tile:hover .s-slot > img { transform: scale(1.05); }
+
+.s-trip-divider {
+  font-family: var(--s-mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--s-grey);
+  margin: clamp(20px, 2.6vw, 32px) 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.s-trip-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--s-line);
+}
+
+/* ---------- clips ---------- */
+.s-past-clips {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+.s-past-clip { margin: 0; position: relative; }
+.s-past-clip video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  object-fit: cover;
+  background: var(--s-ink-2);
+}
+.s-past-clip-cap {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  font-family: var(--s-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--s-bone);
+  background: rgba(9, 16, 30, 0.55);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  padding: 3px 7px;
+  pointer-events: none;
+}
+
+@media (max-width: 720px) {
+  .s-trip-cover { aspect-ratio: 4 / 3; }
+  .s-trip-grid { grid-template-columns: repeat(2, 1fr); }
+  .s-past-clips { grid-template-columns: repeat(2, 1fr); }
+  .s-trip-meta { margin-left: 0; width: 100%; }
+}
+
+/* The scattered polaroid field.
+
+   Two nested elements on purpose: the outer one owns the position and
+   the entrance animation, the inner one owns the resting rotation and
+   the hover. Doing both on one element would mean the animation's
+   `forwards` fill permanently overrides any hover transform. */
+.s-scatter { position: relative; min-height: clamp(660px, 88vh, 1020px); }
+/* The stage owns the perspective; the frames sit at their own depths
+   inside it, so one rotation on this element parallaxes the whole
+   field. */
+.s-scatter-stage {
+  position: absolute;
+  inset: 0;
+  perspective: 1300px;
+  transform-style: preserve-3d;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
 .s-scatter-mid { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; z-index: 3; padding: 0 16px; }
+
 .s-scatter-item {
   position: absolute;
-  width: clamp(120px, 15vw, 210px);
-  aspect-ratio: 4 / 3;
-  border: 6px solid var(--s-bone);
-  box-shadow: 0 14px 30px -14px rgba(20, 36, 63, 0.5);
-  transition: transform 0.6s var(--s-bez);
+  width: clamp(150px, 17.5vw, 270px);
+  transform: translateZ(var(--z, 0px));
 }
-.s-scatter-item:hover { transform: rotate(0deg) scale(1.05) !important; z-index: 5; }
+.s-scatter-card {
+  display: block;
+  aspect-ratio: 4 / 3;
+  position: relative;
+  border: 7px solid var(--s-bone);
+  box-shadow: 0 16px 34px -14px rgba(20, 36, 63, 0.5);
+  transform: rotate(var(--rot, 0deg));
+  transition: transform 0.6s var(--s-bez), box-shadow 0.6s var(--s-bez);
+}
+.s-scatter-item:hover { z-index: 5; }
+.s-scatter-item:hover .s-scatter-card {
+  transform: rotate(0deg) scale(1.06);
+  box-shadow: 0 26px 54px -18px rgba(20, 36, 63, 0.6);
+}
+
+/* Drift in one after another when the page opens, arriving from
+   further back so the entrance reads as depth rather than a slide. */
+@media (prefers-reduced-motion: no-preference) {
+  .s-scatter-item {
+    opacity: 0;
+    animation: s-scatter-in 1.3s var(--s-bez) both;
+  }
+}
+@keyframes s-scatter-in {
+  from { opacity: 0; transform: translate3d(0, 40px, -260px); }
+  to { opacity: 1; transform: translateZ(var(--z, 0px)); }
+}
+
 @media (max-width: 860px) {
   .s-scatter { min-height: 0; }
   .s-scatter-mid { position: static; padding: 40px 0; }

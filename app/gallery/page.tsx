@@ -4,8 +4,10 @@ import Shell from "@/components/as/Shell";
 import Reveal from "@/components/as/Reveal";
 import Slot from "@/components/as/Slot";
 import { GALLERY } from "@/lib/copy";
+import { GALLERY_TALL, PAST_TRIPS } from "@/lib/gallery";
+import PastVideos from "@/components/as/PastVideos";
+import ScatterField, { type Place } from "@/components/as/ScatterField";
 import { abs } from "@/lib/site";
-import type { Slot as SlotData } from "@/lib/departures";
 
 export const metadata: Metadata = {
   title: "SOMEWHERE RECENTLY — Gallery · AS SCHEDULED",
@@ -14,37 +16,28 @@ export const metadata: Metadata = {
   alternates: { canonical: abs("/gallery") },
 };
 
-/* The archive is empty. CLAUDE.md is explicit: no stock travel imagery,
-   and Trip 000 (Alcheringa) is the only past record — its photos have
-   not been supplied. So every tile is a labelled placeholder and the
-   page says so, rather than pretending to a history we do not have.
+/* Real photography from trips that ran — see lib/gallery.ts. The
+   scattered field uses the portrait frames, since the tiles are tall.
+   Everything else now lives inside its trip section below. */
+const SCATTER = GALLERY_TALL.slice(0, 8);
 
-   TODO(mannat): Trip 000 photos + all Season 1 photography. */
-const SCATTER: SlotData[] = Array.from({ length: 10 }, (_, i) => ({
-  src: null,
-  alt: `Archive frame ${i + 1}`,
-  label: `ARCHIVE ${String(i + 1).padStart(2, "0")}`,
-}));
+/* Scatter geometry. Hand-placed, not random, so the server and client
+   render identically.
 
-const ARCHIVE: SlotData[] = Array.from({ length: 11 }, (_, i) => ({
-  src: null,
-  alt: `Archive frame ${i + 1}`,
-  label: `FRAME ${String(i + 1).padStart(2, "0")}`,
-}));
+   Anchored to the left and right edges rather than positioned across
+   the full width: that keeps a clear corridor down the middle for the
+   headline at any window size. `z` is the depth each frame sits at,
+   which is what the pointer tilt parallaxes against. */
+const PLACES: Place[] = [
+  { side: "left", x: "1%", y: "4%", rot: -5, z: 40, delay: 0.05 },
+  { side: "left", x: "13%", y: "27%", rot: 3, z: -70, delay: 0.35 },
+  { side: "left", x: "0%", y: "50%", rot: 2, z: 20, delay: 0.6 },
+  { side: "left", x: "11%", y: "72%", rot: -3, z: -110, delay: 0.8 },
 
-/* Fixed scatter geometry — deliberately hand-placed rather than random,
-   so the layout is identical on the server and the client. */
-const PLACES = [
-  { top: "16%", left: "3%", rot: -5 },
-  { top: "2%", left: "22%", rot: 3 },
-  { top: "4%", left: "58%", rot: -3 },
-  { top: "16%", left: "76%", rot: 4 },
-  { top: "42%", left: "1%", rot: 2 },
-  { top: "44%", left: "70%", rot: -4 },
-  { top: "66%", left: "8%", rot: 5 },
-  { top: "74%", left: "30%", rot: -2 },
-  { top: "72%", left: "56%", rot: 3 },
-  { top: "66%", left: "78%", rot: -5 },
+  { side: "right", x: "2%", y: "2%", rot: 4, z: -60, delay: 0.2 },
+  { side: "right", x: "13%", y: "25%", rot: -4, z: 30, delay: 0.45 },
+  { side: "right", x: "0%", y: "49%", rot: 5, z: -90, delay: 0.7 },
+  { side: "right", x: "12%", y: "71%", rot: -2, z: 10, delay: 0.9 },
 ];
 
 export default function GalleryPage() {
@@ -53,18 +46,7 @@ export default function GalleryPage() {
       {/* ---------- SCATTER HERO ---------- */}
       <section className="s-wrap-wide" style={{ paddingTop: "clamp(110px,14vh,150px)" }}>
         <div className="s-scatter">
-          {SCATTER.map((s, i) => {
-            const p = PLACES[i];
-            return (
-              <div
-                key={s.label}
-                className="s-scatter-item"
-                style={{ top: p.top, left: p.left, transform: `rotate(${p.rot}deg)` }}
-              >
-                <Slot slot={s} sizes="210px" />
-              </div>
-            );
-          })}
+          <ScatterField frames={SCATTER} places={PLACES} />
 
           <div className="s-scatter-mid">
             <Reveal>
@@ -92,15 +74,9 @@ export default function GalleryPage() {
 
               <div style={{ marginTop: 28 }}>
                 <a href="#archive" className="s-btn">
-                  {GALLERY.heroCta} <span className="s-arrow">→</span>
-                </a>
-              </div>
-
-              <p style={{ marginTop: 18 }}>
-                <a href="#archive" className="s-link">
                   {GALLERY.heroLink} <span className="s-arrow">→</span>
                 </a>
-              </p>
+              </div>
             </Reveal>
           </div>
         </div>
@@ -125,26 +101,69 @@ export default function GalleryPage() {
           <span className="s-tick" style={{ display: "block", marginTop: 20 }} />
         </Reveal>
 
-        <Reveal delay={1}>
-          <div style={{ marginTop: "clamp(40px,6vw,72px)" }}>
-            <h3 className="s-h3">
-              {GALLERY.archiveTitle}
-              <span className="s-dot">.</span>
-            </h3>
-            <p className="s-ital" style={{ fontSize: 17, color: "var(--s-grey)", marginTop: 4 }}>
-              {GALLERY.archiveSub}
-            </p>
-          </div>
-        </Reveal>
-
-        <Reveal delay={2}>
-          <div className="s-gal-grid" style={{ marginTop: 26 }}>
-            {ARCHIVE.map((a) => (
-              <Slot key={a.label} slot={a} className="s-gal-tile" sizes="(max-width:720px) 50vw, 25vw" />
-            ))}
-          </div>
-        </Reveal>
       </section>
+
+      {/* ---------- THE TRIPS ----------
+          The whole archive, grouped by the trip it came from. There is
+          no separate flat grid: it showed the same photographs a second
+          time. Dates and traveller counts render only where confirmed. */}
+      {PAST_TRIPS.map((t, i) => (
+        <section
+          key={t.id}
+          className={i % 2 === 1 ? "s-sec-tight s-sec-paper2" : "s-sec-tight"}
+        >
+          <div className="s-wrap">
+            <Reveal>
+              <div className="s-trip-head">
+                <span className="s-trip-num">{String(i + 1).padStart(2, "0")}</span>
+                <div className="s-trip-id">
+                  <h2 className="s-trip-title">{t.fest}</h2>
+                  <p className="s-eyebrow">
+                    {t.campus} · {t.city}
+                  </p>
+                </div>
+                <div className="s-trip-meta">
+                  {t.when ? <span className="s-chip">{t.when}</span> : null}
+                  {t.travellers ? <span className="s-chip">{t.travellers} TRAVELLED</span> : null}
+                  <span className="s-chip">
+                    {t.photos.length + 1 + (t.clips?.length ?? 0)} FRAMES
+                  </span>
+                </div>
+              </div>
+            </Reveal>
+
+            <Reveal delay={1}>
+              <div className="s-trip-cover">
+                <Slot slot={t.cover} sizes="(max-width: 900px) 100vw, 78vw" />
+              </div>
+            </Reveal>
+
+            <Reveal delay={2}>
+              <div className="s-trip-grid">
+                {t.photos.map((p) => (
+                  <div key={p.label} className="s-trip-tile" data-wide={p.wide ?? false}>
+                    <Slot
+                      slot={p}
+                      sizes={
+                        p.wide
+                          ? "(max-width: 720px) 100vw, 40vw"
+                          : "(max-width: 720px) 50vw, 20vw"
+                      }
+                    />
+                  </div>
+                ))}
+              </div>
+            </Reveal>
+
+            {t.clips ? (
+              <Reveal delay={2}>
+                <p className="s-trip-divider">FOOTAGE</p>
+                <PastVideos clips={t.clips} />
+              </Reveal>
+            ) : null}
+          </div>
+        </section>
+      ))}
 
       {/* ---------- KEEP SCROLLING ---------- */}
       <section className="s-wrap" style={{ paddingBottom: "clamp(64px,9vw,120px)" }}>

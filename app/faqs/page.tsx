@@ -5,6 +5,7 @@ import Reveal from "@/components/as/Reveal";
 import Slot from "@/components/as/Slot";
 import Accordion from "@/components/as/Accordion";
 import { FAQ_PAGE, FAQS, TESTIMONIALS } from "@/lib/copy";
+import { GALLERY_WIDE, F } from "@/lib/gallery";
 import { abs } from "@/lib/site";
 import JsonLd from "@/components/seo/JsonLd";
 
@@ -77,9 +78,8 @@ export default function FaqsPage() {
 
               <div style={{ position: "relative", flex: "1 1 180px", aspectRatio: "3 / 4" }}>
                 <Slot
-                  slot={{ src: null, alt: "Crowd at a pro-night", label: "FAQ — CROWD" }}
+                  slot={F.humour}
                   sizes="(max-width:900px) 50vw, 22vw"
-                  hint="3:4 · SEASON 1 FILM"
                 />
               </div>
             </div>
@@ -191,9 +191,8 @@ export default function FaqsPage() {
           <Reveal delay={1}>
             <div style={{ position: "relative", aspectRatio: "16 / 10" }}>
               <Slot
-                slot={{ src: null, alt: "Group at a fest, all together", label: "FAQ — THEY WENT" }}
+                slot={GALLERY_WIDE[0]}
                 sizes="(max-width:900px) 100vw, 48vw"
-                hint="16:10 · SEASON 1 FILM"
               />
             </div>
           </Reveal>
