@@ -4,7 +4,7 @@ import Shell from "@/components/as/Shell";
 import Reveal from "@/components/as/Reveal";
 import Slot from "@/components/as/Slot";
 import { GALLERY } from "@/lib/copy";
-import { GALLERY_TALL, PAST_TRIPS } from "@/lib/gallery";
+import { F, PAST_TRIPS } from "@/lib/gallery";
 import PastVideos from "@/components/as/PastVideos";
 import ScatterField, { type Place } from "@/components/as/ScatterField";
 import { abs } from "@/lib/site";
@@ -16,28 +16,52 @@ export const metadata: Metadata = {
   alternates: { canonical: abs("/gallery") },
 };
 
-/* Real photography from trips that ran — see lib/gallery.ts. The
-   scattered field uses the portrait frames, since the tiles are tall.
-   Everything else now lives inside its trip section below. */
-const SCATTER = GALLERY_TALL.slice(0, 8);
+/* The hero frames, named rather than sliced off the front of
+   GALLERY_TALL. Slicing was how the night-arrival, UNO and blue-stage
+   frames — all marked archive-only — ended up here when the count went
+   from 8 to 11. Naming them means the running order of that list can
+   change without quietly reshuffling this. */
+const SCATTER = [
+  F.climb,
+  F.walk,
+  F.evening,
+  F.viewpoint,
+  F.arriving,
+  F.humour,
+  F.cafe,
+  F.campus,
+  F.iitg,
+  F.iitb,
+  F.show,
+];
 
-/* Scatter geometry. Hand-placed, not random, so the server and client
+/* Scatter geometry. Hand-placed, not random, so server and client
    render identically.
 
-   Anchored to the left and right edges rather than positioned across
-   the full width: that keeps a clear corridor down the middle for the
-   headline at any window size. `z` is the depth each frame sits at,
-   which is what the pointer tilt parallaxes against. */
-const PLACES: Place[] = [
-  { side: "left", x: "1%", y: "4%", rot: -5, z: 40, delay: 0.05 },
-  { side: "left", x: "13%", y: "27%", rot: 3, z: -70, delay: 0.35 },
-  { side: "left", x: "0%", y: "50%", rot: 2, z: 20, delay: 0.6 },
-  { side: "left", x: "11%", y: "72%", rot: -3, z: -110, delay: 0.8 },
+   The frames ring the centre and leave a hole for the headline. The
+   rule: anything in the middle vertical band (y roughly 30–65%) stays
+   wide of centre — x under 16% or over 76%. Frames above and below that
+   band are free horizontally, because they clear the text vertically.
 
-  { side: "right", x: "2%", y: "2%", rot: 4, z: -60, delay: 0.2 },
-  { side: "right", x: "13%", y: "25%", rot: -4, z: 30, delay: 0.45 },
-  { side: "right", x: "0%", y: "49%", rot: 5, z: -90, delay: 0.7 },
-  { side: "right", x: "12%", y: "71%", rot: -2, z: 10, delay: 0.9 },
+   `z` is depth, which the pointer tilt parallaxes against; `w` varies a
+   few widths so the ring does not read as a uniform grid. */
+const PLACES: Place[] = [
+  /* top arc */
+  { x: "3%", y: "12%", z: 30, delay: 0.05, w: "clamp(110px,12.5vw,180px)" },
+  { x: "21%", y: "2%", z: -70, delay: 0.3 },
+  { x: "44%", y: "0%", z: 20, delay: 0.5 },
+  { x: "66%", y: "3%", z: -50, delay: 0.35 },
+  { x: "85%", y: "12%", z: 40, delay: 0.15, w: "clamp(110px,12.5vw,180px)" },
+
+  /* sides — clear of the headline */
+  { x: "0%", y: "44%", z: -100, delay: 0.6 },
+  { x: "80%", y: "42%", z: -30, delay: 0.45 },
+
+  /* bottom arc */
+  { x: "6%", y: "70%", z: 10, delay: 0.75 },
+  { x: "28%", y: "80%", z: -80, delay: 0.9 },
+  { x: "53%", y: "78%", z: 35, delay: 0.65 },
+  { x: "76%", y: "70%", z: -60, delay: 0.8 },
 ];
 
 export default function GalleryPage() {

@@ -225,6 +225,8 @@ export const CONTACT = {
   note: ["WE READ", "EVERYTHING."],
   emailLabel: "EMAIL US",
   phoneLabel: "CALL US",
+  whatsappLabel: "OR WHATSAPP",
+  whatsappUrl: "https://wa.me/917400829921",
   /* Contact page only — deliberately not in the footer, where they
      would appear on every page and attract far more cold calls. */
   phones: ["7400829921", "8969214005"],
@@ -434,8 +436,14 @@ export const FOOTER = {
   subscribePh: "@gmail subscribe",
   prefsLabel: "select ur preference",
   prefs: ["man", "women", "both"],
-  consent:
-    "I agree to receive content from as scheduled via and I have read accept the privacy policy.",
+  /* Shown after a successful subscribe. It says what actually happened —
+     the address is stored — rather than promising a schedule we have not
+     committed to. */
+  subscribeDone: "You're on the list. We'll mail you when the next one opens.",
+  /* The comp read "...from as scheduled via and I have read accept the
+     privacy policy." — a dangling "via" and a missing "and". Consent has
+     to be intelligible to count, so this is corrected. */
+  consent: "I agree to receive email from AS Scheduled, and I have read and accept the privacy policy.",
   cols: [
     {
       h: "Support",
@@ -464,12 +472,16 @@ export const FOOTER = {
   ],
   /* TODO(mannat): real handles. CLAUDE.md lists these as open items,
      so every social link is disabled until they are confirmed. */
+  /* href null renders a plain label rather than a link to a guess.
+     TODO(mannat): Spotify, when there is one. */
   socials: [
-    { t: "Instagram", href: null },
+    { t: "Instagram", href: "https://www.instagram.com/notasscheduled" },
     { t: "Spotify", href: null },
-    { t: "Snapchat", href: null },
-    { t: "YouTube", href: null },
-  ],
+    { t: "Snapchat", href: "https://snapchat.com/t/cpMiq117" },
+    { t: "YouTube", href: "https://www.youtube.com/@Notasscheduled" },
+    /* wa.me takes the country code with no "+" and no spaces. */
+    { t: "WhatsApp", href: "https://wa.me/917400829921" },
+  ] as { t: string; href: string | null }[],
 } as const;
 
 /* ---------- NAV ---------- */

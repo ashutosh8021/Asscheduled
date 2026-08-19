@@ -4,31 +4,32 @@ import { useEffect, useRef, useState } from "react";
 import Slot from "./Slot";
 import type { Slot as SlotData } from "@/lib/departures";
 
-/* The scattered polaroid field, in real 3D.
+/* The scattered photo field.
 
-   The container carries the perspective and tilts toward the pointer;
-   each frame sits at its own translateZ. That single rotation on the
-   parent is what produces the parallax — frames nearer the viewer sweep
-   further than the ones pushed back, for free, without per-frame maths.
+   Frames ring the centre rather than stacking down the edges, leaving a
+   hole for the headline. Positions live in app/gallery/page.tsx: the
+   rule is that anything in the middle vertical band must stay wide of
+   the centre, while frames above and below it are free horizontally,
+   because they clear the text vertically anyway.
 
-   Frames are anchored to the left and right edges rather than placed
-   across the whole width, so the headline in the middle always has a
-   clear corridor no matter how wide the window gets.
+   Depth comes from a single rotation on the stage. Each frame has its
+   own translateZ, so near ones sweep further than far ones as the
+   pointer moves — parallax for free, no per-frame maths.
 
-   Pointer tracking is skipped entirely on touch and under reduced
-   motion — there is no pointer to follow on a phone, and the tilt is
-   decoration, never a way to reach content. */
+   Pointer tracking is skipped on touch and under reduced motion: there
+   is no pointer on a phone, and the tilt is decoration that must never
+   gate access to anything. */
 
 export interface Place {
-  /** Which edge the frame hangs off. */
-  side: "left" | "right";
-  /** Distance in from that edge. */
+  /** % from the left of the field. */
   x: string;
+  /** % from the top of the field. */
   y: string;
-  rot: number;
   /** Depth in px. Negative sits further back. */
   z: number;
   delay: number;
+  /** Optional per-frame width override, for a little variety. */
+  w?: string;
 }
 
 interface Props {
@@ -59,13 +60,11 @@ export default function ScatterField({ frames, places }: Props) {
         const el2 = stage.current;
         if (!el2) return;
         const r = el2.getBoundingClientRect();
-        /* -1 … 1 from the centre of the field. */
         const px = (e.clientX - r.left) / r.width - 0.5;
         const py = (e.clientY - r.top) / r.height - 0.5;
-        el2.style.transform = `rotateY(${px * 7}deg) rotateX(${-py * 5}deg)`;
+        el2.style.transform = `rotateY(${px * 6}deg) rotateX(${-py * 4}deg)`;
       });
     }
-
     function onLeave() {
       const el2 = stage.current;
       if (el2) el2.style.transform = "";
@@ -92,14 +91,15 @@ export default function ScatterField({ frames, places }: Props) {
             style={
               {
                 top: p.y,
-                [p.side]: p.x,
+                left: p.x,
+                width: p.w,
                 "--z": `${p.z}px`,
                 animationDelay: `${p.delay}s`,
               } as React.CSSProperties
             }
           >
-            <div className="s-scatter-card" style={{ "--rot": `${p.rot}deg` } as React.CSSProperties}>
-              <Slot slot={f} sizes="300px" />
+            <div className="s-scatter-card">
+              <Slot slot={f} sizes="240px" />
             </div>
           </div>
         );

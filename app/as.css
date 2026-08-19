@@ -815,10 +815,11 @@
    the entrance animation, the inner one owns the resting rotation and
    the hover. Doing both on one element would mean the animation's
    `forwards` fill permanently overrides any hover transform. */
-.s-scatter { position: relative; min-height: clamp(660px, 88vh, 1020px); }
-/* The stage owns the perspective; the frames sit at their own depths
-   inside it, so one rotation on this element parallaxes the whole
-   field. */
+.s-scatter { position: relative; min-height: clamp(620px, 84vh, 940px); }
+
+/* The stage carries the perspective; each frame sits at its own
+   translateZ, so one rotation here parallaxes the whole field with no
+   per-frame maths. */
 .s-scatter-stage {
   position: absolute;
   inset: 0;
@@ -826,38 +827,51 @@
   transform-style: preserve-3d;
   transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.s-scatter-mid { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; z-index: 3; padding: 0 16px; }
+.s-scatter-mid {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  z-index: 3;
+  padding: 0 16px;
+}
 
+/* Frames ring the centre rather than stacking at the edges. Positions
+   in app/gallery/page.tsx keep the middle band clear for the headline;
+   frames above and below it may sit anywhere horizontally. */
 .s-scatter-item {
   position: absolute;
-  width: clamp(150px, 17.5vw, 270px);
+  width: clamp(120px, 14vw, 200px);
   transform: translateZ(var(--z, 0px));
 }
 .s-scatter-card {
   display: block;
-  aspect-ratio: 4 / 3;
   position: relative;
-  border: 7px solid var(--s-bone);
-  box-shadow: 0 16px 34px -14px rgba(20, 36, 63, 0.5);
-  transform: rotate(var(--rot, 0deg));
-  transition: transform 0.6s var(--s-bez), box-shadow 0.6s var(--s-bez);
+  aspect-ratio: 4 / 3;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 10px 26px -12px rgba(20, 36, 63, 0.42);
+  transition: transform 0.55s var(--s-bez), box-shadow 0.55s var(--s-bez);
 }
+.s-scatter-card .s-slot { border-radius: inherit; }
 .s-scatter-item:hover { z-index: 5; }
 .s-scatter-item:hover .s-scatter-card {
-  transform: rotate(0deg) scale(1.06);
-  box-shadow: 0 26px 54px -18px rgba(20, 36, 63, 0.6);
+  transform: scale(1.06);
+  box-shadow: 0 22px 46px -16px rgba(20, 36, 63, 0.55);
 }
 
-/* Drift in one after another when the page opens, arriving from
-   further back so the entrance reads as depth rather than a slide. */
+/* Drift in from further back, one after another. */
 @media (prefers-reduced-motion: no-preference) {
   .s-scatter-item {
     opacity: 0;
-    animation: s-scatter-in 1.3s var(--s-bez) both;
+    animation: s-scatter-in 1.2s var(--s-bez) both;
   }
 }
 @keyframes s-scatter-in {
-  from { opacity: 0; transform: translate3d(0, 40px, -260px); }
+  from { opacity: 0; transform: translate3d(0, 30px, -240px); }
   to { opacity: 1; transform: translateZ(var(--z, 0px)); }
 }
 
@@ -1112,3 +1126,13 @@ body.s-locked { overflow: hidden; }
   font-weight: 400;
   white-space: nowrap;
 }
+
+/* Social links in the footer — brighter than the unlinked labels so it
+   is obvious which ones actually go somewhere. */
+.s-ftr-social-link {
+  color: var(--s-bone);
+  text-decoration: none;
+  opacity: 0.78;
+  transition: opacity 0.2s, color 0.2s;
+}
+.s-ftr-social-link:hover { opacity: 1; color: var(--s-rust-soft); }

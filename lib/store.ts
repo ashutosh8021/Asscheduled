@@ -136,3 +136,48 @@ export function saveMessage(m: MessageRecord): Promise<boolean> {
     message: m.message,
   });
 }
+
+export interface SubscriberRecord {
+  email: string;
+  preference: string;
+  source: string;
+}
+
+/**
+ * Add someone to the mailing list.
+ *
+ * Upserts on the email: re-submitting the same address updates the
+ * existing row instead of erroring on the unique index, and flips
+ * anyone who had unsubscribed back to subscribed. So a second submit
+ * is a success, not a duplicate-key failure the visitor would see.
+ */
+export async function saveSubscriber(r: SubscriberRecord): Promise<boolean> {
+  const cfg = supabaseConfig();
+  if (!cfg) return false;
+
+  try {
+    const res = await fetch(`${cfg.url}/rest/v1/subscribers?on_conflict=email`, {
+      method: "POST",
+      headers: {
+        ...headers(cfg.serviceRoleKey),
+        /* merge-duplicates turns this into an upsert. */
+        prefer: "return=minimal,resolution=merge-duplicates",
+      },
+      body: JSON.stringify({
+        email: r.email,
+        preference: r.preference || null,
+        source: r.source,
+        status: "subscribed",
+      }),
+      cache: "no-store",
+    });
+    if (!res.ok) {
+      console.error(`[store] subscribers insert failed (${res.status}): ${await res.text()}`);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error("[store] subscribers insert threw", err);
+    return false;
+  }
+}

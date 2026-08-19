@@ -48,23 +48,11 @@ export default function SomewherePage() {
 
           <Reveal delay={1}>
             <div style={{ paddingTop: "clamp(0px,4vw,60px)" }}>
-              {SOMEWHERE.nots.map((n) => (
-                <p
-                  key={n}
-                  className="s-lbl"
-                  style={{
-                    fontSize: 14,
-                    letterSpacing: "0.06em",
-                    padding: "14px 0",
-                    borderBottom: "1px solid var(--s-line)",
-                  }}
-                >
-                  {n}
-                </p>
-              ))}
               <p
                 className="s-h2"
-                style={{ color: "var(--s-rust)", marginTop: 24, fontSize: "clamp(28px,3.6vw,46px)" }}
+                /* marginTop dropped — it spaced this from the three
+                   NO… lines that used to sit above it. */
+                style={{ color: "var(--s-rust)", fontSize: "clamp(32px,4.2vw,58px)" }}
               >
                 <span className="s-underline">{SOMEWHERE.notsMark}</span>
               </p>
@@ -167,48 +155,6 @@ export default function SomewherePage() {
               ))}
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* ---------- THE LITTLE DETAILS ---------- */}
-      <section className="s-sec s-wrap">
-        <div className="s-split s-split-top" style={{ gridTemplateColumns: "minmax(0,.7fr) minmax(0,2fr)" }}>
-          <Reveal>
-            <h2 className="s-h2" style={{ fontSize: "clamp(24px,3vw,40px)" }}>
-              {SOMEWHERE.detailsTitle.map((l) => (
-                <span key={l} style={{ display: "block" }}>
-                  {l}
-                </span>
-              ))}
-            </h2>
-            <span className="s-tick" style={{ display: "block", marginTop: 18 }} />
-          </Reveal>
-
-          <Reveal delay={1}>
-            <dl
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit,minmax(210px,1fr))",
-                gap: "28px 34px",
-                margin: 0,
-              }}
-            >
-              {SOMEWHERE.details.map((d) => (
-                <div key={d.t}>
-                  <dt className="s-eyebrow s-eyebrow-ink" style={{ marginBottom: 10 }}>
-                    {d.t}
-                  </dt>
-                  <dd style={{ margin: 0 }}>
-                    {d.lines.map((l) => (
-                      <p key={l} style={{ fontSize: 14, color: "var(--s-grey)" }}>
-                        {l}
-                      </p>
-                    ))}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </Reveal>
         </div>
       </section>
 

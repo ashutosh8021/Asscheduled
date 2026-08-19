@@ -183,11 +183,6 @@ export const PAST_TRIPS: PastTrip[] = [
         label: "FEST GROUND",
         wide: true,
       },
-      {
-        src: "/img/gallery/pronite-singer.jpg",
-        alt: "A singer on the pronite stage under blue light",
-        label: "PRONITE STAGE",
-      },
     ],
     clips: [
       {
