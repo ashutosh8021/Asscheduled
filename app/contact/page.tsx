@@ -107,18 +107,6 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              <p style={{ marginTop: 14 }}>
-                <a
-                  href={CONTACT.whatsappUrl}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  className="s-link"
-                  style={{ fontSize: 12 }}
-                >
-                  {CONTACT.whatsappLabel} <span className="s-arrow">↗</span>
-                </a>
-              </p>
-
             <div style={{ marginTop: 34 }}>
               <p className="s-ital" style={{ fontSize: 15, color: "var(--s-grey)" }}>
                 {CONTACT.note[0]} {CONTACT.note[1]}

@@ -225,8 +225,6 @@ export const CONTACT = {
   note: ["WE READ", "EVERYTHING."],
   emailLabel: "EMAIL US",
   phoneLabel: "CALL US",
-  whatsappLabel: "OR WHATSAPP",
-  whatsappUrl: "https://wa.me/917400829921",
   /* Contact page only — deliberately not in the footer, where they
      would appear on every page and attract far more cold calls. */
   phones: ["7400829921", "8969214005"],
@@ -479,8 +477,6 @@ export const FOOTER = {
     { t: "Spotify", href: null },
     { t: "Snapchat", href: "https://snapchat.com/t/cpMiq117" },
     { t: "YouTube", href: "https://www.youtube.com/@Notasscheduled" },
-    /* wa.me takes the country code with no "+" and no spaces. */
-    { t: "WhatsApp", href: "https://wa.me/917400829921" },
   ] as { t: string; href: string | null }[],
 } as const;
 
