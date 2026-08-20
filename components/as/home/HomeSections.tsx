@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Reveal from "../Reveal";
 import Slot from "../Slot";
+import Stamp from "../Stamp";
 import Tilt from "../Tilt";
 import { useModal } from "../ModalProvider";
 import { HOME, SOMEWHERE } from "@/lib/copy";
@@ -88,16 +89,19 @@ export default function HomeSections() {
                     style={{ background: "var(--s-paper)", borderColor: "transparent" }}
                   >
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
-                      <div style={{ position: "relative", aspectRatio: "3 / 4", overflow: "hidden" }}>
+                      <div className="s-home-media">
                         <Slot
                           slot={d.portrait}
                           sizes="(max-width: 900px) 50vw, 24vw"
                           hint={d.campus}
                         />
                         {d.soldOut ? (
-                          <span className="s-stamp-big s-stamp-big-over">
-                            {SOMEWHERE.soldOutLabel}
-                          </span>
+                          <Stamp
+                            className="s-stamp-round-over s-stamp-round-sm"
+                            label={SOMEWHERE.soldOutLabel}
+                            top={SOMEWHERE.soldOutArcTop}
+                            bottom={SOMEWHERE.soldOutArcBottom}
+                          />
                         ) : null}
                       </div>
 

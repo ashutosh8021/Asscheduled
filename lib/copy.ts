@@ -160,6 +160,9 @@ export const SOMEWHERE = {
   ],
 
   soldOutLabel: "SOLD OUT",
+  /* The legends curved around the round stamp. */
+  soldOutArcTop: "APPLICATIONS CLOSED",
+  soldOutArcBottom: "SEASON 01",
   soldOutNote: "This one is full. Applications are closed.",
   soldOutCta: "SOLD OUT",
   priceLabel: "PRICE (ALL INCLUSIVE)",

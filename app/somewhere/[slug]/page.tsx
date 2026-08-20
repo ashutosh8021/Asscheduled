@@ -51,7 +51,15 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
         <DepartureHero
           frames={d.wide}
           hint={d.campus}
-          stamp={d.soldOut ? SOMEWHERE.soldOutLabel : undefined}
+          stamp={
+            d.soldOut
+              ? {
+                  label: SOMEWHERE.soldOutLabel,
+                  top: SOMEWHERE.soldOutArcTop,
+                  bottom: SOMEWHERE.soldOutArcBottom,
+                }
+              : undefined
+          }
         >
           <p className="s-eyebrow" style={{ color: "var(--s-butter)" }}>
             {d.fest} — {d.campus}

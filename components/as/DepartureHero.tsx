@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Slot from "./Slot";
+import Stamp from "./Stamp";
 import type { Slot as SlotData } from "@/lib/departures";
 
 /* Full-screen hero for a departure page.
@@ -29,7 +30,7 @@ interface Props {
   /** Placeholder caption for frames with no photography yet. */
   hint?: string;
   /** Struck across the lower right when a departure is closed. */
-  stamp?: string;
+  stamp?: { label: string; top: string; bottom: string };
 }
 
 export default function DepartureHero({ frames, children, hint, stamp }: Props) {
@@ -128,7 +129,14 @@ export default function DepartureHero({ frames, children, hint, stamp }: Props) 
 
       <div className="s-dhero-inner s-wrap">{children}</div>
 
-      {stamp ? <span className="s-dhero-stamp">{stamp}</span> : null}
+      {stamp ? (
+        <Stamp
+          className="s-stamp-round-over s-stamp-hero"
+          label={stamp.label}
+          top={stamp.top}
+          bottom={stamp.bottom}
+        />
+      ) : null}
 
       {count > 1 ? (
         <div className="s-dhero-ui s-wrap">

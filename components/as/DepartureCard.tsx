@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Slot from "./Slot";
+import Stamp from "./Stamp";
 import Tilt from "./Tilt";
 import { SOMEWHERE } from "@/lib/copy";
 import { priceRange, type Departure } from "@/lib/departures";
@@ -103,7 +104,12 @@ export default function DepartureCard({ d, variant = "poster", priority = false 
             hint={d.campus}
           />
             {d.soldOut ? (
-              <span className="s-stamp-big s-stamp-big-over">{SOMEWHERE.soldOutLabel}</span>
+              <Stamp
+                className="s-stamp-round-over"
+                label={SOMEWHERE.soldOutLabel}
+                top={SOMEWHERE.soldOutArcTop}
+                bottom={SOMEWHERE.soldOutArcBottom}
+              />
             ) : null}
           <div className="s-card-over">
             <h3 className="s-h3" style={{ color: "inherit" }}>

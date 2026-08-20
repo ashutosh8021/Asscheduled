@@ -613,7 +613,10 @@
   transition: transform 0.45s var(--s-bez), box-shadow 0.45s var(--s-bez);
 }
 .s-card:hover { box-shadow: 0 24px 48px -24px rgba(20, 36, 63, 0.42); }
-.s-card-media { position: relative; aspect-ratio: 16 / 10; }
+/* A sizing container so the sold-out stamp can be measured against
+   the artwork it is struck across rather than against the viewport —
+   these cards run anywhere from 300px to 600px wide. */
+.s-card-media { position: relative; aspect-ratio: 16 / 10; container-type: inline-size; }
 .s-card-media img { transition: transform 0.7s var(--s-bez); }
 .s-card:hover .s-card-media img { transform: scale(1.045); }
 .s-card-over {
@@ -1286,7 +1289,9 @@ body.s-locked { overflow: hidden; }
 
 /* A card for a departure nobody can join any more. Muted rather than
    hidden — it is still worth seeing that it ran. */
-.s-card-closed .s-card-media { filter: saturate(0.55); }
+/* The photograph is muted, not the whole box — a filter on the
+   container would drain the stamp struck over it too. */
+.s-card-closed .s-card-media > .s-slot { filter: saturate(0.55); }
 .s-card-closed .s-card-media::after {
   content: "";
   position: absolute;
@@ -1313,64 +1318,166 @@ body.s-locked { overflow: hidden; }
   cursor: not-allowed;
 }
 
-/* The full rubber stamp — struck across the artwork rather than sat
-   beside it. Two rings and a slight tilt do most of the work; the
-   slight transparency lets the photograph show through so it reads as
-   ink on the image rather than a sticker on top of it. */
-.s-stamp-big {
+/* The round stamp. Rings, a curved legend top and bottom and the
+   wordmark struck across the middle — the thing a border-control desk
+   would own, which is exactly the register this brand speaks in.
+
+   `--d` is the diameter and the only number that ever needs changing:
+   font-size is derived from it, and every part inside is set in `em`,
+   so one value scales the ring, the type and the wordmark together.
+   1em = d/20, which is 10 units of the SVG's 200-unit box.
+
+   It has to be an absolute length — a percentage would resolve against
+   the container for `width` but against the parent's font-size in the
+   `calc`, which is not the same number. Container units give the right
+   answer; the viewport clamp is the fallback for browsers without
+   them, and is deliberately conservative. */
+.s-stamp-round {
+  --d: clamp(140px, 20vw, 200px);
   position: absolute;
   top: 50%;
   left: 50%;
   z-index: 4;
-  transform: translate(-50%, -50%) rotate(-11deg);
-  font-family: var(--s-mono);
-  font-size: clamp(15px, 3.2vw, 30px);
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  white-space: nowrap;
+  display: block;
+  width: var(--d);
+  height: var(--d);
+  font-size: calc(var(--d) / 20);
+  transform: translate(-50%, -50%) rotate(-13deg);
   color: #D9351F;
-  padding: clamp(8px, 1.4vw, 16px) clamp(14px, 2.6vw, 30px);
-  border: 3px solid #D9351F;
-  /* the inner ring */
-  box-shadow: inset 0 0 0 3px rgba(255, 252, 246, 0.9), inset 0 0 0 6px #D9351F;
-  background: rgba(255, 252, 246, 0.14);
-  opacity: 0.92;
+  opacity: 0.94;
   pointer-events: none;
-  text-indent: 0.2em; /* balance the trailing letter-space */
-}
-/* On the darker listing poster the ink needs to sit brighter. */
-.s-stamp-big-over {
-  color: #FF5A42;
-  border-color: #FF5A42;
-  box-shadow: inset 0 0 0 3px rgba(9, 16, 30, 0.55), inset 0 0 0 6px #FF5A42;
-  background: rgba(9, 16, 30, 0.3);
 }
 
-/* Struck across the lower right of a closed departure's hero. Kept
-   clear of the title (upper left) and the progress bars (lower left). */
-.s-dhero-stamp {
-  position: absolute;
-  right: clamp(18px, 5vw, 84px);
-  bottom: clamp(70px, 12vh, 130px);
-  z-index: 4;
-  transform: rotate(-11deg);
+.s-stamp-ring {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.s-stamp-o { fill: none; stroke: currentColor; stroke-width: 5; }
+.s-stamp-i { fill: none; stroke: currentColor; stroke-width: 1.8; }
+.s-stamp-bead { fill: currentColor; }
+
+/* Set in the SVG's own units, so these track the viewBox and not the
+   page's font size. */
+.s-stamp-arc {
+  fill: currentColor;
   font-family: var(--s-mono);
-  font-size: clamp(18px, 3.4vw, 40px);
+  font-size: 11.5px;
   font-weight: 700;
-  letter-spacing: 0.2em;
-  text-indent: 0.2em;
+  letter-spacing: 1.9px;
+}
+/* The bottom legend is short, so it can afford wider tracking. */
+.s-stamp-arc-b { font-size: 11px; letter-spacing: 3.6px; }
+
+.s-stamp-mid {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 12em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.42em;
+}
+.s-stamp-rule {
+  width: 100%;
+  height: 0.16em;
+  background: currentColor;
+}
+
+/* The real wordmark, used as a mask so it takes the stamp's ink
+   instead of printing navy over the photograph. */
+.s-stamp-mark {
+  width: 11em;
+  height: 1.42em;
+  background: currentColor;
+  -webkit-mask: url("/img/logo-ink.png") center / contain no-repeat;
+  mask: url("/img/logo-ink.png") center / contain no-repeat;
+}
+
+.s-stamp-word {
+  font-family: var(--s-mono);
+  font-size: 2em;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.1em;
+  text-indent: 0.1em; /* balance the trailing letter-space */
   text-transform: uppercase;
   white-space: nowrap;
-  color: #FF5A42;
-  padding: clamp(9px, 1.5vw, 18px) clamp(16px, 2.8vw, 34px);
-  border: 3px solid #FF5A42;
-  box-shadow: inset 0 0 0 3px rgba(9, 16, 30, 0.5), inset 0 0 0 6px #FF5A42;
-  background: rgba(9, 16, 30, 0.3);
-  pointer-events: none;
+}
+
+/* The homepage rail's portrait half of the card. A container for the
+   same reason the poster media is one. */
+.s-home-media { position: relative; aspect-ratio: 3 / 4; overflow: hidden; container-type: inline-size; }
+
+/* Half-width artwork — the homepage rail's portrait column. */
+.s-stamp-round-sm { --d: clamp(120px, 14vw, 170px); }
+
+@supports (width: 1cqw) {
+  /* 16/10 artwork: the height is the tight dimension, so the cap is
+     set from it — 39cqw is a shade under two thirds of the height. */
+  .s-stamp-round { --d: clamp(112px, 39cqw, 250px); }
+  /* 3/4 artwork: width is the tight dimension instead. */
+  .s-stamp-round-sm { --d: clamp(104px, 62cqw, 210px); }
+}
+
+/* Over photography the ink has to sit brighter, and a whisper of a
+   disc behind it keeps the thin rings off a busy sky. */
+.s-stamp-round-over {
+  color: #FF6A4F;
+  background: radial-gradient(closest-side, rgba(9, 16, 30, 0.4), rgba(9, 16, 30, 0.15) 76%, transparent);
+}
+
+/* The hero is one big picture, so the stamp goes to the lower right
+   rather than dead centre: clear of the title block on the upper left
+   and the progress bars along the bottom. */
+.s-stamp-hero {
+  --d: clamp(160px, 22vw, 280px);
+  top: auto;
+  left: auto;
+  right: clamp(16px, 5vw, 90px);
+  bottom: clamp(76px, 13vh, 140px);
+  transform: rotate(-13deg);
 }
 @media (max-width: 720px) {
-  /* On a phone the lower right collides with the controls, so it moves
-     up and centres under the title block. */
-  .s-dhero-stamp { right: auto; left: 50%; bottom: auto; top: 58%; transform: translateX(-50%) rotate(-11deg); }
+  /* On a phone the lower right collides with the controls, so it
+     centres under the title block instead. */
+  .s-stamp-hero {
+    --d: min(58vw, 230px);
+    right: auto;
+    bottom: auto;
+    left: 50%;
+    top: 58%;
+    transform: translateX(-50%) rotate(-13deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Struck, not faded in — it lands once and stays. */
+  .s-stamp-round { animation: s-strike 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+  .s-stamp-hero { animation-delay: 0.25s; }
+}
+@keyframes s-strike {
+  from { opacity: 0; transform: translate(-50%, -50%) rotate(-13deg) scale(1.5); }
+  to { opacity: 0.94; transform: translate(-50%, -50%) rotate(-13deg) scale(1); }
+}
+/* The hero stamp is corner-anchored, so it needs its own keyframes —
+   the centred one carries a translate the corner one must not. */
+@media (prefers-reduced-motion: no-preference) {
+  .s-stamp-hero { animation-name: s-strike-corner; }
+}
+@keyframes s-strike-corner {
+  from { opacity: 0; transform: rotate(-13deg) scale(1.5); }
+  to { opacity: 0.94; transform: rotate(-13deg) scale(1); }
+}
+@media (max-width: 720px) {
+  @media (prefers-reduced-motion: no-preference) {
+    .s-stamp-hero { animation-name: s-strike-mobile; }
+  }
+  @keyframes s-strike-mobile {
+    from { opacity: 0; transform: translateX(-50%) rotate(-13deg) scale(1.5); }
+    to { opacity: 0.94; transform: translateX(-50%) rotate(-13deg) scale(1); }
+  }
 }
