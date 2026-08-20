@@ -68,7 +68,13 @@ function validateStep1(a: Answers): Partial<Record<keyof Answers, string>> {
 export default function ApplyModal() {
   const { close, preselect } = useModal();
   const [step, setStep] = useState<1 | 2>(1);
-  const [a, setA] = useState<Answers>({ ...EMPTY, event: preselect ?? "" });
+  /* Ignore a preselect for a departure that has since closed — a stale
+     tab or an old link should not land someone on a dead selection. */
+  const openPreselect =
+    preselect && DEPARTURES.some((d) => d.id === preselect && !d.soldOut)
+      ? preselect
+      : "";
+  const [a, setA] = useState<Answers>({ ...EMPTY, event: openPreselect });
   const [errors, setErrors] = useState<Partial<Record<keyof Answers, string>>>({});
   const [sending, setSending] = useState(false);
   const [done, setDone] = useState<null | { reference: string; delivered: boolean }>(null);
@@ -337,7 +343,10 @@ export default function ApplyModal() {
                   aria-invalid={Boolean(errors.event)}
                 >
                   <option value="">{APPLY.fields.event.ph}</option>
-                  {DEPARTURES.map((d) => (
+                    {/* Closed departures are dropped rather than shown
+                        disabled: an option nobody can pick is a dead end.
+                        The API refuses them regardless. */}
+                  {DEPARTURES.filter((d) => !d.soldOut).map((d) => (
                     <option key={d.id} value={d.id}>
                       {d.fest} — {d.campus}
                     </option>

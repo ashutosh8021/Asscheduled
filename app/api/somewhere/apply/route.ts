@@ -68,6 +68,15 @@ export async function POST(request: Request) {
 
   if (bad.length) return fail("Some answers did not pass validation.", 422, bad);
 
+  /* Closed departures are refused here, not just hidden in the form.
+     The select can be edited in devtools and a stale tab may still hold
+     the old list, so this is the check that actually holds. A distinct
+     message, because "did not pass validation" would be baffling when
+     every field was filled in correctly. */
+  if (departure!.soldOut) {
+    return fail(`${departure!.fest} is full. Applications are closed.`, 409, ["event"]);
+  }
+
   const reference = newReference();
 
   /* Store first, then notify. The row is the record of the application;

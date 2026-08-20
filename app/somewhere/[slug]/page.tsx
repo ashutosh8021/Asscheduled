@@ -75,6 +75,9 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
             </span>
             <span className="s-chip s-chip-over">+{d.batches.length} BATCHES</span>
             <span className="s-chip s-chip-over">{d.range}</span>
+            {d.soldOut ? (
+              <span className="s-soldout s-soldout-over">{SOMEWHERE.soldOutLabel}</span>
+            ) : null}
           </div>
         </DepartureHero>
 
@@ -123,15 +126,29 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
                   <span className="s-price-per">{SOMEWHERE.pricePer}</span>
                 </p>
 
-                <ApplyButton label={DETAIL.applyCta} event={d.id} full />
+                {/* A span, not a disabled button: there is nothing to
+                    press, so it should not look pressable or take focus. */}
+                {d.soldOut ? (
+                  <span className="s-btn-closed" style={{ width: "100%", justifyContent: "center" }}>
+                    {SOMEWHERE.soldOutCta}
+                  </span>
+                ) : (
+                  <ApplyButton label={DETAIL.applyCta} event={d.id} full />
+                )}
 
                 {/* A real remaining count when one is confirmed; the
                     comp's line when it is not. Never a fake number. */}
                 <p className="s-hint" style={{ marginTop: 14 }}>
-                  ⚡{" "}
-                  {d.spotsLeft !== null
-                    ? `${d.spotsLeft} SPOTS LEFT`
-                    : DETAIL.spotsFallback}
+                  {d.soldOut ? (
+                    SOMEWHERE.soldOutNote
+                  ) : (
+                    <>
+                      ⚡{" "}
+                      {d.spotsLeft !== null
+                        ? `${d.spotsLeft} SPOTS LEFT`
+                        : DETAIL.spotsFallback}
+                    </>
+                  )}
                 </p>
               </div>
             </Reveal>
@@ -289,7 +306,11 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
                   <br />
                   {DETAIL.stamp[1]}
                 </span>
-                <ApplyButton label={DETAIL.applyCta} event={d.id} />
+                {d.soldOut ? (
+                  <span className="s-btn-closed">{SOMEWHERE.soldOutCta}</span>
+                ) : (
+                  <ApplyButton label={DETAIL.applyCta} event={d.id} />
+                )}
               </div>
             </div>
           </Reveal>

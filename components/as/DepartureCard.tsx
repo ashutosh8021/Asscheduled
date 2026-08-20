@@ -44,9 +44,10 @@ export default function DepartureCard({ d, variant = "poster", priority = false 
             </div>
           </div>
 
-          <p className="s-chip" style={{ alignSelf: "flex-start" }}>
-            +{d.batches.length} BATCHES
-          </p>
+            <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+              <p className="s-chip">+{d.batches.length} BATCHES</p>
+              {d.soldOut ? <span className="s-soldout">{SOMEWHERE.soldOutLabel}</span> : null}
+            </div>
 
           <hr className="s-rule" />
 
@@ -93,7 +94,7 @@ export default function DepartureCard({ d, variant = "poster", priority = false 
 
   return (
     <Tilt max={5} lift={10}>
-      <article className="s-card">
+      <article className={d.soldOut ? "s-card s-card-closed" : "s-card"}>
         <div className="s-card-media">
           <Slot
             slot={d.card}
@@ -111,6 +112,11 @@ export default function DepartureCard({ d, variant = "poster", priority = false 
             >
               {d.campus}
             </p>
+              {d.soldOut ? (
+                <p style={{ marginTop: 10 }}>
+                  <span className="s-soldout s-soldout-over">{SOMEWHERE.soldOutLabel}</span>
+                </p>
+              ) : null}
           </div>
         </div>
 

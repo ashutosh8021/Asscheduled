@@ -1261,3 +1261,54 @@ body.s-locked { overflow: hidden; }
     font-size: 16px;
   }
 }
+
+/* ------------------------------------------------------------
+   SOLD OUT
+   ------------------------------------------------------------ */
+/* Red is the stamp colour in this system and nothing else, so a closed
+   departure reads as a stamp rather than a styled label. */
+.s-soldout {
+  display: inline-block;
+  font-family: var(--s-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #D9351F;
+  border: 2px solid #D9351F;
+  padding: 5px 10px;
+  transform: rotate(-3deg);
+  white-space: nowrap;
+  background: rgba(255, 252, 246, 0.9);
+}
+/* Over photography. */
+.s-soldout-over { background: rgba(9, 16, 30, 0.55); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+
+/* A card for a departure nobody can join any more. Muted rather than
+   hidden — it is still worth seeing that it ran. */
+.s-card-closed .s-card-media { filter: saturate(0.55); }
+.s-card-closed .s-card-media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(9, 16, 30, 0.28);
+  pointer-events: none;
+}
+
+/* The disabled apply control. A span, not a button — there is nothing
+   to press, so nothing should look pressable or take focus. */
+.s-btn-closed {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--s-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 14px 24px;
+  border: 1px solid var(--s-line);
+  background: var(--s-paper-2);
+  color: var(--s-grey);
+  cursor: not-allowed;
+}

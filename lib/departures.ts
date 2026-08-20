@@ -67,6 +67,13 @@ export interface Departure {
   /** Upper bound when a departure spans package tiers. Omitted for a
    *  single flat price, in which case only `price` is shown. */
   priceMax?: number;
+  /**
+   * Closed to new applications. Cards and the detail page say so, the
+   * apply button is disabled, and the departure is dropped from the
+   * form's list. The API refuses it too — a disabled control in the
+   * browser stops nobody who opens devtools.
+   */
+  soldOut?: boolean;
   /** Genuine remaining count. null when not confirmed — the UI then
    *  shows "Spots are limited. Vibes are unlimited." instead of a number.
    *  TODO(mannat): wire real availability before launch. */
@@ -129,6 +136,7 @@ export const DEPARTURES: Departure[] = [
     days: 8,
     nights: 7,
     price: 16499,
+    soldOut: true,
     spotsLeft: null,
     intro: [
       "A few days built around good places, better people, late nights and the kind of plans that only make sense once you're there.",

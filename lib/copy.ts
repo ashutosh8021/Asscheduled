@@ -159,6 +159,9 @@ export const SOMEWHERE = {
     { t: "WHAT HAPPENS AFTER", lines: ["You come back.", "With stories.", "And probably a group chat", "that never dies."] },
   ],
 
+  soldOutLabel: "SOLD OUT",
+  soldOutNote: "This one is full. Applications are closed.",
+  soldOutCta: "SOLD OUT",
   priceLabel: "PRICE (ALL INCLUSIVE)",
   pricePer: "/ person",
   priceIncludes: ["Travel", "Stay", "Food", "Event Access", "Crew"],

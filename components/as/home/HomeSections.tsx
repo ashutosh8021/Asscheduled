@@ -5,7 +5,7 @@ import Reveal from "../Reveal";
 import Slot from "../Slot";
 import Tilt from "../Tilt";
 import { useModal } from "../ModalProvider";
-import { HOME } from "@/lib/copy";
+import { HOME, SOMEWHERE } from "@/lib/copy";
 import { GALLERY_ALL, GALLERY_WIDE } from "@/lib/gallery";
 import { DEPARTURES, shortPrice } from "@/lib/departures";
 
@@ -109,6 +109,12 @@ export default function HomeSections() {
                         <h3 className="s-h3" style={{ fontSize: "clamp(19px,2vw,26px)" }}>
                           {d.campus}
                         </h3>
+
+                        {d.soldOut ? (
+                          <span className="s-soldout" style={{ alignSelf: "flex-start" }}>
+                            {SOMEWHERE.soldOutLabel}
+                          </span>
+                        ) : null}
 
                         <p className="s-card-note" style={{ textTransform: "none" }}>
                           {d.homeDates}
