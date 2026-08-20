@@ -375,8 +375,41 @@
 .s-hdr-right { display: flex; align-items: center; justify-content: flex-end; gap: clamp(14px, 2vw, 28px); }
 .s-hdr-cta { padding: 10px 18px; font-size: 11px; }
 
-.s-burger { display: none; flex-direction: column; gap: 5px; padding: 8px; background: none; border: 0; cursor: pointer; }
-.s-burger span { display: block; width: 24px; height: 2px; background: currentColor; transition: transform 0.3s var(--s-bez), opacity 0.2s; }
+/* The menu button.
+
+   44x44 because that is the smallest reliable tap target — it was 40x32,
+   which is fiddly on a phone. The outline is drawn with currentColor on
+   a pseudo-element rather than a fixed border, so it reads correctly
+   both while the header floats over the video and after it turns to
+   paper, without needing two rules. */
+.s-burger {
+  position: relative;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.s-burger::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1px solid currentColor;
+  opacity: 0.22;
+  transition: opacity 0.22s var(--s-bez);
+}
+.s-burger:hover::before,
+.s-burger:focus-visible::before,
+.s-burger[aria-expanded="true"]::before { opacity: 0.55; }
+.s-burger span { display: block; width: 21px; height: 2px; background: currentColor; transition: transform 0.3s var(--s-bez), opacity 0.2s; }
 .s-burger[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
 .s-burger[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
 .s-burger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
@@ -409,6 +442,15 @@
   .s-hdr-left { display: none; }
   .s-hdr-nav { display: none; }
   .s-burger { display: flex; }
+  /* The CTA stays. Hiding it put the site's primary action behind a
+     menu tap on the device most people use. Compact enough to sit
+     beside the wordmark and the burger. */
+  .s-hdr-cta { padding: 9px 12px; font-size: 10px; letter-spacing: 0.1em; gap: 7px; }
+}
+
+/* Below this the wordmark, the button and the burger genuinely will not
+   fit on one line, so the burger carries it. */
+@media (max-width: 379px) {
   .s-hdr-cta { display: none; }
 }
 
@@ -467,8 +509,42 @@
 }
 .s-hero-cta { margin-top: 30px; }
 
+/* ---------- the hero on a phone ----------
+   Same full-bleed design, tightened for a tall narrow screen.
+
+   Three changes, each for a reason:
+   1. 88svh, not 100. A full-height hero hides everything below it, so
+      nothing suggests the page continues. Stopping short lets the next
+      section show, which is the scroll cue.
+   2. A heavier gradient under the text. Overlaid serif type sits on
+      moving water here; on a laptop the same type sits on open sky.
+   3. Smaller headline with more room per line, so it breaks over three
+      lines instead of four and stops crowding the button. */
 @media (max-width: 900px) {
-  .s-hero-inner { padding-top: 26vh; }
+  .s-hero {
+    min-height: 88vh;
+    min-height: 88svh;
+  }
+  .s-hero-scrim {
+    background: linear-gradient(
+      to bottom,
+      rgba(9, 16, 30, 0.58) 0%,
+      rgba(9, 16, 30, 0.12) 26%,
+      rgba(9, 16, 30, 0.46) 58%,
+      rgba(9, 16, 30, 0.88) 100%
+    );
+  }
+  .s-hero-inner {
+    padding-top: 18vh;
+    padding-bottom: clamp(38px, 7vh, 64px);
+  }
+  .s-hero-h1 {
+    font-size: clamp(33px, 8.6vw, 46px);
+    max-width: 17ch;
+    line-height: 1.02;
+  }
+  .s-hero-sub { margin-top: 16px; max-width: 30ch; }
+  .s-hero-cta { margin-top: 22px; }
 }
 
 /* ------------------------------------------------------------
@@ -569,6 +645,16 @@
   align-items: flex-start;
 }
 .s-dhero-stack { position: absolute; inset: 0; }
+
+/* Same reasoning as the homepage hero: a full-height one on a phone
+   hides the whole page behind it, so nothing says there is more. */
+@media (max-width: 900px) {
+  .s-dhero {
+    height: 88vh;
+    height: 88svh;
+    min-height: 460px;
+  }
+}
 
 .s-dhero-frame {
   position: absolute;
@@ -875,10 +961,32 @@
   to { opacity: 1; transform: translateZ(var(--z, 0px)); }
 }
 
+/* On a phone the ring cannot work — there is no room to arrange frames
+   around a headline. Hiding them left the gallery's own hero with no
+   photographs at all, which is the one thing that page is for. So the
+   field flattens into a grid above the text instead. */
 @media (max-width: 860px) {
   .s-scatter { min-height: 0; }
-  .s-scatter-mid { position: static; padding: 40px 0; }
-  .s-scatter-item { display: none; }
+  .s-scatter-stage {
+    position: static;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 7px;
+    perspective: none;
+    /* the pointer tilt writes an inline transform; nothing to tilt here */
+    transform: none !important;
+  }
+  .s-scatter-item {
+    position: static;
+    width: auto !important;
+    transform: none;
+    animation: none;
+    opacity: 1;
+  }
+  /* Six is a clean two rows; the rest belong to the desktop ring. */
+  .s-scatter-item:nth-child(n + 7) { display: none; }
+  .s-scatter-card { aspect-ratio: 1 / 1; border-radius: 7px; }
+  .s-scatter-mid { position: static; padding: 34px 0 0; }
 }
 
 /* ------------------------------------------------------------
@@ -1136,3 +1244,20 @@ body.s-locked { overflow: hidden; }
   transition: opacity 0.2s, color 0.2s;
 }
 .s-ftr-social-link:hover { opacity: 1; color: var(--s-rust-soft); }
+
+/* ------------------------------------------------------------
+   TOUCH DEVICES
+   ------------------------------------------------------------ */
+/* iOS Safari zooms the whole page when you focus an input smaller than
+   16px, then leaves you scrolled sideways. Every form on this site had
+   14–15px fields, so tapping any of them jumped the layout. Keyed to
+   pointer rather than width, because it is the input method that
+   triggers it — an iPad in landscape is wide and still does this. */
+@media (pointer: coarse) {
+  .s-input,
+  .s-select,
+  .s-textarea,
+  .s-ftr-sub input {
+    font-size: 16px;
+  }
+}

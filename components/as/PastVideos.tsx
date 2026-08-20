@@ -30,7 +30,14 @@ export default function PastVideos({ clips }: { clips: Clip[] }) {
     const root = wrap.current;
     if (!root) return;
 
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    /* No autoplay on touch devices. `preload="none"` means nothing is
+       fetched until something plays, so scroll-to-play is exactly what
+       would spend a visitor's mobile data — several megabytes of clips
+       for a section they may only be scrolling past. On a phone the
+       poster waits for a tap instead. */
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const coarse = window.matchMedia("(pointer: coarse)").matches;
+    if (reduced || coarse) return;
 
     const videos = Array.from(root.querySelectorAll("video"));
 

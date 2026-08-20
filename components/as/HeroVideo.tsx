@@ -19,15 +19,38 @@ import { useModal } from "./ModalProvider";
 
 /* Re-encoded from the master in /asset: audio stripped, CRF 24, index
    moved to the front so playback starts before the file finishes. The
-   14MB master would stall the hero on anything but fast wifi. */
-const VIDEO = "/video/hero-as01-v2.mp4";
-const POSTER = "/video/hero-as01-v2.jpg";
+   14MB master would stall the hero on anything but fast wifi.
+
+   Two cuts, because one cannot serve both shapes. The hero is a full
+   viewport box, so on a phone (about 0.46 wide-to-tall) `cover` on the
+   16:9 file shows only 26% of the frame — a vertical strip that halves
+   the car and loses the number plate. The portrait cut is 9:16, framed
+   from the man through to the plate, and shows about 82%. */
+const WIDE = { src: "/video/hero-as01-v2.mp4", poster: "/video/hero-as01-v2.jpg" };
+const PORTRAIT = {
+  src: "/video/hero-as01-portrait.mp4",
+  poster: "/video/hero-as01-portrait.jpg",
+};
+
+/* Chosen after mount rather than with <source media>, whose support for
+   video is inconsistent — and a wrong guess there downloads the wrong
+   file before it can be corrected. The poster covers the gap. */
+const NARROW = "(max-width: 820px)";
 
 export default function HeroVideo() {
   const { openApply } = useModal();
   const media = useRef<HTMLDivElement>(null);
   const content = useRef<HTMLDivElement>(null);
   const [motion, setMotion] = useState(true);
+  const [clip, setClip] = useState<typeof WIDE | null>(null);
+
+  useEffect(() => {
+    const mq = window.matchMedia(NARROW);
+    const pick = () => setClip(mq.matches ? PORTRAIT : WIDE);
+    pick();
+    mq.addEventListener("change", pick);
+    return () => mq.removeEventListener("change", pick);
+  }, []);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -82,10 +105,13 @@ export default function HeroVideo() {
   return (
     <section className="s-hero s-stage">
       <div className="s-hero-media" ref={media}>
-        {motion ? (
+        {motion && clip ? (
           <video
-            src={VIDEO}
-            poster={POSTER}
+            /* key on the src so a resize across the breakpoint swaps the
+               file rather than leaving the old one decoded in place. */
+            key={clip.src}
+            src={clip.src}
+            poster={clip.poster}
             autoPlay
             muted
             loop
@@ -96,7 +122,7 @@ export default function HeroVideo() {
           />
         ) : (
           <Image
-            src={POSTER}
+            src={(clip ?? WIDE).poster}
             alt=""
             fill
             priority
