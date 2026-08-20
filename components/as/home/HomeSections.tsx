@@ -48,11 +48,11 @@ export default function HomeSections() {
             </p>
           </Reveal>
 
-          <Reveal delay={1}>
+          <Reveal delay={1} className="s-bleed">
             <Tilt max={4} lift={8}>
               <Slot
                 slot={GALLERY_WIDE[0]}
-                className="s-gal-tile"
+                className="s-gal-tile s-home-editorial"
                 sizes="(max-width: 900px) 100vw, 48vw"
               />
             </Tilt>
@@ -88,11 +88,11 @@ export default function HomeSections() {
                     className="s-card"
                     style={{ background: "var(--s-paper)", borderColor: "transparent" }}
                   >
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
+                    <div className="s-home-card">
                       <div className="s-home-media">
                         <Slot
                           slot={d.portrait}
-                          sizes="(max-width: 900px) 50vw, 24vw"
+                          sizes="(max-width: 720px) 100vw, (max-width: 900px) 50vw, 24vw"
                           hint={d.campus}
                         />
                         {d.soldOut ? (
@@ -105,15 +105,7 @@ export default function HomeSections() {
                         ) : null}
                       </div>
 
-                      <div
-                        style={{
-                          padding: "22px 20px",
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: 10,
-                          color: "var(--s-ink)",
-                        }}
-                      >
+                      <div className="s-home-cardbody">
                         <span className="s-tick" />
                         <h3 className="s-h3" style={{ fontSize: "clamp(19px,2vw,26px)" }}>
                           {d.campus}
@@ -160,29 +152,21 @@ export default function HomeSections() {
       <section className="s-sec-tight s-sec-paper2">
         <div className="s-wrap">
           <Reveal>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "baseline",
-                gap: 18,
-                flexWrap: "wrap",
-                marginBottom: 22,
-              }}
-            >
+            {/* Layout in CSS, not inline: the phone build needs to
+                override it, and an inline style would outrank it. */}
+            <div className="s-home-galhead">
               <h2 className="s-h3">{HOME.galleryTitle}</h2>
-              <p className="s-ital" style={{ fontSize: 18, color: "var(--s-grey)" }}>
-                {HOME.gallerySub}
-              </p>
-              <Link href="/gallery" className="s-link" style={{ marginLeft: "auto" }}>
+              <p className="s-ital s-home-galsub">{HOME.gallerySub}</p>
+              <Link href="/gallery" className="s-link s-home-galopen">
                 OPEN <span className="s-arrow">→</span>
               </Link>
             </div>
           </Reveal>
 
-          <Reveal delay={1}>
-            <div className="s-gal-rail">
+          <Reveal delay={1} className="s-bleed">
+            <div className="s-gal-rail s-gal-rail-bleed">
               {STRIP.map((s) => (
-                <Slot key={s.label} slot={s} className="s-gal-tile" sizes="260px" />
+                <Slot key={s.label} slot={s} className="s-gal-tile" sizes="(max-width: 720px) 68vw, 260px" />
               ))}
             </div>
           </Reveal>
@@ -206,21 +190,9 @@ export default function HomeSections() {
           />
         </div>
 
-        <div
-          className="s-wrap"
-          style={{
-            position: "relative",
-            zIndex: 2,
-            paddingTop: "clamp(56px,9vw,110px)",
-            paddingBottom: "clamp(56px,9vw,110px)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: 28,
-            flexWrap: "wrap",
-            color: "var(--s-bone)",
-          }}
-        >
+        {/* Layout lives in .s-home-final, not here: an inline style
+            would outrank the phone media query that stacks it. */}
+        <div className="s-wrap s-home-final">
           <Reveal>
             <h2 className="s-h2" style={{ color: "inherit" }}>
               {HOME.finalTitle}
