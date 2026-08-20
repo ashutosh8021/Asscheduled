@@ -28,9 +28,11 @@ interface Props {
   children: React.ReactNode;
   /** Placeholder caption for frames with no photography yet. */
   hint?: string;
+  /** Struck across the lower right when a departure is closed. */
+  stamp?: string;
 }
 
-export default function DepartureHero({ frames, children, hint }: Props) {
+export default function DepartureHero({ frames, children, hint, stamp }: Props) {
   const [idx, setIdx] = useState(0);
   const [playing, setPlaying] = useState(true);
   const [motion, setMotion] = useState(true);
@@ -125,6 +127,8 @@ export default function DepartureHero({ frames, children, hint }: Props) {
       <div className="s-dhero-scrim" />
 
       <div className="s-dhero-inner s-wrap">{children}</div>
+
+      {stamp ? <span className="s-dhero-stamp">{stamp}</span> : null}
 
       {count > 1 ? (
         <div className="s-dhero-ui s-wrap">

@@ -88,12 +88,17 @@ export default function HomeSections() {
                     style={{ background: "var(--s-paper)", borderColor: "transparent" }}
                   >
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
-                      <div style={{ position: "relative", aspectRatio: "3 / 4" }}>
+                      <div style={{ position: "relative", aspectRatio: "3 / 4", overflow: "hidden" }}>
                         <Slot
                           slot={d.portrait}
                           sizes="(max-width: 900px) 50vw, 24vw"
                           hint={d.campus}
                         />
+                        {d.soldOut ? (
+                          <span className="s-stamp-big s-stamp-big-over">
+                            {SOMEWHERE.soldOutLabel}
+                          </span>
+                        ) : null}
                       </div>
 
                       <div
@@ -110,11 +115,6 @@ export default function HomeSections() {
                           {d.campus}
                         </h3>
 
-                        {d.soldOut ? (
-                          <span className="s-soldout" style={{ alignSelf: "flex-start" }}>
-                            {SOMEWHERE.soldOutLabel}
-                          </span>
-                        ) : null}
 
                         <p className="s-card-note" style={{ textTransform: "none" }}>
                           {d.homeDates}

@@ -48,7 +48,11 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
         {/* ---------- FULL-SCREEN HERO ----------
             The campus frame first, then every other frame we hold for
             this departure, cross-fading one after another. */}
-        <DepartureHero frames={d.wide} hint={d.campus}>
+        <DepartureHero
+          frames={d.wide}
+          hint={d.campus}
+          stamp={d.soldOut ? SOMEWHERE.soldOutLabel : undefined}
+        >
           <p className="s-eyebrow" style={{ color: "var(--s-butter)" }}>
             {d.fest} — {d.campus}
           </p>
@@ -75,9 +79,6 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
             </span>
             <span className="s-chip s-chip-over">+{d.batches.length} BATCHES</span>
             <span className="s-chip s-chip-over">{d.range}</span>
-            {d.soldOut ? (
-              <span className="s-soldout s-soldout-over">{SOMEWHERE.soldOutLabel}</span>
-            ) : null}
           </div>
         </DepartureHero>
 

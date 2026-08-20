@@ -102,6 +102,9 @@ export default function DepartureCard({ d, variant = "poster", priority = false 
             sizes="(max-width: 900px) 100vw, 46vw"
             hint={d.campus}
           />
+            {d.soldOut ? (
+              <span className="s-stamp-big s-stamp-big-over">{SOMEWHERE.soldOutLabel}</span>
+            ) : null}
           <div className="s-card-over">
             <h3 className="s-h3" style={{ color: "inherit" }}>
               {d.fest}
@@ -112,11 +115,6 @@ export default function DepartureCard({ d, variant = "poster", priority = false 
             >
               {d.campus}
             </p>
-              {d.soldOut ? (
-                <p style={{ marginTop: 10 }}>
-                  <span className="s-soldout s-soldout-over">{SOMEWHERE.soldOutLabel}</span>
-                </p>
-              ) : null}
           </div>
         </div>
 
