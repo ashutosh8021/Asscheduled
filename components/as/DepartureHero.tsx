@@ -21,7 +21,9 @@ import type { Slot as SlotData } from "@/lib/departures";
    3. Reduced motion means no auto-advance and no push-in at all — the
       first frame just sits there and the segments still work by hand. */
 
-const INTERVAL_MS = 5000;
+/* How long each frame holds. Keep in step with the `s-seg` fill
+   duration in app/as.css — the progress bar is timing this. */
+const INTERVAL_MS = 3400;
 
 interface Props {
   frames: SlotData[];
@@ -119,7 +121,7 @@ export default function DepartureHero({ frames, children, hint, stamp }: Props) 
               data-motion={motion}
               aria-hidden={i !== idx}
             >
-              <Slot slot={f} priority={i === 0} sizes="100vw" hint={hint} />
+              <Slot slot={f} priority={i === 0} sizes="100vw" quality={90} hint={hint} />
             </div>
           ) : null
         )}

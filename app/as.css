@@ -664,15 +664,18 @@
   inset: 0;
   opacity: 0;
   transform: scale(1.001);
-  transition: opacity 1.1s var(--s-bez);
+  transition: opacity 0.7s var(--s-bez);
 }
 .s-dhero-frame[data-on="true"] { opacity: 1; }
 /* The push-in runs only while a frame is active, so each photo starts
    its movement fresh as it fades up. The frames are 16:9 crops, so
    `cover` fills the screen without bars at any usual viewport. */
 .s-dhero-frame[data-on="true"][data-motion="true"] {
-  transform: scale(1.08);
-  transition: opacity 1.1s var(--s-bez), transform 7s linear;
+  /* A gentler push-in than before. The source photography is only
+     ~720px wide, so every extra percent of magnification is upscale
+     the eye can see. */
+  transform: scale(1.04);
+  transition: opacity 0.7s var(--s-bez), transform 5s linear;
 }
 
 /* Weighted to the top now that the title sits there, with a lighter
@@ -740,7 +743,8 @@
   background: var(--s-bone);
 }
 .s-dhero-seg[data-on="true"] .s-dhero-seg-fill { width: 100%; }
-.s-dhero-seg-fill[data-run="true"] { animation: s-seg 5s linear forwards; }
+/* Must match INTERVAL_MS in components/as/DepartureHero.tsx. */
+.s-dhero-seg-fill[data-run="true"] { animation: s-seg 3.4s linear forwards; }
 @keyframes s-seg {
   from { width: 0; }
   to { width: 100%; }

@@ -28,6 +28,12 @@ interface Props {
    * thirds of itself to the crop.
    */
   fit?: "cover" | "contain";
+  /**
+   * next/image encode quality. The default of 75 is right for cards,
+   * but the full-bleed hero is already upscaling soft source
+   * photography — re-encoding that at 75 compounds the loss.
+   */
+  quality?: number;
 }
 
 export default function Slot({
@@ -38,6 +44,7 @@ export default function Slot({
   dark = false,
   hint,
   fit = "cover",
+  quality,
 }: Props) {
   return (
     <div className={`s-slot ${className}`.trim()}>
@@ -47,6 +54,7 @@ export default function Slot({
           alt={slot.alt}
           fill
           sizes={sizes}
+          quality={quality}
           priority={priority}
           loading={priority ? undefined : "lazy"}
           style={fit === "contain" ? { objectFit: "contain" } : undefined}

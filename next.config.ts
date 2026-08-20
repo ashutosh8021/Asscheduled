@@ -49,6 +49,9 @@ const nextConfig: NextConfig = {
   images: {
     /* Ordered: AVIF first, WebP fallback. */
     formats: ["image/avif", "image/webp"],
+    /* 75 is the default everything else uses; 90 is for the full-bleed
+       hero, whose source photography is soft enough already. */
+    qualities: [75, 90],
   },
 
   async headers() {
