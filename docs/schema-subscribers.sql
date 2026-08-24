@@ -21,8 +21,14 @@ create table if not exists subscribers (
 -- One row per address. Re-submitting the same email updates the existing
 -- row rather than creating a duplicate, and re-subscribes anyone who had
 -- opted out.
+--
+-- This must be a plain column unique, not an index on lower(email): the
+-- upsert in lib/store.ts asks PostgREST for on_conflict=email, and
+-- Postgres will not match that to an expression index. The route already
+-- lowercases the address before it gets here (app/api/somewhere/subscribe),
+-- so the column itself is always normalised.
 create unique index if not exists subscribers_email_key
-  on subscribers (lower(email));
+  on subscribers (email);
 
 create index if not exists subscribers_created_idx on subscribers (created_at desc);
 
