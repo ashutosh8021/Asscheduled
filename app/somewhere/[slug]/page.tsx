@@ -142,7 +142,7 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
                     {SOMEWHERE.soldOutCta}
                   </span>
                 ) : (
-                  <ApplyButton label={DETAIL.applyCta} event={d.id} full />
+                  <ApplyButton label={DETAIL.applyCta} event={d.id} full source="departure-panel" />
                 )}
 
                 {/* A real remaining count when one is confirmed; the
@@ -318,7 +318,7 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
                 {d.soldOut ? (
                   <span className="s-btn-closed">{SOMEWHERE.soldOutCta}</span>
                 ) : (
-                  <ApplyButton label={DETAIL.applyCta} event={d.id} />
+                  <ApplyButton label={DETAIL.applyCta} event={d.id} source="departure-close" />
                 )}
               </div>
             </div>

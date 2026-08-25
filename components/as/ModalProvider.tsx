@@ -12,11 +12,17 @@ type Which = null | "apply" | "collab";
 
 interface Ctx {
   open: Which;
-  /** `event` preselects the departure in the application form. */
-  openApply: (event?: string) => void;
+  /**
+   * `event` preselects the departure in the application form.
+   * `source` names the surface the CTA sat on, so the funnel can show
+   * which part of the site actually produces applications.
+   */
+  openApply: (event?: string, source?: string) => void;
   openCollab: () => void;
   close: () => void;
   preselect: string | null;
+  /** Where the open came from. Analytics only. */
+  source: string | null;
 }
 
 const ModalCtx = createContext<Ctx | null>(null);
@@ -30,10 +36,12 @@ export function useModal(): Ctx {
 export default function ModalProvider({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState<Which>(null);
   const [preselect, setPreselect] = useState<string | null>(null);
+  const [source, setSource] = useState<string | null>(null);
 
   const close = useCallback(() => setOpen(null), []);
-  const openApply = useCallback((event?: string) => {
+  const openApply = useCallback((event?: string, from?: string) => {
     setPreselect(event ?? null);
+    setSource(from ?? null);
     setOpen("apply");
   }, []);
   const openCollab = useCallback(() => setOpen("collab"), []);
@@ -55,8 +63,8 @@ export default function ModalProvider({ children }: { children: ReactNode }) {
   }, [open, close]);
 
   const value = useMemo(
-    () => ({ open, openApply, openCollab, close, preselect }),
-    [open, openApply, openCollab, close, preselect]
+    () => ({ open, openApply, openCollab, close, preselect, source }),
+    [open, openApply, openCollab, close, preselect, source]
   );
 
   return (

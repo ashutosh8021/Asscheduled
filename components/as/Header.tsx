@@ -100,7 +100,7 @@ export default function Header({ overHero = false }: { overHero?: boolean }) {
             ))}
           </ul>
 
-          <button type="button" className="s-btn s-hdr-cta" onClick={() => openApply()}>
+          <button type="button" className="s-btn s-hdr-cta" onClick={() => openApply(undefined, "header")}>
             {NAV_CTA} <span className="s-arrow">→</span>
           </button>
 
@@ -131,7 +131,7 @@ export default function Header({ overHero = false }: { overHero?: boolean }) {
             className="s-btn"
             onClick={() => {
               setMenu(false);
-              openApply();
+              openApply(undefined, "header-menu");
             }}
           >
             {NAV_CTA} <span className="s-arrow">→</span>

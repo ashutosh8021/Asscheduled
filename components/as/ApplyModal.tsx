@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ModalShell from "./ModalShell";
 import { useModal } from "./ModalProvider";
 import { APPLY, STATES, CONTACT_EMAIL } from "@/lib/copy";
 import { DEPARTURES } from "@/lib/departures";
+import { EVENTS, track } from "@/lib/analytics";
 
 /* "I am coming." — the two-step application overlay from comps (12) and (14).
 
@@ -66,7 +67,7 @@ function validateStep1(a: Answers): Partial<Record<keyof Answers, string>> {
 }
 
 export default function ApplyModal() {
-  const { close, preselect } = useModal();
+  const { close, preselect, source } = useModal();
   const [step, setStep] = useState<1 | 2>(1);
   /* Ignore a preselect for a departure that has since closed — a stale
      tab or an old link should not land someone on a dead selection. */
@@ -79,6 +80,19 @@ export default function ApplyModal() {
   const [sending, setSending] = useState(false);
   const [done, setDone] = useState<null | { reference: string; delivered: boolean }>(null);
 
+  /* The funnel starts here. The modal is only mounted while it is open,
+     so mounting is opening. Departure code and originating surface only —
+     never an answer, a name, an email or a phone number. */
+  useEffect(() => {
+    track(EVENTS.applyStart, {
+      trip: openPreselect || "none",
+      source: source ?? "unknown",
+    });
+    /* Once per open: the deps are read at mount and do not change while
+       this instance lives. */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   function set<K extends keyof Answers>(k: K, v: Answers[K]) {
     setA((prev) => ({ ...prev, [k]: v }));
     if (errors[k]) setErrors((prev) => ({ ...prev, [k]: undefined }));
@@ -87,7 +101,10 @@ export default function ApplyModal() {
   function next() {
     const e = validateStep1(a);
     setErrors(e);
-    if (Object.keys(e).length === 0) setStep(2);
+    if (Object.keys(e).length === 0) {
+      setStep(2);
+      track(EVENTS.applyStep2, { trip: a.event || "none" });
+    }
   }
 
   async function submit() {
@@ -103,11 +120,14 @@ export default function ApplyModal() {
          either one means we have it. */
       if (json.ok && json.reference && json.received) {
         setDone({ reference: json.reference, delivered: true });
+        track(EVENTS.applicationLodged, { trip: a.event || "none" });
       } else {
         setDone({ reference: "—", delivered: false });
+        track(EVENTS.applyFailed, { trip: a.event || "none", reason: "rejected" });
       }
     } catch {
       setDone({ reference: "—", delivered: false });
+      track(EVENTS.applyFailed, { trip: a.event || "none", reason: "network" });
     } finally {
       setSending(false);
     }

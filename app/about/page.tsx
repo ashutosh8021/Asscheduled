@@ -460,7 +460,7 @@ export default function AboutPage() {
               {ABOUT.ctaTitle[1]}
             </h2>
             <div style={{ marginTop: 26 }}>
-              <ApplyButton label={ABOUT.ctaButton} />
+              <ApplyButton label={ABOUT.ctaButton} source="about" />
             </div>
           </Reveal>
         </div>

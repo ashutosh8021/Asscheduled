@@ -12,12 +12,15 @@ export default function ApplyButton({
   event,
   className = "s-btn",
   full = false,
+  source = "departure",
 }: {
   label: string;
   /** Departure id, preselects the event in the form. */
   event?: string;
   className?: string;
   full?: boolean;
+  /** Names the surface this button sits on, for the funnel. */
+  source?: string;
 }) {
   const { openApply } = useModal();
 
@@ -26,7 +29,7 @@ export default function ApplyButton({
       type="button"
       className={className}
       style={full ? { width: "100%" } : undefined}
-      onClick={() => openApply(event)}
+      onClick={() => openApply(event, source)}
     >
       {label} <span className="s-arrow">↗</span>
     </button>

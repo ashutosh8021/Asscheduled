@@ -30,13 +30,21 @@ export function pageview(path: string): void {
    create a second, empty funnel in the GA4 property.
 
    Mark these as key events (conversions) in GA4 → Admin → Events:
-     application_lodged  — the real conversion; fires on /apply/thank-you
+     application_lodged  — the real conversion
+     apply_start         — the application overlay was opened
+     apply_step_2        — step 1 passed validation; the halfway mark
+     apply_failed        — the submit was attempted and did not land
      payment_initiated   — Razorpay Checkout actually opened
-     apply_start         — Form 7A opened from any CTA
      contact_click       — an email link was used
-     whatsapp_click      — a WhatsApp link was used */
+     whatsapp_click      — a WhatsApp link was used
+
+   Between apply_start, apply_step_2 and application_lodged you can see
+   where people give up. Params carry the departure code and the surface
+   the CTA was on — never an answer, a name, an email or a phone. */
 export const EVENTS = {
   applyStart: "apply_start",
+  applyStep2: "apply_step_2",
+  applyFailed: "apply_failed",
   paymentInitiated: "payment_initiated",
   applicationLodged: "application_lodged",
   contactClick: "contact_click",

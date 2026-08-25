@@ -203,7 +203,7 @@ export default function HomeSections() {
           </Reveal>
 
           <Reveal delay={1}>
-            <button type="button" className="s-btn s-btn-butter" onClick={() => openApply()}>
+            <button type="button" className="s-btn s-btn-butter" onClick={() => openApply(undefined, "home-final")}>
               {HOME.finalCta}
             </button>
           </Reveal>

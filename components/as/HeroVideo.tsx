@@ -141,7 +141,7 @@ export default function HeroVideo() {
         <p className="s-hero-sub">{HOME.heroSub}</p>
 
         <div className="s-hero-cta">
-          <button type="button" className="s-btn s-btn-butter" onClick={() => openApply()}>
+          <button type="button" className="s-btn s-btn-butter" onClick={() => openApply(undefined, "hero")}>
             {HOME.heroCta}
           </button>
         </div>
