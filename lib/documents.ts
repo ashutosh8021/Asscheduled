@@ -271,24 +271,51 @@ export async function signedUrl(storagePath: string): Promise<string | null> {
   }
 }
 
-/** Remove one document — the object and the row. Used by the purge and
- *  when somebody withdraws consent. */
+/**
+ * Remove one document — the object first, then the row.
+ *
+ * That order is deliberate. If the object cannot be deleted we keep the
+ * row, because the row is the only thing that knows the file exists:
+ * dropping it first would strand somebody's ID in the bucket with
+ * nothing left pointing at it, and the retention promise in the privacy
+ * policy would be quietly false.
+ *
+ * The storage DELETE carries no content-type. Supabase rejects a
+ * bodyless DELETE that declares application/json — "Body cannot be
+ * empty when content-type is set to application/json" — and the earlier
+ * version of this function sent the shared JSON headers, swallowed the
+ * 400 and reported success.
+ */
 export async function deleteDocument(id: string, storagePath: string): Promise<boolean> {
   const cfg = supabaseConfig();
   if (!cfg) return false;
 
   try {
-    await fetch(`${cfg.url}/storage/v1/object/${BUCKET}/${encodeURI(storagePath)}`, {
+    const obj = await fetch(`${cfg.url}/storage/v1/object/${BUCKET}/${encodeURI(storagePath)}`, {
       method: "DELETE",
-      headers: headers(cfg.serviceRoleKey),
+      headers: {
+        apikey: cfg.serviceRoleKey,
+        authorization: `Bearer ${cfg.serviceRoleKey}`,
+      },
       cache: "no-store",
     });
+
+    if (!obj.ok) {
+      console.error(`[documents] object delete failed (${obj.status}): ${await obj.text()}`);
+      /* Keep the row. It is the only handle left on the file. */
+      return false;
+    }
+
     const res = await fetch(`${cfg.url}/rest/v1/documents?id=eq.${encodeURIComponent(id)}`, {
       method: "DELETE",
       headers: { ...headers(cfg.serviceRoleKey), prefer: "return=minimal" },
       cache: "no-store",
     });
-    return res.ok;
+    if (!res.ok) {
+      console.error(`[documents] row delete failed (${res.status}): ${await res.text()}`);
+      return false;
+    }
+    return true;
   } catch (err) {
     console.error("[documents] delete threw", err);
     return false;
