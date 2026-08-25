@@ -271,3 +271,24 @@
 .a-docs-none { margin: 0; color: #8b93a1; font-size: 12px; }
 .a-docs-note { margin: 0; color: #ffb454; font-size: 11.5px; }
 .a-docs-error { margin: 0; color: #e06c5b; font-size: 12px; }
+
+/* The documents themselves, drawn rather than linked — the point of
+   opening somebody's ID is reading the name off it. Sized so a card
+   is legible without leaving the page; click for full size. */
+.a-docs-list li { display: block; }
+.a-docs-head { display: flex; gap: 14px; align-items: baseline; flex-wrap: wrap; }
+.a-docs-shot {
+  display: block;
+  margin-top: 10px;
+  max-width: 420px;
+  border: 1px solid #262a31;
+  background: #0b0d10;
+}
+.a-docs-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 300px;
+  object-fit: contain;
+}
+.a-docs-shot:hover { border-color: #454d5c; }

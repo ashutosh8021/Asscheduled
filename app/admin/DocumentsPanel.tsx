@@ -120,18 +120,30 @@ export default function DocumentsPanel({ id }: { id: string }) {
           <ul className="a-docs-list">
             {docs.map((d) => (
               <li key={d.id}>
-                <span>{KIND_LABEL[d.kind] ?? d.kind}</span>
-                <span className="a-docs-meta">
-                  {Math.round(d.bytes / 1024)} KB ·{" "}
-                  {new Date(d.uploadedAt).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}
-                </span>
-                {d.url ? (
-                  <a href={d.url} target="_blank" rel="noreferrer">
-                    OPEN
+                <div className="a-docs-head">
+                  <span>{KIND_LABEL[d.kind] ?? d.kind}</span>
+                  <span className="a-docs-meta">
+                    {Math.round(d.bytes / 1024)} KB ·{" "}
+                    {new Date(d.uploadedAt).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}
+                  </span>
+                  {d.url ? (
+                    <a href={d.url} target="_blank" rel="noreferrer">
+                      FULL SIZE
+                    </a>
+                  ) : (
+                    <span className="a-docs-meta">unavailable</span>
+                  )}
+                </div>
+
+                {/* The point of looking at an ID is reading it, so show
+                    it rather than linking to it. PDFs cannot be drawn
+                    inline here — those keep the link only. */}
+                {d.url && d.mime.startsWith("image/") ? (
+                  <a href={d.url} target="_blank" rel="noreferrer" className="a-docs-shot">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={d.url} alt={`${KIND_LABEL[d.kind] ?? d.kind}, uploaded`} />
                   </a>
-                ) : (
-                  <span className="a-docs-meta">unavailable</span>
-                )}
+                ) : null}
               </li>
             ))}
           </ul>
@@ -140,7 +152,8 @@ export default function DocumentsPanel({ id }: { id: string }) {
 
       {docs && docs.length > 0 ? (
         <p className="a-docs-note">
-          These links expire in 5 minutes. Do not paste them anywhere.
+          These expire 5 minutes after loading — press SHOW DOCUMENTS again if an image goes
+          blank. Do not paste the links anywhere.
         </p>
       ) : null}
 
