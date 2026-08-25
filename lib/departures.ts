@@ -155,7 +155,7 @@ export const DEPARTURES: Departure[] = [
     ],
     days: 5,
     nights: 4,
-    price: 8499,
+    price: 7999,
     priceMax: 12499,
     spotsLeft: null,
     intro: [
