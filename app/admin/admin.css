@@ -208,3 +208,66 @@
 .a-login-btn[disabled] { opacity: 0.6; cursor: default; }
 .a-err { color: #c0392b; font-size: 12.5px; margin-top: 12px; text-align: center; }
 .a-note { color: #8b93a1; font-size: 12px; margin-top: 18px; line-height: 1.6; text-align: center; }
+
+/* ------------------------------------------------------------
+   IDENTITY DOCUMENTS
+   ------------------------------------------------------------
+   Deliberately plain. This panel hands out links to somebody's
+   government ID; it should look like a control surface, not
+   something you click through without reading. */
+.a-docs { display: flex; flex-direction: column; gap: 12px; padding-top: 4px; }
+.a-docs .a-actions button {
+  font: inherit;
+  font-size: 11px;
+  padding: 5px 11px;
+  background: #22262e;
+  color: #e6e8ec;
+  border: 1px solid #333944;
+  cursor: pointer;
+}
+.a-docs .a-actions button:hover { background: #2b303a; border-color: #454d5c; }
+.a-docs .a-actions button[disabled] { opacity: 0.5; cursor: default; }
+
+.a-docs-link { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.a-docs-link input {
+  font: inherit;
+  font-size: 12px;
+  flex: 1 1 340px;
+  min-width: 0;
+  padding: 7px 10px;
+  background: #0f1216;
+  border: 1px solid #333944;
+  color: #e6e8ec;
+}
+.a-docs-link button {
+  font: inherit;
+  font-size: 11px;
+  padding: 7px 12px;
+  background: #BE452A;
+  border: 1px solid #BE452A;
+  color: #fff;
+  cursor: pointer;
+}
+.a-docs-link p {
+  flex: 1 1 100%;
+  margin: 0;
+  color: #8b93a1;
+  font-size: 11.5px;
+  line-height: 1.6;
+}
+
+.a-docs-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.a-docs-list li {
+  display: flex;
+  gap: 14px;
+  align-items: baseline;
+  flex-wrap: wrap;
+  padding: 8px 10px;
+  background: #0f1216;
+  border: 1px solid #262a31;
+}
+.a-docs-list a { color: #8ab4ff; }
+.a-docs-meta { color: #7d8593; font-size: 11.5px; }
+.a-docs-none { margin: 0; color: #8b93a1; font-size: 12px; }
+.a-docs-note { margin: 0; color: #ffb454; font-size: 11.5px; }
+.a-docs-error { margin: 0; color: #e06c5b; font-size: 12px; }

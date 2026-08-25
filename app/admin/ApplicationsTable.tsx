@@ -5,6 +5,7 @@ import { Fragment, useState } from "react";
 import type { ApplicationRow, ApplicationStatus } from "@/lib/adminData";
 import { DEPARTURES } from "@/lib/departures";
 import { Detail, fullWhen, type Field } from "./Detail";
+import DocumentsPanel from "./DocumentsPanel";
 
 /* The worklist. Status changes post to /api/admin/status and then
    refresh the server component, so what you see is always what is in
@@ -53,7 +54,15 @@ export default function ApplicationsTable({ rows }: { rows: ApplicationRow[] }) 
   }
 
   function fieldsFor(r: ApplicationRow): Field[] {
-    return [
+    /* Documents belong to accepted applicants only — nobody else has
+       been asked for any, so an empty panel on every other row would
+       be noise. */
+    const docs: Field[] =
+      r.status === "accepted"
+        ? [{ label: "Documents", value: <DocumentsPanel id={r.id} />, wide: true }]
+        : [];
+
+    return docs.concat([
       { label: "Applied", value: fullWhen(r.created_at) },
       { label: "Reference", value: r.reference },
       { label: "Departure", value: `${departureName(r.departure_code)} (${r.departure_code})` },
@@ -77,7 +86,7 @@ export default function ApplicationsTable({ rows }: { rows: ApplicationRow[] }) 
         ) : null,
       },
       { label: "What made them want to come", value: r.why, wide: true },
-    ];
+    ]);
   }
 
   if (rows.length === 0) return <p className="a-empty">Nothing here yet.</p>;

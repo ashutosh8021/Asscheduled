@@ -84,36 +84,106 @@ export function TermsPane({ level: H = "h3" }: { level?: PaneLevel } = {}) {
 export function PrivacyPane({ level: H = "h3" }: { level?: PaneLevel } = {}) {
   return (
     <>
-      <H>What we collect</H>
+      <H>Who holds your data</H>
       <p>
-        What you type into Form 7A: particulars, contact details, nine answers, one photo.
-        Payment runs entirely inside Razorpay — card and UPI details never touch our servers.
+        ROITCOVE VENTURES LLP, LLPIN ACZ-2215, India, trading as AS SCHEDULED. We are the data
+        fiduciary for everything described below.
       </p>
-      <H>What we do with it</H>
+
+      <H>What we collect, and when</H>
       <p>
-        Selection. Emergency contact during the trip. Nothing else. No sale, no sharing, no ad
-        targeting, no newsletter you didn&apos;t ask for.
+        <b>When you apply for a departure:</b> your name, phone number, gender, age, state,
+        occupation, college, the departure you chose, and — if you fill them in — your Instagram
+        handle and your answer to why you want to come. We do not ask for your email address at
+        this stage and we do not ask for a photograph.
       </p>
+      <p>
+        <b>When you write to us:</b> your name, email, phone and message. <b>When you propose a
+        collaboration:</b> your name, organisation, email, phone, and the details of what you are
+        proposing. <b>When you join the mailing list:</b> your email address, the preference you
+        select, and the date you consented.
+      </p>
+
+      <H>Identity documents</H>
+      <p>
+        If your application is accepted, we ask you to upload a government photo ID and a college
+        ID. We need the first to book rail travel in your name and the second to confirm you are a
+        student. We ask for masked Aadhaar where you have it, and we accept any government photo
+        ID — passport, driving licence or voter ID are all fine, and you do not have to send
+        Aadhaar.
+      </p>
+      <p>
+        These are requested only after you are accepted, never as part of applying. If you are not
+        selected we never hold a document of yours at all. They are stored in a private,
+        access-controlled store, are never public, and are deleted after the trip ends — see
+        Retention below.
+      </p>
+
+      <H>What we use it for</H>
+      <p>
+        Selecting applicants, booking your travel and accommodation, reaching you before and
+        during the trip, and meeting our legal and tax obligations. Nothing else. We do not sell
+        your data, we do not share it for advertising, and we do not add you to a mailing list you
+        did not ask to join.
+      </p>
+
+      <H>Who else processes it</H>
+      <p>
+        Supabase (database and document storage), Vercel (hosting), and Resend (email delivery)
+        process data on our behalf under contract. Google Analytics receives anonymous usage
+        statistics as described below. Rail and hotel bookings require passing your travel details
+        to the relevant operator. Some of these providers process data outside India.
+      </p>
+
+      <H>Cookies and analytics</H>
+      <p>
+        We use Google Analytics 4 to count visits and see which pages lead to applications. It
+        sets cookies in your browser and records pages viewed, approximate location from your IP
+        address, and which buttons were pressed. Your IP is anonymised before it is stored.
+      </p>
+      <p>
+        We never send your name, phone number, answers or documents to Google. The only details
+        attached to an analytics event are which departure a button referred to and which part of
+        the site it sat on. Browser-level tracking protection or an ad blocker will stop this
+        entirely, and the site works normally without it.
+      </p>
+
       <H>Retention</H>
       <p>
-        {/* Was "deleted within 90 days of refund" — there is no refund on
-            rejection, so that clause described an event that never happens. */}
         Applications that are not selected: deleted within 90 days of the decision. Selected
-        travellers: kept for the season for operations and legal compliance, then archived.
+        travellers: kept for the season for operations and for as long as tax and accounting law
+        requires, then archived. Identity documents: deleted after the departure ends, and sooner
+        if you ask. Mailing list: until you unsubscribe. Enquiries and collaboration proposals:
+        two years.
       </p>
+
       <H>Your rights</H>
+      <p>
+        You can ask for a copy of what we hold, ask us to correct it, ask us to delete it, and
+        withdraw consent you have given. Withdrawing consent for identity documents after you have
+        been accepted may mean we cannot book your travel, but you are entitled to do it.
+      </p>
       <p>
         {CONTACT_EMAIL ? (
           <>
-            Write to <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> for a copy or
-            deletion of your data.
+            Write to <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
           </>
         ) : (
-          <>Use the contact page to request a copy or deletion of your data.</>
+          <>Use the contact page.</>
         )}{" "}
-        We answer within 7 working days.
+        We answer within 7 working days. If we have not resolved it to your satisfaction you may
+        complain to the Data Protection Board of India.
       </p>
-      <p className="lnote">Controller: ROITCOVE VENTURES LLP · LLPIN ACZ-2215 · India.</p>
+
+      <H>Age</H>
+      <p>
+        You must be 18 or over to apply. We do not knowingly collect data from anyone younger. If
+        you believe we hold a minor&apos;s data, tell us and we will delete it.
+      </p>
+
+      <p className="lnote">
+        Controller: ROITCOVE VENTURES LLP · LLPIN ACZ-2215 · India.
+      </p>
     </>
   );
 }

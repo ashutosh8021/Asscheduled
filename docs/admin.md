@@ -61,3 +61,53 @@ Every read and write here uses the Supabase **service role key**, which
 bypasses row level security entirely. That is why each route begins with
 `currentAdmin()`. If you add a page or route under `/admin`, it must do the
 same — there is no middleware doing it for you.
+
+## Identity documents
+
+Accepted applicants upload a government photo ID and a college ID so travel
+can be booked in their name. Two things make this less dangerous than it
+sounds, and both are deliberate:
+
+**Only accepted applicants are ever asked.** Nobody who applies and is turned
+down uploads anything, so the store holds documents for confirmed travellers
+only. You cannot leak what you never held.
+
+**Nothing is public.** Objects live in a private bucket. The admin views them
+through a signed URL that expires in five minutes, so a URL that ends up in a
+screenshot, a browser history or a log is dead before anyone finds it.
+
+### One-time setup
+
+1. Run `docs/schema-documents.sql` in the SQL editor.
+2. **Storage → New bucket**, name it `documents`, and leave **Public** OFF.
+   This is the single most important switch on this page. A public bucket
+   would put every traveller's ID on the open internet at a guessable URL.
+
+Nothing works until both are done, and the failure is silent — the upload
+page will simply say the link is invalid.
+
+### Day to day
+
+Expand an **accepted** application in the admin and you get a Documents panel.
+
+- **UPLOAD LINK** issues a single-use link and shows a copy button. Send it
+  over WhatsApp. It lasts 14 days. It is the only thing needed to upload
+  against that application, so treat it like a password — and issuing a new
+  one immediately kills the old one, which is how you revoke.
+- **SHOW DOCUMENTS** fetches what has been uploaded. Deliberately not loaded
+  with the row: somebody's government ID should be something you asked to
+  see, not something that appears because you expanded a row.
+- **DELETE** removes both the files and the records, permanently.
+
+Issuing a link, viewing documents and deleting them are each logged
+server-side with your email address. That is on purpose.
+
+### Retention
+
+The privacy policy says documents are deleted after the departure ends. That
+promise is currently kept by hand — use DELETE on each traveller once a trip
+is over. `docs/schema-documents.sql` creates a `documents_expired` view
+listing anything older than 120 days so nothing gets quietly forgotten.
+
+TODO(mannat): automate this. A promise in a privacy policy that depends on
+somebody remembering is a promise that eventually gets broken.

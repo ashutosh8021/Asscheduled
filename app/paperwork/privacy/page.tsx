@@ -7,7 +7,7 @@ import { PrivacyPane } from "@/components/legal/LegalContent";
 export const metadata: Metadata = {
   title: "Privacy Policy · AS SCHEDULED",
   description:
-    "What Form 7A collects, what it is used for, how long it is kept, and how to ask for a copy or deletion. Payment details never touch our servers.",
+    "What we collect when you apply, what we use it for, how long we keep it, and how to ask for a copy or deletion. Identity documents are requested only after you are accepted.",
   alternates: { canonical: "/paperwork/privacy" },
 };
 
