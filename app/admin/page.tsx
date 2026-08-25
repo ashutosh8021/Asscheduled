@@ -7,12 +7,15 @@ import {
   listMessages,
   listCollaborations,
   applicationCounts,
+  listDocumentBundles,
+  documentBundleCount,
   APPLICATION_STATUSES,
 } from "@/lib/adminData";
 import { DEPARTURES } from "@/lib/departures";
 import ApplicationsTable from "./ApplicationsTable";
 import MessagesTable from "./MessagesTable";
 import CollabsTable from "./CollabsTable";
+import DocumentsTab from "./DocumentsTab";
 import SignOut from "./SignOut";
 import "./admin.css";
 
@@ -35,15 +38,22 @@ export default async function AdminPage({
   if (!admin) redirect("/admin/login");
 
   const sp = await searchParams;
-  const tab = sp.tab === "messages" || sp.tab === "collabs" ? sp.tab : "applications";
+  const tab =
+    sp.tab === "messages" || sp.tab === "collabs" || sp.tab === "documents"
+      ? sp.tab
+      : "applications";
 
-  const [counts, apps, messages, collabs] = await Promise.all([
+  const [counts, docCount, apps, messages, collabs, bundles] = await Promise.all([
     applicationCounts(),
+    documentBundleCount(),
     tab === "applications"
       ? listApplications({ status: sp.status, departure: sp.departure })
       : Promise.resolve([]),
     tab === "messages" ? listMessages() : Promise.resolve([]),
     tab === "collabs" ? listCollaborations() : Promise.resolve([]),
+    /* Signed URLs are minted here and expire in minutes, so this is
+       fetched only for the tab that shows them. */
+    tab === "documents" ? listDocumentBundles() : Promise.resolve([]),
   ]);
 
   /* Preserve the other filters when building a link. */
@@ -66,6 +76,9 @@ export default async function AdminPage({
             </Link>
             <Link className="a-tab" href="/admin?tab=messages" data-on={tab === "messages"}>
               MESSAGES
+            </Link>
+            <Link className="a-tab" href="/admin?tab=documents" data-on={tab === "documents"}>
+              DOCUMENTS<span className="a-tab-count">{docCount}</span>
             </Link>
             <Link className="a-tab" href="/admin?tab=collabs" data-on={tab === "collabs"}>
               COLLABS
@@ -110,6 +123,8 @@ export default async function AdminPage({
         ) : null}
 
         {tab === "messages" ? <MessagesTable rows={messages} /> : null}
+
+        {tab === "documents" ? <DocumentsTab bundles={bundles} /> : null}
 
         {tab === "collabs" ? <CollabsTable rows={collabs} /> : null}
       </div>

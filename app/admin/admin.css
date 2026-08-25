@@ -292,3 +292,71 @@
   object-fit: contain;
 }
 .a-docs-shot:hover { border-color: #454d5c; }
+
+/* ------------------------------------------------------------
+   DOCUMENTS TAB
+   ------------------------------------------------------------
+   One card per traveller. Images load with the page here: you came
+   to this tab to look at documents, so a second button to reveal
+   them would be ceremony rather than caution. */
+.a-dt { display: flex; flex-direction: column; gap: 18px; }
+
+.a-dt-card { border: 1px solid #262a31; background: #191c21; }
+
+.a-dt-head {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 14px 16px;
+  border-bottom: 1px solid #21252b;
+}
+.a-dt-name { margin: 0; font-size: 15px; font-weight: 600; letter-spacing: 0.01em; }
+.a-dt-meta { margin: 5px 0 0; color: #8b93a1; font-size: 12px; line-height: 1.6; }
+.a-dt-meta a { color: #8ab4ff; }
+.a-dt-right { display: flex; gap: 10px; align-items: center; }
+
+/* An incomplete set should read as a gap, not as an absence you have
+   to notice for yourself. */
+.a-dt-missing {
+  margin: 0;
+  padding: 9px 16px;
+  background: #241c10;
+  border-bottom: 1px solid #21252b;
+  color: #ffb454;
+  font-size: 12px;
+}
+
+.a-dt-files {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+  padding: 14px 16px 16px;
+}
+.a-dt-file { margin: 0; }
+.a-dt-file figcaption {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+.a-dt-file img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 340px;
+  object-fit: contain;
+  border: 1px solid #262a31;
+  background: #0b0d10;
+}
+.a-dt-file a:hover img { border-color: #454d5c; }
+.a-dt-pdf {
+  display: inline-block;
+  padding: 10px 14px;
+  border: 1px solid #333944;
+  color: #8ab4ff;
+  font-size: 12px;
+}

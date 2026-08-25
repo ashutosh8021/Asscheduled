@@ -32,3 +32,8 @@ asset/**/*.MP4
 asset/**/*.mp4
 asset/**/*.MOV
 asset/**/*.mov
+
+# Screenshots and scratch output from verification runs. A mis-positioned
+# argv once wrote one to a file called "x" in the repo root.
+/.shots/
+/x
