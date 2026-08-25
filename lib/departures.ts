@@ -21,6 +21,26 @@ export interface Slot {
   credit?: string;
 }
 
+/**
+ * A short film that opens a departure's hero, ahead of the stills.
+ *
+ * Two cuts, for the same reason the homepage hero has two: the hero is
+ * a full-viewport box, so `cover` on a 16:9 file shows only a narrow
+ * strip of it on a phone.
+ */
+export interface Clip {
+  src: string;
+  /** 9:16 cut, used below 820px. */
+  portrait: string;
+  poster: string;
+  posterPortrait: string;
+  /** Runtime in seconds. The hero holds here for this long instead of
+   *  the usual interval — cutting away mid-clip looks like a fault. */
+  seconds: number;
+  alt: string;
+  credit?: string;
+}
+
 export interface Batch {
   /** Display string exactly as the comp writes it. */
   label: string;
@@ -103,6 +123,8 @@ export interface Departure {
   wide: Slot[];
   /** The detail-page mosaic. Only campus photography exists today. */
   mosaic: Slot[];
+  /** Optional film that opens the hero, ahead of `wide`. */
+  clip?: Clip;
 }
 
 export const DEPARTURES: Departure[] = [
@@ -217,6 +239,15 @@ export const DEPARTURES: Departure[] = [
         credit: "PULSE, AIIMS New Delhi",
       },
     ],
+    clip: {
+      src: "/video/pulse-stage.mp4",
+      portrait: "/video/pulse-stage-portrait.mp4",
+      poster: "/video/pulse-stage.jpg",
+      posterPortrait: "/video/pulse-stage-portrait.jpg",
+      seconds: 12.5,
+      alt: "A performer on the PULSE main stage under blue light",
+      credit: "PULSE, AIIMS New Delhi",
+    },
     mosaic: [
       {
         src: "/img/aiims/classical.jpg",

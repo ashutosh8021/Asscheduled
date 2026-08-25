@@ -50,6 +50,7 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
             this departure, cross-fading one after another. */}
         <DepartureHero
           frames={d.wide}
+          clip={d.clip}
           hint={d.campus}
           stamp={
             d.soldOut

@@ -3,27 +3,34 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Slot from "./Slot";
 import Stamp from "./Stamp";
-import type { Slot as SlotData } from "@/lib/departures";
+import type { Clip, Slot as SlotData } from "@/lib/departures";
 
 /* Full-screen hero for a departure page.
 
-   The frames cross-fade and hold a slow push-in while they are on
-   screen, so the masthead moves on its own instead of sitting as one
-   static picture.
+   A departure with film opens on it; everything else cross-fades
+   through the stills, holding a slow push-in while each is on screen,
+   so the masthead moves on its own instead of sitting as one static
+   picture.
 
-   Three things this deliberately does:
+   Four things this deliberately does:
 
-   1. Frames mount lazily. Only the first frame is in the DOM on load —
-      the next is mounted one step ahead of being shown. All five
-      stacked at once would put ~500KB of hero imagery in front of LCP.
+   1. Frames mount lazily. Only the first is in the DOM on load — the
+      next is mounted one step ahead of being shown. All five stacked
+      at once would put ~500KB of hero imagery in front of LCP.
    2. It can be paused. Auto-advancing content needs a stop control
       (WCAG 2.2.2), and it also pauses itself when the tab is hidden.
-   3. Reduced motion means no auto-advance and no push-in at all — the
-      first frame just sits there and the segments still work by hand. */
+   3. Reduced motion means no auto-advance, no push-in and no
+      autoplaying film — the first frame just sits there (the clip as
+      its poster) and the segments still work by hand.
+   4. The clip holds for its own length rather than the still interval.
+      Cutting away from a performance three seconds in reads as a bug. */
 
-/* How long each frame holds. Keep in step with the `s-seg` fill
-   duration in app/as.css — the progress bar is timing this. */
 const INTERVAL_MS = 3400;
+
+/* Chosen after mount rather than with <source media>, whose support for
+   video is inconsistent — and a wrong guess there downloads the wrong
+   file before it can be corrected. The poster covers the gap. */
+const NARROW = "(max-width: 820px)";
 
 interface Props {
   frames: SlotData[];
@@ -33,17 +40,29 @@ interface Props {
   hint?: string;
   /** Struck across the lower right when a departure is closed. */
   stamp?: { label: string; top: string; bottom: string };
+  /** Plays first, ahead of the stills. */
+  clip?: Clip;
 }
 
-export default function DepartureHero({ frames, children, hint, stamp }: Props) {
+export default function DepartureHero({ frames, children, hint, stamp, clip }: Props) {
   const [idx, setIdx] = useState(0);
   const [playing, setPlaying] = useState(true);
   const [motion, setMotion] = useState(true);
+  const [narrow, setNarrow] = useState(false);
   /* Which frames exist in the DOM. Grows as the sequence advances. */
   const [mounted, setMounted] = useState<number[]>([0]);
   const timer = useRef<number | null>(null);
+  const video = useRef<HTMLVideoElement>(null);
 
-  const count = frames.length;
+  /* With a clip, slot 0 is the film and the stills start at 1. */
+  const offset = clip ? 1 : 0;
+  const count = frames.length + offset;
+
+  /* The clip earns its full runtime; the stills get the usual beat. */
+  const holdFor = useCallback(
+    (i: number) => (clip && i === 0 ? clip.seconds * 1000 : INTERVAL_MS),
+    [clip]
+  );
 
   const show = useCallback(
     (next: number) => {
@@ -66,6 +85,15 @@ export default function DepartureHero({ frames, children, hint, stamp }: Props) 
     return () => mq.removeEventListener("change", apply);
   }, []);
 
+  useEffect(() => {
+    if (!clip) return;
+    const mq = window.matchMedia(NARROW);
+    const pick = () => setNarrow(mq.matches);
+    pick();
+    mq.addEventListener("change", pick);
+    return () => mq.removeEventListener("change", pick);
+  }, [clip]);
+
   /* Mount the second frame after hydration rather than in the server
      HTML: it keeps the first frame alone in the markup so the browser
      gives it the whole connection, and it is still loaded long before
@@ -79,11 +107,32 @@ export default function DepartureHero({ frames, children, hint, stamp }: Props) 
   useEffect(() => {
     if (!playing || !motion || count < 2) return;
 
-    timer.current = window.setTimeout(() => show(idx + 1), INTERVAL_MS);
+    timer.current = window.setTimeout(() => show(idx + 1), holdFor(idx));
     return () => {
       if (timer.current) window.clearTimeout(timer.current);
     };
-  }, [idx, playing, motion, count, show]);
+  }, [idx, playing, motion, count, show, holdFor]);
+
+  /* Restart the film each time the sequence comes back round to it,
+     and hold it still whenever it is off screen or paused.
+
+     `narrow` belongs in the deps even though it is not read here: the
+     first render always picks the wide cut, and the swap to the
+     portrait one changes `src`, which reloads the element and leaves
+     it paused. Without this the film never starts on a phone. */
+  useEffect(() => {
+    const v = video.current;
+    if (!v) return;
+
+    if (idx === 0 && playing && motion) {
+      v.currentTime = 0;
+      /* A blocked autoplay is not an error worth surfacing — the
+         poster is already showing the same frame. */
+      void v.play().catch(() => {});
+    } else {
+      v.pause();
+    }
+  }, [idx, playing, motion, narrow]);
 
   /* A carousel ticking away in a background tab is wasted work. */
   useEffect(() => {
@@ -112,16 +161,42 @@ export default function DepartureHero({ frames, children, hint, stamp }: Props) 
       onKeyDown={onKeyDown}
     >
       <div className="s-dhero-stack">
+        {clip ? (
+          <div className="s-dhero-frame" data-on={idx === 0} aria-hidden={idx !== 0}>
+            <video
+              ref={video}
+              className="s-dhero-video"
+              /* Both cuts exist; only the matched one is ever fetched. */
+              src={narrow ? clip.portrait : clip.src}
+              poster={narrow ? clip.posterPortrait : clip.poster}
+              aria-label={clip.alt}
+              /* muted + playsInline are both required for inline
+                 autoplay on iOS, and the poster carries the frame
+                 until the video decodes so the hero is never blank. */
+              muted
+              playsInline
+              preload="metadata"
+              disablePictureInPicture
+            />
+          </div>
+        ) : null}
+
         {frames.map((f, i) =>
-          mounted.includes(i) ? (
+          mounted.includes(i + offset) ? (
             <div
               key={f.label}
               className="s-dhero-frame"
-              data-on={i === idx}
+              data-on={i + offset === idx}
               data-motion={motion}
-              aria-hidden={i !== idx}
+              aria-hidden={i + offset !== idx}
             >
-              <Slot slot={f} priority={i === 0} sizes="100vw" quality={90} hint={hint} />
+              <Slot
+                slot={f}
+                priority={i === 0 && !clip}
+                sizes="100vw"
+                quality={90}
+                hint={hint}
+              />
             </div>
           ) : null
         )}
@@ -143,9 +218,9 @@ export default function DepartureHero({ frames, children, hint, stamp }: Props) 
       {count > 1 ? (
         <div className="s-dhero-ui s-wrap">
           <div className="s-dhero-segs" role="tablist" aria-label="Choose a frame">
-            {frames.map((f, i) => (
+            {Array.from({ length: count }, (_, i) => (
               <button
-                key={f.label}
+                key={i}
                 type="button"
                 role="tab"
                 className="s-dhero-seg"
@@ -162,6 +237,9 @@ export default function DepartureHero({ frames, children, hint, stamp }: Props) 
                   key={`${i}-${idx}-${playing}`}
                   className="s-dhero-seg-fill"
                   data-run={i === idx && playing && motion}
+                  /* The clip's segment has to run for the clip's
+                     length, not the CSS default. */
+                  style={{ animationDuration: `${holdFor(i)}ms` }}
                 />
               </button>
             ))}
