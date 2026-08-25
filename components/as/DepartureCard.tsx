@@ -5,7 +5,7 @@ import Slot from "./Slot";
 import Stamp from "./Stamp";
 import Tilt from "./Tilt";
 import { SOMEWHERE } from "@/lib/copy";
-import { priceRange, type Departure } from "@/lib/departures";
+import { batchLabel, priceRange, type Departure } from "@/lib/departures";
 
 /* Two card shapes, both from the comps:
 
@@ -46,7 +46,7 @@ export default function DepartureCard({ d, variant = "poster", priority = false 
           </div>
 
             <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-              <p className="s-chip">+{d.batches.length} BATCHES</p>
+              <p className="s-chip">{batchLabel(d.batches)}</p>
               {d.soldOut ? <span className="s-soldout">{SOMEWHERE.soldOutLabel}</span> : null}
             </div>
 
@@ -127,7 +127,7 @@ export default function DepartureCard({ d, variant = "poster", priority = false 
         <div className="s-card-body">
           <div className="s-card-row">
             <p className="s-card-dates">{d.range}</p>
-            <span className="s-chip">+{d.batches.length} BATCHES</span>
+            <span className="s-chip">{batchLabel(d.batches)}</span>
           </div>
 
           <div className="s-card-row" style={{ marginTop: "auto" }}>

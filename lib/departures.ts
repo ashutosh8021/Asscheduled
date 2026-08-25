@@ -107,6 +107,138 @@ export interface Departure {
 
 export const DEPARTURES: Departure[] = [
   {
+    /* PULSE'26 — AIIMS New Delhi's own festival. Structured on the
+       Rendezvous departure per instruction ("keep it like delhi"), with
+       two differences confirmed by Mannat on 2026-08-25: the trip is the
+       fest window exactly, so there are no sightseeing days, and the
+       price is a range rather than Delhi's flat figure. */
+    id: "PUL-26",
+    slug: "pulse-aiims-delhi",
+    fest: "PULSE'26",
+    campus: "AIIMS DELHI",
+    titleTop: "DELHI",
+    titleBottom: "PULSE",
+    cardNote: "DELHI, AT FULL VOLUME.",
+    homeNote: "AIIMS pulse",
+    homeDates: "17th – 21st September",
+    range: "17 SEP → 21 SEP",
+    batches: [
+      {
+        label: "17 SEP, 2026 – 21 SEP, 2026",
+        start: "2026-09-17",
+        end: "2026-09-21",
+        days: 5,
+        nights: 4,
+      },
+    ],
+    days: 5,
+    nights: 4,
+    price: 8499,
+    priceMax: 12499,
+    spotsLeft: null,
+    intro: [
+      "Five days that start the moment the gates open and don't ease off until the last set ends.",
+      "PULSE is AIIMS New Delhi's own festival, and it runs on its own logic — forty-odd events and five pro shows, where the same people compete at anatomy art in the afternoon and lose it completely at the pronite.",
+      "You arrive into the middle of it. You leave when it's finished.",
+    ],
+    included: [
+      "As Scheduled Trip Host (2 Trip Hosts)",
+      "Train 3rd AC – Round Trip (From Your City to Delhi)",
+      /* TODO(mannat): confirm. Derived from the Rendezvous pattern of
+         (days − 2) breakfasts, (days − 2) lunches, (days − 3) dinners,
+         which fits its 8-day trip exactly. Nobody stated it for a
+         5-day one — this is the only line here not taken from you. */
+      "Meals in total: 3 Breakfasts, 3 Lunches, 2 Dinners",
+      "Accommodation (Sharing Basis)",
+      "2 Entry Passes to Pulse",
+      "Transfer from Airport / Station",
+    ],
+    excluded: [
+      "Only 1 Dinner during Pro-Night",
+      "The thing you bought without needing it",
+      "The cab you took because walking suddenly felt unacceptable",
+      "The plan that appeared after 11:47 PM",
+    ],
+    itinerary: [
+      { n: "DAY 01", date: "17 SEP", title: "PULSE OPENS", detail: null },
+      { n: "DAY 02", date: "18 SEP", title: "THE COMPETITIONS & EVENTS", detail: null },
+      { n: "DAY 03", date: "19 SEP", title: "ANOTHER ROUND TO GO", detail: null },
+      { n: "DAY 04", date: "20 SEP", title: "THE MAIN EVENT", detail: null },
+      { n: "DAY 05", date: "21 SEP", title: "FAREWELL", detail: null },
+    ],
+    brochure: null,
+    hero: {
+      src: "/img/aiims/crowd.jpg",
+      alt: "A performer crouched at the edge of the stage, the crowd filling the ground behind",
+      label: "HERO — PUL-26",
+      credit: "PULSE, AIIMS New Delhi",
+    },
+    card: {
+      src: "/img/aiims/crowd.jpg",
+      alt: "A performer crouched at the edge of the stage, the crowd filling the ground behind",
+      label: "CARD — PUL-26",
+      credit: "PULSE, AIIMS New Delhi",
+    },
+    portrait: {
+      src: "/img/aiims/pronite.jpg",
+      alt: "A pronite set under yellow smoke, the crowd lit from the stage",
+      label: "PORTRAIT — PUL-26",
+      credit: "PULSE, AIIMS New Delhi",
+    },
+    wide: [
+      {
+        src: "/img/wide/aiims-crowd.jpg",
+        alt: "A performer crouched at the edge of the stage, the crowd filling the ground behind",
+        label: "WIDE — PULSE CROWD",
+        credit: "PULSE, AIIMS New Delhi",
+      },
+      {
+        src: "/img/wide/aiims-pronite.jpg",
+        alt: "A pronite set under yellow smoke, the crowd lit from the stage",
+        label: "WIDE — PRONITE",
+        credit: "PULSE, AIIMS New Delhi",
+      },
+      {
+        src: "/img/wide/aiims-mainstage.jpg",
+        alt: "A solo performer on the main stage, the hall dark around them",
+        label: "WIDE — MAIN STAGE",
+        credit: "PULSE, AIIMS New Delhi",
+      },
+      {
+        src: "/img/wide/aiims-classical.jpg",
+        alt: "Two dancers mid-performance in classical costume under stage light",
+        label: "WIDE — CLASSICAL",
+        credit: "PULSE, AIIMS New Delhi",
+      },
+      {
+        src: "/img/wide/aiims-troupe.jpg",
+        alt: "A dance troupe holding a formation on stage",
+        label: "WIDE — TROUPE",
+        credit: "PULSE, AIIMS New Delhi",
+      },
+    ],
+    mosaic: [
+      {
+        src: "/img/aiims/classical.jpg",
+        alt: "Two dancers mid-performance in classical costume under stage light",
+        label: "PUL-26 / CLASSICAL",
+        credit: "PULSE, AIIMS New Delhi",
+      },
+      {
+        src: "/img/aiims/mainstage.jpg",
+        alt: "A solo performer on the main stage, the hall dark around them",
+        label: "PUL-26 / MAIN STAGE",
+        credit: "PULSE, AIIMS New Delhi",
+      },
+      {
+        src: "/img/aiims/troupe.jpg",
+        alt: "A dance troupe holding a formation on stage",
+        label: "PUL-26 / TROUPE",
+        credit: "PULSE, AIIMS New Delhi",
+      },
+    ],
+  },
+  {
     id: "REN-26",
     slug: "rendezvous-iit-delhi",
     fest: "RENDEZVOUS'26",
@@ -420,6 +552,15 @@ export function shortPrice(n: number): string {
  * spans tiers. The homepage keeps using shortPrice, since "From" already
  * says the low end of a range.
  */
+/**
+ * The batch-count chip. "+2 BATCHES" reads as "two more to choose from",
+ * which is right for a multi-batch departure and wrong for a single one —
+ * "+1 BATCHES" is just broken English on a live page.
+ */
+export function batchLabel(batches: readonly unknown[]): string {
+  return batches.length === 1 ? "1 BATCH" : `+${batches.length} BATCHES`;
+}
+
 export function priceRange(d: Pick<Departure, "price" | "priceMax">): string {
   return d.priceMax && d.priceMax !== d.price
     ? `${inr(d.price)} – ${inr(d.priceMax)}`

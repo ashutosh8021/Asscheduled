@@ -24,3 +24,11 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+
+# Camera video from shoots. These run to hundreds of megabytes and GitHub
+# rejects anything over 100MB outright. Originals stay on the drive; the
+# web cuts that actually ship live in public/video.
+asset/**/*.MP4
+asset/**/*.mp4
+asset/**/*.MOV
+asset/**/*.mov

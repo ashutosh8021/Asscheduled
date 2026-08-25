@@ -7,7 +7,7 @@ import Accordion from "@/components/as/Accordion";
 import ApplyButton from "@/components/as/ApplyButton";
 import DepartureHero from "@/components/as/DepartureHero";
 import { DETAIL, SOMEWHERE } from "@/lib/copy";
-import { DEPARTURES, getDeparture, priceRange } from "@/lib/departures";
+import { DEPARTURES, batchLabel, getDeparture, priceRange } from "@/lib/departures";
 import { abs } from "@/lib/site";
 
 /* Experience detail — comps (7) and (8). One template, both departures;
@@ -85,7 +85,7 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
             <span className="s-chip s-chip-over">
               {d.days} DAYS · {d.nights} NIGHTS
             </span>
-            <span className="s-chip s-chip-over">+{d.batches.length} BATCHES</span>
+            <span className="s-chip s-chip-over">{batchLabel(d.batches)}</span>
             <span className="s-chip s-chip-over">{d.range}</span>
           </div>
         </DepartureHero>
