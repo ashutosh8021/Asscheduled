@@ -54,13 +54,22 @@ export default function ApplicationsTable({ rows }: { rows: ApplicationRow[] }) 
   }
 
   function fieldsFor(r: ApplicationRow): Field[] {
-    /* Documents belong to accepted applicants only — nobody else has
-       been asked for any, so an empty panel on every other row would
-       be noise. */
-    const docs: Field[] =
-      r.status === "accepted"
-        ? [{ label: "Documents", value: <DocumentsPanel id={r.id} />, wide: true }]
-        : [];
+    /* Show the panel wherever documents could exist, which is two
+       different cases:
+
+       - the departure collects them at application time, so they may
+         already be there while the row still says "new";
+       - the application is accepted, so it is time to ask.
+
+       Gating on "accepted" alone hid every PULSE applicant's uploads
+       completely — the files were in the bucket and nothing in the
+       admin said so. Anywhere else stays clean. */
+    const departure = DEPARTURES.find((x) => x.id === r.departure_code);
+    const mayHaveDocuments = r.status === "accepted" || departure?.documentsAtApply === true;
+
+    const docs: Field[] = mayHaveDocuments
+      ? [{ label: "Documents", value: <DocumentsPanel id={r.id} />, wide: true }]
+      : [];
 
     return docs.concat([
       { label: "Applied", value: fullWhen(r.created_at) },
