@@ -151,6 +151,38 @@ export interface SubscriberRecord {
  * anyone who had unsubscribed back to subscribed. So a second submit
  * is a success, not a duplicate-key failure the visitor would see.
  */
+/**
+ * The id of an application, by its reference.
+ *
+ * saveApplication returns a boolean because the insert asks for
+ * `return=minimal` — deliberately, so applicants' personal data stays
+ * out of the response and the logs. This reads back just the id, which
+ * is what a document upload has to be attached to.
+ */
+export async function findApplicationId(reference: string): Promise<string | null> {
+  const cfg = supabaseConfig();
+  if (!cfg) return null;
+
+  try {
+    const res = await fetch(
+      `${cfg.url}/rest/v1/applications?reference=eq.${encodeURIComponent(reference)}&select=id`,
+      {
+        headers: {
+          apikey: cfg.serviceRoleKey,
+          authorization: `Bearer ${cfg.serviceRoleKey}`,
+        },
+        cache: "no-store",
+      }
+    );
+    if (!res.ok) return null;
+    const rows = (await res.json()) as { id: string }[];
+    return rows[0]?.id ?? null;
+  } catch (err) {
+    console.error("[store] application lookup threw", err);
+    return null;
+  }
+}
+
 export async function saveSubscriber(r: SubscriberRecord): Promise<boolean> {
   const cfg = supabaseConfig();
   if (!cfg) return false;

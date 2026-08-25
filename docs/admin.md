@@ -64,13 +64,22 @@ same — there is no middleware doing it for you.
 
 ## Identity documents
 
-Accepted applicants upload a government photo ID and a college ID so travel
-can be booked in their name. Two things make this less dangerous than it
-sounds, and both are deliberate:
+Travellers upload a government photo ID and a college ID so travel can be
+booked in their name. There are two ways this happens, set per departure by
+`documentsAtApply` in `lib/departures.ts`:
 
-**Only accepted applicants are ever asked.** Nobody who applies and is turned
-down uploads anything, so the store holds documents for confirmed travellers
-only. You cannot leak what you never held.
+**At application** (PULSE / `PUL-26`). The overlay asks for both documents
+straight after the application lands, so you can check somebody is a real
+student before selecting them. The cost is that you hold documents for
+applicants you go on to decline — **purge those**, they are the ones you have
+no reason to keep.
+
+**After acceptance** (everything else). Mark someone accepted, send them the
+upload link. Nobody who is turned down ever uploads anything, so the store
+holds documents for confirmed travellers only.
+
+Whichever door they came through, the link dies the moment an application is
+declined, and nothing is ever public.
 
 **Nothing is public.** Objects live in a private bucket. The admin views them
 through a signed URL that expires in five minutes, so a URL that ends up in a

@@ -6,6 +6,7 @@ import { useModal } from "./ModalProvider";
 import { APPLY, STATES, CONTACT_EMAIL } from "@/lib/copy";
 import { DEPARTURES } from "@/lib/departures";
 import { EVENTS, track } from "@/lib/analytics";
+import UploadFields from "./UploadFields";
 
 /* "I am coming." — the two-step application overlay from comps (12) and (14).
 
@@ -78,7 +79,7 @@ export default function ApplyModal() {
   const [a, setA] = useState<Answers>({ ...EMPTY, event: openPreselect });
   const [errors, setErrors] = useState<Partial<Record<keyof Answers, string>>>({});
   const [sending, setSending] = useState(false);
-  const [done, setDone] = useState<null | { reference: string; delivered: boolean }>(null);
+  const [done, setDone] = useState<null | { reference: string; delivered: boolean; upload?: string | null }>(null);
 
   /* The funnel starts here. The modal is only mounted while it is open,
      so mounting is opening. Departure code and originating surface only —
@@ -115,11 +116,18 @@ export default function ApplyModal() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify(a),
       });
-      const json = (await res.json()) as { ok: boolean; reference?: string; received?: boolean };
+      const json = (await res.json()) as {
+        ok: boolean;
+        reference?: string;
+        received?: boolean;
+        /* Present only for departures that ask for ID at application
+           time, and only when the row actually stored. */
+        upload?: string | null;
+      };
       /* `received` is true if the application was stored OR mailed —
          either one means we have it. */
       if (json.ok && json.reference && json.received) {
-        setDone({ reference: json.reference, delivered: true });
+        setDone({ reference: json.reference, delivered: true, upload: json.upload ?? null });
         track(EVENTS.applicationLodged, { trip: a.event || "none" });
       } else {
         setDone({ reference: "—", delivered: false });
@@ -150,7 +158,9 @@ export default function ApplyModal() {
         </h2>
         <p className="s-modal-sub">
           {done.delivered
-            ? "We read every single one. We'll come back to you."
+            ? done.upload
+              ? "Two documents and you're done."
+              : "We read every single one. We'll come back to you."
             : "We could not file that from here."}
         </p>
 
@@ -169,9 +179,15 @@ export default function ApplyModal() {
             </p>
           )}
 
+          {done.upload ? (
+            <div style={{ marginTop: 22, textAlign: "left" }}>
+              <UploadFields token={done.upload} compact />
+            </div>
+          ) : null}
+
           <div className="s-modal-actions">
             <button type="button" className="s-btn s-btn-forest" onClick={close}>
-              CLOSE
+              {done.upload ? "DONE" : "CLOSE"}
             </button>
           </div>
         </div>

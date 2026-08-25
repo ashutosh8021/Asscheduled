@@ -125,6 +125,15 @@ export interface Departure {
   mosaic: Slot[];
   /** Optional film that opens the hero, ahead of `wide`. */
   clip?: Clip;
+  /**
+   * Ask for a college ID and a government photo ID as part of applying,
+   * rather than after acceptance.
+   *
+   * The trade is deliberate and worth knowing: it lets you check
+   * somebody is a real student before you select them, at the cost of
+   * holding documents for applicants you go on to decline. Purge those.
+   */
+  documentsAtApply?: boolean;
 }
 
 export const DEPARTURES: Departure[] = [
@@ -157,6 +166,8 @@ export const DEPARTURES: Departure[] = [
     nights: 4,
     price: 8799,
     priceMax: 12799,
+    /* AIIMS asks for ID up front — see the note on the field. */
+    documentsAtApply: true,
     spotsLeft: null,
     intro: [
       "Five days that start the moment the gates open and don't ease off until the last set ends.",

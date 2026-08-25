@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { deliver, isIndianMobile, readStrings } from "@/lib/inbox";
 import { newReference } from "@/lib/reference";
 import { DEPARTURES } from "@/lib/departures";
-import { saveApplication, storeConfigured } from "@/lib/store";
+import { findApplicationId, saveApplication, storeConfigured } from "@/lib/store";
+import { issueUploadToken } from "@/lib/documents";
 
 /* "I am coming." — the application overlay from comps (12) and (14).
 
@@ -128,5 +129,21 @@ export async function POST(request: Request) {
     );
   }
 
-  return NextResponse.json({ ok: true, reference, received, stored, delivered });
+  /* Departures that ask for ID up front hand back an upload token, and
+     the overlay turns it into a third step. It can only be issued when
+     the row actually exists — there is nothing to attach a document to
+     otherwise — which is why this happens after the save rather than
+     as part of the form.
+
+     A departure that wants documents but could not store the row gets
+     no token: an upload with nowhere to land is worse than asking for
+     it by email. */
+  let upload: string | null = null;
+  if (departure?.documentsAtApply && stored) {
+    const row = await findApplicationId(reference);
+    if (row) upload = await issueUploadToken(row);
+    if (!upload) console.error(`[apply] could not issue an upload token for ${reference}`);
+  }
+
+  return NextResponse.json({ ok: true, reference, received, stored, delivered, upload });
 }

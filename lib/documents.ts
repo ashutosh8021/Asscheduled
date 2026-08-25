@@ -112,8 +112,7 @@ export async function issueUploadToken(applicationId: string): Promise<string | 
  * Resolve an upload token to its application.
  *
  * Null for anything not currently valid: unknown token, expired link,
- * or an application no longer in `accepted`. Withdrawing an acceptance
- * closes the upload page with it.
+ * or a declined application. Declining closes the upload page with it.
  */
 export async function resolveUploadToken(token: string): Promise<TokenTarget | null> {
   const cfg = supabaseConfig();
@@ -140,7 +139,11 @@ export async function resolveUploadToken(token: string): Promise<TokenTarget | n
     const b = Buffer.from(hashToken(token));
     if (a.length !== b.length || !timingSafeEqual(a, b)) return null;
 
-    if (row.status !== "accepted") return null;
+    /* Valid while the application is live. Two flows share this: some
+       departures collect documents at application time (status "new"),
+       others after selection ("accepted"). Declining kills the link in
+       both cases — which is also how you revoke one. */
+    if (row.status === "declined") return null;
     if (!row.documents_expires_at || new Date(row.documents_expires_at) < new Date()) return null;
 
     return {
