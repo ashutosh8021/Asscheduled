@@ -82,6 +82,28 @@ screenshot, a browser history or a log is dead before anyone finds it.
 2. **Storage → New bucket**, name it `documents`, and leave **Public** OFF.
    This is the single most important switch on this page. A public bucket
    would put every traveller's ID on the open internet at a guessable URL.
+   Set the bucket's size limit to 2MB and restrict MIME types to
+   `image/jpeg, image/png, image/webp, application/pdf`. The upload route
+   enforces both as well, so the bucket is a backstop rather than the
+   control. (The 50MB on the Storage settings page is the free plan's
+   account-wide ceiling, is not adjustable, and is unrelated.)
+
+   Uploads are capped at 2MB and nothing is resized for anyone — people
+   compress their own files. The form says so above the file picker, and
+   an oversized file is rejected with its actual size in the message.
+   Expect this to come up: a phone photo is usually 3-5MB.
+   Optionally set the bucket's own size limit to 2MB and restrict MIME
+   types to `image/jpeg, image/png, image/webp, application/pdf` — both are
+   already enforced by the upload route, so this is a backstop rather than
+   the control. (The 50MB figure on the Storage settings page is the free
+   plan's account-wide ceiling and is not adjustable; it is unrelated.)
+
+   The app caps uploads at 1.9MB, deliberately under the bucket, so the
+   rejection comes from the route with a readable message rather than from
+   storage with an error code. Photos over that are resized in the browser
+   before they are sent — a 4000x3000 phone frame comes out around 1800px
+   and well under a megabyte and a half — so in practice only an oversized
+   PDF ever hits the limit.
 
 Nothing works until both are done, and the failure is silent — the upload
 page will simply say the link is invalid.

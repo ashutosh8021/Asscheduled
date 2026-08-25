@@ -41,7 +41,10 @@ export default function UploadForm({
 
   async function send(kind: DocumentKind, file: File) {
     if (file.size > MAX_BYTES) {
-      setErrors((e) => ({ ...e, [kind]: `Over ${Math.round(MAX_BYTES / 1048576)}MB. Send a smaller one.` }));
+      setErrors((e) => ({
+        ...e,
+        [kind]: `That file is ${(file.size / 1_000_000).toFixed(1)}MB. Compress it under 2MB and try again.`,
+      }));
       setState((s) => ({ ...s, [kind]: "error" }));
       return;
     }
@@ -73,6 +76,14 @@ export default function UploadForm({
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
+      {/* Said before the file picker, not after it fails. Phone photos
+          run well over this, so people need to know to shrink one
+          while they are still choosing it. */}
+      <p className="s-hint">
+        JPG, PNG or PDF, under {MAX_BYTES / 1_000_000}MB each. Most phone photos are larger than
+        that — compress or resize before you upload.
+      </p>
+
       {DOCUMENT_KINDS.map((kind) => {
         const s = state[kind];
         return (

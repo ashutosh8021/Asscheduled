@@ -15,4 +15,7 @@ export const DOCUMENT_KINDS: DocumentKind[] = ["photo_id", "college_id"];
 
 export const ACCEPTED_MIME = ["image/jpeg", "image/png", "image/webp", "application/pdf"] as const;
 
-export const MAX_BYTES = 8 * 1024 * 1024;
+/* Matches the bucket's own 2MB cap. Files are not resized for anyone —
+   people compress their own before uploading, and the form says so up
+   front rather than letting them pick a 4MB photo and then fail. */
+export const MAX_BYTES = 2_000_000;
