@@ -106,17 +106,15 @@ export function PrivacyPane({ level: H = "h3" }: { level?: PaneLevel } = {}) {
 
       <H>Identity documents</H>
       <p>
-        If your application is accepted, we ask you to upload a government photo ID and a college
-        ID. We need the first to book rail travel in your name and the second to confirm you are a
-        student. We ask for masked Aadhaar where you have it, and we accept any government photo
-        ID — passport, driving licence or voter ID are all fine, and you do not have to send
-        Aadhaar.
+        Some departures require your Aadhaar and your college ID. We need the Aadhaar to book rail
+        travel in your name — the name on the ticket has to match the ID you travel with — and the
+        college ID to confirm you are a student, which the host campus checks on entry.
       </p>
       <p>
-        These are requested only after you are accepted, never as part of applying. If you are not
-        selected we never hold a document of yours at all. They are stored in a private,
-        access-controlled store, are never public, and are deleted after the trip ends — see
-        Retention below.
+        Where a departure asks for them, they are part of the application. Where it does not, they
+        are requested only after you are accepted. Either way they are stored in a private,
+        access-controlled store, are never public, are seen only by us, and are deleted after the
+        trip ends — see Retention below. You can ask us to delete them sooner.
       </p>
 
       <H>What we use it for</H>
