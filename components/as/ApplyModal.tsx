@@ -6,7 +6,9 @@ import { useModal } from "./ModalProvider";
 import { APPLY, STATES, CONTACT_EMAIL } from "@/lib/copy";
 import { DEPARTURES } from "@/lib/departures";
 import { EVENTS, track } from "@/lib/analytics";
-import UploadFields from "./UploadFields";
+import DropZone, { rejectReason, type ZoneState } from "./DropZone";
+import { DOCUMENT_LABELS, SizeNote } from "./UploadFields";
+import { DOCUMENT_KINDS, type DocumentKind } from "@/lib/documentRules";
 
 /* "I am coming." — the two-step application overlay from comps (12) and (14).
 
@@ -81,6 +83,33 @@ export default function ApplyModal() {
   const [sending, setSending] = useState(false);
   const [done, setDone] = useState<null | { reference: string; delivered: boolean; upload?: string | null }>(null);
 
+  /* Documents are chosen in step 2 but cannot be sent yet — there is no
+     application to attach them to until the form is submitted. They are
+     held here and go up immediately afterwards, so the whole thing
+     reads as one action. */
+  const [files, setFiles] = useState<Partial<Record<DocumentKind, File>>>({});
+  const [fileErrors, setFileErrors] = useState<Partial<Record<DocumentKind, string>>>({});
+  const [docState, setDocState] = useState<Record<DocumentKind, ZoneState>>({
+    photo_id: "idle",
+    college_id: "idle",
+  });
+
+  /* Whether the chosen departure collects ID as part of applying. */
+  const needsDocuments =
+    DEPARTURES.find((d) => d.id === a.event)?.documentsAtApply === true;
+
+  function pick(kind: DocumentKind, file: File) {
+    const bad = rejectReason(file);
+    if (bad) {
+      setFileErrors((e) => ({ ...e, [kind]: bad }));
+      setDocState((s) => ({ ...s, [kind]: "error" }));
+      return;
+    }
+    setFiles((f) => ({ ...f, [kind]: file }));
+    setFileErrors((e) => ({ ...e, [kind]: undefined }));
+    setDocState((s) => ({ ...s, [kind]: "idle" }));
+  }
+
   /* The funnel starts here. The modal is only mounted while it is open,
      so mounting is opening. Departure code and originating surface only —
      never an answer, a name, an email or a phone number. */
@@ -108,7 +137,53 @@ export default function ApplyModal() {
     }
   }
 
+  /** Sends whatever step 2 collected, once there is a token for it. */
+  async function sendHeldFiles(token: string) {
+    for (const kind of DOCUMENT_KINDS) {
+      const file = files[kind];
+      if (!file) continue;
+
+      setDocState((s) => ({ ...s, [kind]: "sending" }));
+      const body = new FormData();
+      body.set("token", token);
+      body.set("kind", kind);
+      body.set("file", file);
+
+      try {
+        const res = await fetch("/api/documents/upload", { method: "POST", body });
+        const json = (await res.json()) as { ok: boolean; error?: string };
+        setDocState((s) => ({ ...s, [kind]: json.ok ? "done" : "error" }));
+        if (!json.ok) {
+          setFileErrors((e) => ({ ...e, [kind]: json.error ?? "That did not go through." }));
+        }
+      } catch {
+        setDocState((s) => ({ ...s, [kind]: "error" }));
+        setFileErrors((e) => ({ ...e, [kind]: "No connection. Try again." }));
+      }
+    }
+  }
+
   async function submit() {
+    /* Both documents are required where the departure asks for them —
+       an application without them cannot be checked, which is the whole
+       point of asking at this stage. */
+    if (needsDocuments) {
+      const missing = DOCUMENT_KINDS.filter((k) => !files[k]);
+      if (missing.length) {
+        setFileErrors((e) => {
+          const next = { ...e };
+          for (const k of missing) next[k] = "This one is required.";
+          return next;
+        });
+        setDocState((s) => {
+          const next = { ...s };
+          for (const k of missing) next[k] = "error";
+          return next;
+        });
+        return;
+      }
+    }
+
     setSending(true);
     try {
       const res = await fetch("/api/somewhere/apply", {
@@ -127,6 +202,12 @@ export default function ApplyModal() {
       /* `received` is true if the application was stored OR mailed —
          either one means we have it. */
       if (json.ok && json.reference && json.received) {
+        /* The application is safe at this point. Documents go up next;
+           if one fails the application still stands, and the done
+           screen offers the upload again rather than pretending the
+           whole thing failed. */
+        if (json.upload) await sendHeldFiles(json.upload);
+
         setDone({ reference: json.reference, delivered: true, upload: json.upload ?? null });
         track(EVENTS.applicationLodged, { trip: a.event || "none" });
       } else {
@@ -138,6 +219,27 @@ export default function ApplyModal() {
       track(EVENTS.applyFailed, { trip: a.event || "none", reason: "network" });
     } finally {
       setSending(false);
+    }
+  }
+
+  /* Which documents did not land. Empty is the happy path. */
+  const docsFailed = DOCUMENT_KINDS.filter((k) => docState[k] === "error");
+
+  /** Re-send one document against the token we already hold. */
+  async function retry(kind: DocumentKind, file: File, token: string) {
+    setDocState((s) => ({ ...s, [kind]: "sending" }));
+    const body = new FormData();
+    body.set("token", token);
+    body.set("kind", kind);
+    body.set("file", file);
+    try {
+      const res = await fetch("/api/documents/upload", { method: "POST", body });
+      const json = (await res.json()) as { ok: boolean; error?: string };
+      setDocState((s) => ({ ...s, [kind]: json.ok ? "done" : "error" }));
+      if (!json.ok) setFileErrors((e) => ({ ...e, [kind]: json.error ?? "That did not go through." }));
+    } catch {
+      setDocState((s) => ({ ...s, [kind]: "error" }));
+      setFileErrors((e) => ({ ...e, [kind]: "No connection. Try again." }));
     }
   }
 
@@ -179,10 +281,37 @@ export default function ApplyModal() {
             </p>
           )}
 
+          {/* Documents were chosen in step 2 and sent with the
+              application. Confirm that, or hand back the failed ones —
+              the application itself already landed either way. */}
           {done.upload ? (
-            <div style={{ marginTop: 22, textAlign: "left" }}>
-              <UploadFields token={done.upload} compact />
-            </div>
+            docsFailed.length === 0 ? (
+              <p className="s-hint" style={{ marginTop: 12 }}>
+                ✓ Your ID and college ID came through.
+              </p>
+            ) : (
+              <div style={{ marginTop: 20, textAlign: "left" }}>
+                <p className="s-body" style={{ fontSize: 14, marginBottom: 14 }}>
+                  Your application is safe. These did not go through — try again here.
+                </p>
+                {docsFailed.map((kind) => (
+                  <DropZone
+                    key={kind}
+                    id={`re-${kind}`}
+                    title={DOCUMENT_LABELS[kind].title}
+                    hint={DOCUMENT_LABELS[kind].hint}
+                    state={docState[kind]}
+                    file={files[kind] ?? null}
+                    error={fileErrors[kind]}
+                    doneHint="Sent"
+                    onPick={(f) => {
+                      pick(kind, f);
+                      void retry(kind, f, done.upload as string);
+                    }}
+                  />
+                ))}
+              </div>
+            )
           ) : null}
 
           <div className="s-modal-actions">
@@ -426,6 +555,38 @@ export default function ApplyModal() {
                 </span>
               </div>
             </div>
+
+            {/* Departures that verify students ask for ID here, in the
+                form. The files are held until the application has been
+                created — there is nothing to attach them to before
+                that — and go up the moment it has. */}
+            {needsDocuments ? (
+              <div className="s-field s-field-full s-ups">
+                <hr className="s-rule" style={{ margin: "4px 0 2px" }} />
+                <p className="s-up-head">
+                  {DEPARTURES.find((d) => d.id === a.event)?.fest} needs two documents
+                </p>
+                <SizeNote />
+
+                {DOCUMENT_KINDS.map((kind) => (
+                  <DropZone
+                    key={kind}
+                    id={`ap-${kind}`}
+                    title={DOCUMENT_LABELS[kind].title}
+                    hint={DOCUMENT_LABELS[kind].hint}
+                    state={docState[kind]}
+                    file={files[kind] ?? null}
+                    error={fileErrors[kind]}
+                    doneHint="Tap to change"
+                    onPick={(f) => pick(kind, f)}
+                  />
+                ))}
+
+                <p className="s-hint">
+                  Stored privately, never shown on the site, and deleted after the trip.
+                </p>
+              </div>
+            ) : null}
           </div>
         )}
 

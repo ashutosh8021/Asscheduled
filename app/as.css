@@ -1624,6 +1624,19 @@ body.s-locked { overflow: hidden; }
   max-width: 52ch;
 }
 
+/* .s-drop is a <label>, so inside the application form it inherits
+   `.s-field label`, which is uppercase 11px mono meant for field
+   captions. Reset it here or the filename and the prompt come out
+   shouting and unreadable. */
+.s-field .s-drop,
+.s-drop {
+  font-family: var(--s-mono);
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
 .s-drop {
   display: flex;
   align-items: center;
@@ -1727,4 +1740,15 @@ body.s-locked { overflow: hidden; }
   /* The 76px target is already well past the 44px minimum, so only the
      padding tightens. */
   .s-drop { padding: 14px 15px; }
+}
+
+/* The document block inside the application form. */
+.s-up-head {
+  font-family: var(--s-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--s-rust);
+  margin-bottom: 2px;
 }
