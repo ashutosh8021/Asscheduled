@@ -20,7 +20,7 @@ interface Doc {
 }
 
 const KIND_LABEL: Record<string, string> = {
-  photo_id: "Aadhaar",
+  photo_id: "Government photo ID",
   college_id: "College ID",
 };
 

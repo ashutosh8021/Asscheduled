@@ -73,8 +73,8 @@ export default async function DocumentsPage({
 
         <div style={{ maxWidth: 620, marginTop: 26 }}>
           <p className="s-body">
-            Two documents and we can book your travel. Your Aadhaar has to match the name on the
-            ticket, which is why we need it; the college ID confirms you are a student.
+            Two documents and we can book your travel. Your ID has to match the name on the ticket,
+            which is why we need it; the college ID confirms you are a student.
           </p>
           <p className="s-body" style={{ marginTop: 14 }}>
             These are stored privately, are never shown on the site, and are deleted after the trip

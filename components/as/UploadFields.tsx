@@ -16,22 +16,18 @@ import { DOCUMENT_KINDS, MAX_BYTES, type DocumentKind } from "@/lib/documentRule
    lose the first, and so somebody on a slow connection sees the first
    land instead of watching one bar for a minute. */
 
-/* Asked for plainly, with the reason attached. The earlier version
-   offered four alternatives and ended "you do not have to send
-   Aadhaar", which reads as apologising for the question — and the
-   train booking genuinely needs it. State what is required and why;
-   people mind that far less than being hedged at.
-
-   The stored `kind` stays "photo_id". It is a database value, not a
-   label, and renaming it would mean a migration for nothing. */
+/* Alternatives are offered, because they are genuinely accepted. What
+   is not said is "you do not have to send Aadhaar" — spelling out the
+   opt-out reads as apologising for the question and invites the answer
+   nobody wants. Listing what works is enough. */
 export const DOCUMENT_LABELS: Record<DocumentKind, { title: string; hint: string }> = {
   photo_id: {
-    title: "Aadhaar",
-    hint: "Your train ticket is booked against this, so the name has to match exactly.",
+    title: "Government photo ID",
+    hint: "Masked Aadhaar is ideal. Passport, driving licence or voter ID are all fine.",
   },
   college_id: {
     title: "College ID",
-    hint: "Front of the card, with your name and the college readable. AIIMS checks this at the gate.",
+    hint: "Front of the card, with your name and the college readable.",
   },
 };
 

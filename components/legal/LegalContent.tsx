@@ -106,9 +106,10 @@ export function PrivacyPane({ level: H = "h3" }: { level?: PaneLevel } = {}) {
 
       <H>Identity documents</H>
       <p>
-        Some departures require your Aadhaar and your college ID. We need the Aadhaar to book rail
-        travel in your name — the name on the ticket has to match the ID you travel with — and the
-        college ID to confirm you are a student, which the host campus checks on entry.
+        Some departures require a government photo ID and a college ID. We need the first to book
+        rail travel in your name — the name on the ticket has to match the ID you travel with — and
+        the second to confirm you are a student, which the host campus checks on entry. Masked
+        Aadhaar is ideal; passport, driving licence and voter ID are equally acceptable.
       </p>
       <p>
         Where a departure asks for them, they are part of the application. Where it does not, they
