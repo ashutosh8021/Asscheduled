@@ -11,7 +11,11 @@ import { GALLERY_ALL, GALLERY_WIDE } from "@/lib/gallery";
 import { DEPARTURES, shortPrice } from "@/lib/departures";
 
 /* Homepage body, in the comp's order:
-   editorial brand moment → NOW SCHEDULED rail → gallery strip → final CTA. */
+   NOW SCHEDULED rail → editorial brand moment → gallery strip → final CTA.
+
+   The departures lead. Somebody arriving wants to know what is on
+   before they want to know who we are, and the hero above already
+   named the fests — this is where they get a price and a picture. */
 
 /* "A few from our previous trips" — so these must be exactly that.
    Real frames from trips that ran; see lib/gallery.ts. */
@@ -22,46 +26,18 @@ export default function HomeSections() {
 
   return (
     <>
-      {/* ---------- EDITORIAL BRAND MOMENT ---------- */}
-      <section className="s-sec s-wrap">
-        <div className="s-split">
-          <Reveal>
-            <p className="s-eyebrow" style={{ marginBottom: 18 }}>
-              {HOME.aboutEyebrow}
-            </p>
+      {/* These two swap places by screen. Departures lead on a laptop,
+          where there is room to take both in; on a phone the editorial
+          block comes first, as it always did. Done with `order` on a
+          flex column rather than by rendering either twice.
 
-            <h2 className="s-h2">{HOME.aboutTitle}</h2>
-
-            <p className="s-body" style={{ marginTop: 24 }}>
-              {HOME.aboutBody}
-            </p>
-
-            <p className="s-body" style={{ marginTop: 18 }}>
-              {HOME.aboutKicker}{" "}
-              <span className="s-underline s-underline-sm">{HOME.aboutKickerMark}</span>.
-            </p>
-
-            <p style={{ marginTop: 32 }}>
-              <Link href="/about" className="s-link">
-                {HOME.aboutCta} <span className="s-arrow">→</span>
-              </Link>
-            </p>
-          </Reveal>
-
-          <Reveal delay={1} className="s-bleed">
-            <Tilt max={4} lift={8}>
-              <Slot
-                slot={GALLERY_WIDE[0]}
-                className="s-gal-tile s-home-editorial"
-                sizes="(max-width: 900px) 100vw, 48vw"
-              />
-            </Tilt>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ---------- NOW SCHEDULED ---------- */}
-      <section className="s-sec s-sec-ink">
+          DOM order is departures-first deliberately: that is the more
+          important content, so it is what a crawler and a screen
+          reader meet first. The phone's visual reorder is the one that
+          diverges from it. */}
+      <div className="s-home-order">
+        {/* ---------- NOW SCHEDULED ---------- */}
+        <section className="s-sec s-sec-ink s-home-now">
         <div className="s-wrap">
           <Reveal>
             <p className="s-eyebrow" style={{ marginBottom: 12 }}>
@@ -147,6 +123,46 @@ export default function HomeSections() {
           </Reveal>
         </div>
       </section>
+
+        {/* ---------- EDITORIAL BRAND MOMENT ---------- */}
+        <section className="s-sec s-wrap s-home-ed">
+        <div className="s-split">
+          <Reveal>
+            <p className="s-eyebrow" style={{ marginBottom: 18 }}>
+              {HOME.aboutEyebrow}
+            </p>
+
+            <h2 className="s-h2">{HOME.aboutTitle}</h2>
+
+            <p className="s-body" style={{ marginTop: 24 }}>
+              {HOME.aboutBody}
+            </p>
+
+            <p className="s-body" style={{ marginTop: 18 }}>
+              {HOME.aboutKicker}{" "}
+              <span className="s-underline s-underline-sm">{HOME.aboutKickerMark}</span>.
+            </p>
+
+            <p style={{ marginTop: 32 }}>
+              <Link href="/about" className="s-link">
+                {HOME.aboutCta} <span className="s-arrow">→</span>
+              </Link>
+            </p>
+          </Reveal>
+
+          <Reveal delay={1} className="s-bleed">
+            <Tilt max={4} lift={8}>
+              <Slot
+                slot={GALLERY_WIDE[0]}
+                className="s-gal-tile s-home-editorial"
+                sizes="(max-width: 900px) 100vw, 48vw"
+              />
+            </Tilt>
+          </Reveal>
+        </div>
+      </section>
+
+      </div>
 
       {/* ---------- GALLERY STRIP ---------- */}
       <section className="s-sec-tight s-sec-paper2">

@@ -2182,3 +2182,13 @@ body.s-locked { overflow: hidden; }
   padding-top: 17px;
   padding-bottom: 17px;
 }
+
+/* The departures and the editorial block trade places by screen.
+   Departures lead on a laptop; on a phone the editorial block comes
+   first, as it always did. DOM order is departures-first because that
+   is the more important content — the phone is the view that reorders. */
+.s-home-order { display: flex; flex-direction: column; }
+
+@media (max-width: 720px) {
+  .s-home-order .s-home-ed { order: -1; }
+}
