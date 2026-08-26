@@ -1822,3 +1822,63 @@ body.s-locked { overflow: hidden; }
   }
   .s-ly-reel { flex: 0 0 auto; width: 62vw; }
 }
+
+/* ------------------------------------------------------------
+   TRAIN WINDOW
+   ------------------------------------------------------------
+   Drawn, not filmed. Each moving band is rendered twice and slid
+   left by exactly one tile before snapping back; because the tile
+   ends where it begins the snap is invisible. Different speeds per
+   layer is what reads as distance.
+
+   Everything animated is a transform, so it composites on the GPU
+   and never triggers layout. */
+.s-tw { margin: 0; }
+
+.s-tw-frame {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  border-radius: 34px;
+  overflow: hidden;
+  background: #0B1424;
+  border: 1px solid rgba(147, 163, 188, 0.18);
+}
+.s-tw-svg { display: block; width: 100%; height: 100%; }
+
+.s-tw-band { will-change: transform; }
+
+@keyframes s-tw-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-400px); }
+}
+/* Rain falls rather than passes, so it travels on Y. */
+@keyframes s-tw-fall {
+  from { transform: translateY(0); }
+  to   { transform: translateY(500px); }
+}
+
+.s-tw-far    { animation: s-tw-scroll 34s linear infinite; }
+.s-tw-near   { animation: s-tw-scroll 19s linear infinite; }
+.s-tw-poles  { animation: s-tw-scroll  6s linear infinite; }
+.s-tw-lights { animation: s-tw-scroll  4s linear infinite; }
+.s-tw-rain   { animation: s-tw-fall  1.15s linear infinite; }
+
+.s-tw-cap {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  font-family: var(--s-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--s-grey-2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* The scene was never carrying the message, so stopping it costs
+     nothing. It stands as a still illustration. */
+  .s-tw-band,
+  .s-tw-rain { animation: none; }
+}
