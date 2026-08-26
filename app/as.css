@@ -1752,3 +1752,73 @@ body.s-locked { overflow: hidden; }
   color: var(--s-rust);
   margin-bottom: 2px;
 }
+
+/* ------------------------------------------------------------
+   LAST YEAR
+   ------------------------------------------------------------
+   Vertical clips, shown vertically. The footage was shot on a
+   phone held upright at a gig; cropping it into a landscape box
+   would throw away most of the frame to make it look like
+   something it is not. */
+.s-ly-title { font-size: clamp(28px, 3.8vw, 52px); margin-top: 12px; }
+.s-ly-note { margin-top: 18px; max-width: 56ch; }
+
+/* The clips take the wider half — they are the point of the section. */
+.s-ly { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr); align-items: center; }
+
+.s-ly-reels {
+  display: flex;
+  gap: clamp(12px, 1.8vw, 20px);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 6px;
+}
+.s-ly-reels::-webkit-scrollbar { display: none; }
+
+.s-ly-reel {
+  margin: 0;
+  /* Share the column evenly rather than each taking a fixed width, so
+     two clips fill the half they are given at any screen size. */
+  flex: 1 1 0;
+  min-width: 190px;
+  scroll-snap-align: start;
+}
+.s-ly-reel video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  object-fit: cover;
+  background: var(--s-ink);
+  border: 1px solid var(--s-line);
+}
+.s-ly-reel figcaption {
+  margin-top: 8px;
+  font-family: var(--s-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--s-grey);
+}
+
+@media (max-width: 900px) {
+  /* .s-ly sets its own columns further up the file, which overrides
+     the rule that normally collapses .s-split here — so it has to
+     collapse itself. */
+  .s-ly { grid-template-columns: 1fr; align-items: start; }
+  .s-ly-reels { margin-top: 6px; }
+}
+
+@media (max-width: 720px) {
+  /* Runs off both edges, like the homepage gallery, so the next clip
+     peeking is what says it scrolls. */
+  .s-ly-reels {
+    margin-left: calc(var(--s-pad) * -1);
+    margin-right: calc(var(--s-pad) * -1);
+    padding-left: var(--s-pad);
+    padding-right: var(--s-pad);
+    scroll-padding-left: var(--s-pad);
+  }
+  .s-ly-reel { flex: 0 0 auto; width: 62vw; }
+}

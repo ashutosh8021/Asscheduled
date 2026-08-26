@@ -6,6 +6,7 @@ import Slot from "@/components/as/Slot";
 import Accordion from "@/components/as/Accordion";
 import ApplyButton from "@/components/as/ApplyButton";
 import DepartureHero from "@/components/as/DepartureHero";
+import LastYear from "@/components/as/LastYear";
 import { DETAIL, SOMEWHERE } from "@/lib/copy";
 import { DEPARTURES, batchLabel, getDeparture, priceRange } from "@/lib/departures";
 import { abs } from "@/lib/site";
@@ -283,6 +284,24 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
             </Reveal>
           </div>
         </section>
+
+        {/* ---------- LAST YEAR ----------
+            Only for departures that have footage from a previous
+            edition. It sits after the schedule on purpose: by then
+            somebody knows what the week is, and this answers what it
+            actually feels like. */}
+        {d.lastYear ? (
+          <section className="s-wrap s-sec-tight">
+            <Reveal>
+              <LastYear
+                eyebrow={d.lastYear.eyebrow}
+                title={d.lastYear.title}
+                note={d.lastYear.note}
+                reels={d.lastYear.reels}
+              />
+            </Reveal>
+          </section>
+        ) : null}
 
         {/* ---------- CLOSING ---------- */}
         <section

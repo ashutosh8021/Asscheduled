@@ -37,3 +37,4 @@ asset/**/*.mov
 # argv once wrote one to a file called "x" in the repo root.
 /.shots/
 /x
+.candidates/

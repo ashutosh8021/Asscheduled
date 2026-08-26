@@ -62,6 +62,14 @@ export interface ItineraryDay {
   detail: string | null;
 }
 
+/** A vertical clip in the "last year" strip. */
+export interface Reel {
+  src: string;
+  poster: string;
+  alt: string;
+  credit?: string;
+}
+
 export interface Departure {
   id: string;
   slug: string;
@@ -125,6 +133,19 @@ export interface Departure {
   mosaic: Slot[];
   /** Optional film that opens the hero, ahead of `wide`. */
   clip?: Clip;
+  /**
+   * Footage from the last edition of this fest.
+   *
+   * Only ever a previous year, never dressed up as one of ours — the
+   * point is to show what the place is actually like, and the section
+   * says which year it is.
+   */
+  lastYear?: {
+    eyebrow: string;
+    title: string;
+    note: string;
+    reels: Reel[];
+  };
   /**
    * Ask for a college ID and a government photo ID as part of applying,
    * rather than after acceptance.
@@ -250,6 +271,25 @@ export const DEPARTURES: Departure[] = [
         credit: "PULSE, AIIMS New Delhi",
       },
     ],
+    lastYear: {
+      eyebrow: "PULSE'25",
+      title: "WHAT LAST YEAR LOOKED LIKE",
+      note: "Shot on the ground at the last edition. Not a showreel, not borrowed — just what the stage looked like from where everyone was standing.",
+      reels: [
+        {
+          src: "/video/pulse25-red.mp4",
+          poster: "/video/pulse25-red.jpg",
+          alt: "A performer mid-song under red stage light at PULSE 2025",
+          credit: "PULSE, AIIMS New Delhi",
+        },
+        {
+          src: "/video/pulse25-green.mp4",
+          poster: "/video/pulse25-green.jpg",
+          alt: "A performer at the microphone under green light at PULSE 2025",
+          credit: "PULSE, AIIMS New Delhi",
+        },
+      ],
+    },
     clip: {
       src: "/video/pulse-stage.mp4",
       portrait: "/video/pulse-stage-portrait.mp4",

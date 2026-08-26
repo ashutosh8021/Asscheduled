@@ -19,6 +19,27 @@ Shot by the PULSE / AIIMS media team.
 | `public/img/aiims/classical.jpg` · `public/img/wide/aiims-classical.jpg` | `DSC00106.JPG` |
 | `public/img/aiims/troupe.jpg` · `public/img/wide/aiims-troupe.jpg` | `IMG_2847.JPG` |
 
+### Last year's footage — `PULSE'25`
+
+`public/video/pulse25-red.mp4` and `pulse25-green.mp4`, shown in the "what
+last year looked like" section, plus `pulse-stage.mp4` and
+`pulse-mainstage.mp4` on the hero. Same source and same permission as the
+stills above. Cut from `MVI_9661`, `MVI_9511`, `C3610` and `C3818`.
+
+The two `MVI_` clips were shot on a camera held sideways, so they carry no
+rotation flag and need `transpose=2` — they are portrait footage inside a
+landscape file.
+
+The section is labelled `PULSE'25` on the page. That label is the basis on
+which showing it is honest: it is a previous edition of the festival, not an
+AS Scheduled trip, and it must never be presented as one.
+
+**Not used, and must not be.** `asset/vidssave.com SEEDHE MAUT - Naksha _
+Live at Mood Indigo IIT Bombay 2025 _ MI Studio 720P.mp4` is a YouTube
+download of Mood Indigo's own production of a commercial artist's set. It is
+gitignored and is not on the site. Using it would be the fest's video, the
+artist's performance and the label's recording, all without permission.
+
 Originals are in `asset/AIIMS DELHI/`. The web files are 16:9 and 3:4 crops
 with EXIF stripped — the camera originals carried GPS coordinates, serial
 numbers and capture timestamps, none of which belong on a public server.
