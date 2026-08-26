@@ -4,7 +4,7 @@ import type { MetadataRoute } from "next";
    an added-to-homescreen launch should not flash white. */
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "AS SCHEDULED — Season 01",
+    name: "AS SCHEDULED — Season 02",
     short_name: "AS SCHEDULED",
     description:
       "Curated six-day departures around India's biggest college fests. 19 seats. Application only.",

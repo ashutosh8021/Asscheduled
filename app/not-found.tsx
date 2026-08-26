@@ -5,7 +5,7 @@ import Footer from "@/components/layout/Footer";
 
 export const metadata: Metadata = {
   title: "NO SUCH FILE · AS SCHEDULED",
-  description: "That reference does not exist in the Season 01 record.",
+  description: "That reference does not exist in the Season 02 record.",
   robots: { index: false, follow: false },
 };
 
@@ -27,7 +27,7 @@ export default function NotFound() {
             <span className="st st-grey">NOT ON RECORD</span>
             <p className="disp">Nothing is filed under that address.</p>
             <p className="rail-empty-note">
-              Either the reference was mistyped or the file was never opened. Season 01 runs to
+              Either the reference was mistyped or the file was never opened. Season 02 runs to
               four departures and a short list of pending ones — all of them are on the board.
             </p>
             <div className="err-acts">

@@ -35,7 +35,10 @@ export default function Header() {
     <>
       <div className="annc">
         <p>
-          SEASON 01 APPLICATIONS OPEN · 19 SEATS PER DEPARTURE · ₹500 REGISTRATION, NON-REFUNDABLE
+          {/* Renders on /paperwork, the 404 and the error page, which are
+              live. The ₹500 is a separate question — it is not currently
+              charged; flagged with Mannat. */}
+          SEASON 02 APPLICATIONS OPEN · 19 SEATS PER DEPARTURE · ₹500 REGISTRATION, NON-REFUNDABLE
         </p>
       </div>
 

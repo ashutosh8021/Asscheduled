@@ -26,7 +26,8 @@ create extension if not exists "pgcrypto";
 -- than ordinary bad input.
 create table if not exists applications (
   id            uuid primary key default gen_random_uuid(),
-  -- The AS-S1-XXXXXXXXXX code the applicant is shown and quotes back.
+  -- The AS-S2-XXXXXXXXXX code the applicant is shown and quotes back.
+  -- Season 01 rows still read AS-S1-; references are never rewritten.
   reference     text not null unique,
   -- REN-26 / THO-26. Deliberately not a foreign key: departures live in
   -- lib/departures.ts (CLAUDE.md: trip data lives in one place), so a

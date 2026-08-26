@@ -33,7 +33,9 @@ export default async function ThankYouPage({
   const { ref } = await searchParams;
   /* Only ever display a reference matching the format we issue — this value
      comes from the URL and is therefore attacker-controlled. */
-  const reference = ref && /^AS-S1-[A-Z0-9]{1,16}$/.test(ref) ? ref : null;
+  /* Both seasons: references issued during Season 01 are still valid
+     and still quoted back at us. */
+  const reference = ref && /^AS-S[12]-[A-Z0-9]{1,16}$/.test(ref) ? ref : null;
 
   return (
     <>

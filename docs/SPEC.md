@@ -1,4 +1,4 @@
-# AS SCHEDULED — Product & Brand Spec (Season 01)
+# AS SCHEDULED — Product & Brand Spec (Season 02)
 Place at `docs/SPEC.md`. CLAUDE.md points here. Reference build: `reference/as-scheduled-v4.html`.
 
 ## 1. What this is

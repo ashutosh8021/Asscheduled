@@ -35,7 +35,11 @@ export const HOME = {
     "NO ITINERARY SURVIVES CONTACT",
   ],
 
-  heroEyebrow: "SEASON 01",
+  heroEyebrow: "SEASON 02",
+  /* Season 01 ran last year. TODO(mannat): confirm 16 SEP is the
+     season opening rather than PULSE's own departure, which the data
+     has as the 17th. */
+  heroEyebrowNote: "16 SEP",
   heroLine1: "WE BRING",
   /* The comp shows CULTURE and notes the word cycles. The rest are
      written to match its register — short, concrete, one word.
@@ -191,7 +195,7 @@ export const SOMEWHERE = {
   soldOutLabel: "SOLD OUT",
   /* The legends curved around the round stamp. */
   soldOutArcTop: "APPLICATIONS CLOSED",
-  soldOutArcBottom: "SEASON 01",
+  soldOutArcBottom: "SEASON 02",
   soldOutNote: "This one is full. Applications are closed.",
   soldOutCta: "SOLD OUT",
   priceLabel: "PRICE (ALL INCLUSIVE)",

@@ -1,5 +1,5 @@
 /* ============================================================
-   SEASON 01 DEPARTURES — transcribed from the approved comps in
+   SEASON 02 DEPARTURES — transcribed from the approved comps in
    /asset (WhatsApp Image 2026-08-15 at 17.36.40 (5)–(8)).
 
    This is the single source of truth for the "SOMEWHERE" routes.

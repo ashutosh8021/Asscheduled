@@ -1884,19 +1884,11 @@ body.s-locked { overflow: hidden; }
 }
 
 /* ------------------------------------------------------------
-   HOMEPAGE HERO — two comps, one page
+   HOMEPAGE HERO
    ------------------------------------------------------------
-   Desktop follows the light comp, phones the dark one. Both are in
-   the DOM and CSS picks between them, which is only reasonable
-   because neither is expensive: type on one side, a few kilobytes
-   of SVG on the other. No second video, no second image set. */
-.s-hh-dark { display: none; }
-
-@media (max-width: 820px) {
-  .s-hh-light { display: none; }
-  .s-hh-dark { display: block; }
-}
-
+   One layout, sized for whatever it lands on. The type is the
+   image, so it is allowed to be enormous — this is the one place
+   on the site that shouts. */
 /* ---- the ticker ---- */
 /* Fixed above the header, which is itself fixed. The header is then
    pushed down by exactly this height so the two stack rather than
@@ -2012,9 +2004,12 @@ body.s-locked { overflow: hidden; }
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  width: clamp(200px, 21vw, 300px);
-  aspect-ratio: 3 / 2;
+  gap: 4px;
+  /* Wide rather than tall. At 3:2 it read as a poster parked beside
+     the headline; widening it and taking about a third off the height
+     makes it a button that happens to be big. */
+  width: clamp(250px, 28vw, 400px);
+  height: clamp(104px, 9.8vw, 142px);
   background: var(--s-rust);
   color: var(--s-bone);
   border: 0;
@@ -2028,11 +2023,29 @@ body.s-locked { overflow: hidden; }
   letter-spacing: 0.01em;
   text-transform: uppercase;
 }
-.s-hh-apply-note {
-  font-family: var(--s-mono);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.16em;
+.s-hh-apply-arrow { font-size: 20px; line-height: 1; }
+
+/* The list and its one mark share a stacking context, so the mark can
+   sit in the gap without belonging to any row. */
+.s-hh-listwrap { position: relative; }
+
+.s-hh-star {
+  position: absolute;
+  /* The empty middle: clear of the fest names on the left and the
+     campus and date on the right. */
+  left: 46%;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(-12deg);
+  font-size: clamp(52px, 7vw, 104px);
+  line-height: 1;
+  color: var(--s-rust);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* No room for it once the rows go two-line. */
+@media (max-width: 720px) {
+  .s-hh-star { display: none; }
 }
 
 .s-hh-list { list-style: none; margin: clamp(34px, 5vw, 64px) 0 0; padding: 0; border-top: 1px solid var(--s-line); }
@@ -2067,6 +2080,41 @@ body.s-locked { overflow: hidden; }
   letter-spacing: 0.1em;
   min-width: 7ch;
   text-align: right;
+}
+
+/* ---- phone ---- */
+@media (max-width: 720px) {
+  /* The APPLY block goes. The header already carries I'M COMING at
+     thumb height; repeating it here costs a third of a small screen
+     to say something already on screen. */
+  .s-hh-apply { display: none; }
+
+  /* The phone header is 77px, taller than the desktop 65 because the
+     CTA wraps to two lines. main only pads for the ticker, so the
+     clearance has to come from here. */
+  .s-hh-light { padding-top: 96px; }
+
+  .s-hh-row { display: block; margin-top: 10px; }
+
+  /* Bigger relative to the screen than on desktop, which is what the
+     comp's note asks for — 15.5vw puts WE BRING across the full
+     measure at any phone width. */
+  .s-hh-title { font-size: clamp(46px, 15.5vw, 76px); line-height: 0.88; }
+  .s-hh-tail { font-size: 0.56em; margin-top: 0.12em; }
+
+  /* The row becomes two lines: the fest reads first, the where and
+     when sit under it. Side by side at this width the campus name
+     was being squeezed into two or three characters. */
+  .s-hh-listrow {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2px 14px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+  .s-hh-fest { grid-column: 1 / -1; font-size: clamp(24px, 7.4vw, 34px); }
+  .s-hh-campus { margin-left: 0; font-size: 11px; }
+  .s-hh-when { font-size: 12px; min-width: 0; }
 }
 
 /* ---- phone: the dark comp ---- */

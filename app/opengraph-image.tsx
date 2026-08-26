@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "AS SCHEDULED — Season 01. 19 seats per departure. Application only.";
+export const alt = "AS SCHEDULED — Season 02. 19 seats per departure. Application only.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -26,7 +26,7 @@ export default function OpengraphImage() {
       >
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 22, letterSpacing: 4 }}>
           <span>AS SCHEDULED®</span>
-          <span style={{ color: "#8A8FA1" }}>SEASON 01</span>
+          <span style={{ color: "#8A8FA1" }}>SEASON 02</span>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column" }}>

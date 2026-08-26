@@ -66,7 +66,7 @@ export const metadata: Metadata = {
      does not override it — which told crawlers the entire site was a
      duplicate of "/". Each page declares its own canonical instead. */
   openGraph: {
-    title: "AS SCHEDULED — Season 01 Departure Board",
+    title: "AS SCHEDULED — Season 02 Departure Board",
     description: "One fest. One city. Six days. Nineteen strangers. Application only.",
     url: "/",
     siteName: SITE_NAME,
@@ -75,7 +75,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "AS SCHEDULED — Season 01 Departure Board",
+    title: "AS SCHEDULED — Season 02 Departure Board",
     description: "One fest. One city. Six days. Nineteen strangers. Application only.",
   },
   formatDetection: { telephone: false, address: false, email: false },

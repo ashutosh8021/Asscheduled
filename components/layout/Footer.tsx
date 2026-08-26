@@ -88,7 +88,7 @@ export default function Footer() {
                 <Link href="/contact">Contact</Link>
               </li>
               {!HAS_ANY_CONTACT && (
-                <li className="foot-pending">Channels published before Season 01 departs.</li>
+                <li className="foot-pending">Channels published before Season 02 departs.</li>
               )}
             </ul>
             <h2 style={{ marginTop: 26 }}>Paperwork</h2>
@@ -117,7 +117,7 @@ export default function Footer() {
         </div>
         <div className="foot-legal">
           <span>© 2026 ROITCOVE VENTURES LLP · LLPIN ACZ-2215 · India</span>
-          <span>AS SCHEDULED® — Season 01</span>
+          <span>AS SCHEDULED® — Season 02</span>
         </div>
       </footer>
       {pane && <LegalSheet pane={pane} setPane={setPane} onClose={() => setPane(null)} />}

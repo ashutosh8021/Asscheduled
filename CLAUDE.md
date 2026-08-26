@@ -1,4 +1,4 @@
-# AS SCHEDULED — Season 01 platform
+# AS SCHEDULED — Season 02 platform
 
 Application-only curated travel platform. ROITCOVE VENTURES LLP (LLPIN ACZ-2215, India).
 This file is a contract, not documentation. Every rule here changes behavior.
