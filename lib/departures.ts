@@ -643,6 +643,27 @@ export function batchLabel(batches: readonly unknown[]): string {
   return batches.length === 1 ? "1 BATCH" : `+${batches.length} BATCHES`;
 }
 
+/**
+ * The next departure anyone can still join.
+ *
+ * Earliest by start date, skipping anything sold out — a countdown to
+ * a trip nobody can book is worse than no countdown. Null once the
+ * season is over, and callers must handle that rather than assume.
+ */
+export function nextDeparture(now: Date = new Date()): Departure | null {
+  const open = DEPARTURES.filter((d) => !d.soldOut)
+    .map((d) => ({ d, at: new Date(`${d.batches[0]?.start ?? ""}T00:00:00+05:30`) }))
+    .filter((x) => !Number.isNaN(x.at.getTime()) && x.at > now)
+    .sort((a, b) => a.at.getTime() - b.at.getTime());
+
+  return open[0]?.d ?? null;
+}
+
+/** The ISO start of a departure, as a Date. */
+export function departureStart(d: Departure): Date {
+  return new Date(`${d.batches[0]?.start ?? ""}T00:00:00+05:30`);
+}
+
 export function priceRange(d: Pick<Departure, "price" | "priceMax">): string {
   return d.priceMax && d.priceMax !== d.price
     ? `${inr(d.price)} – ${inr(d.priceMax)}`

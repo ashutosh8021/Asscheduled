@@ -1882,3 +1882,255 @@ body.s-locked { overflow: hidden; }
   .s-tw-band,
   .s-tw-rain { animation: none; }
 }
+
+/* ------------------------------------------------------------
+   HOMEPAGE HERO — two comps, one page
+   ------------------------------------------------------------
+   Desktop follows the light comp, phones the dark one. Both are in
+   the DOM and CSS picks between them, which is only reasonable
+   because neither is expensive: type on one side, a few kilobytes
+   of SVG on the other. No second video, no second image set. */
+.s-hh-dark { display: none; }
+
+@media (max-width: 820px) {
+  .s-hh-light { display: none; }
+  .s-hh-dark { display: block; }
+}
+
+/* ---- the ticker ---- */
+/* Fixed above the header, which is itself fixed. The header is then
+   pushed down by exactly this height so the two stack rather than
+   overlap — see .s-root[data-ticker] below. */
+.s-tick-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 950;
+  background: var(--s-ink-2);
+  color: var(--s-bone);
+  overflow: hidden;
+  white-space: nowrap;
+  /* Height is stated, not left to padding plus line-height. The header
+     is positioned by the same number, and a derived one drifts the
+     moment the font or the size changes — which is exactly how the
+     header ended up sitting on top of this. */
+  height: var(--s-tick-h, 38px);
+  display: flex;
+  align-items: center;
+}
+.s-tick-track {
+  display: inline-flex;
+  will-change: transform;
+  animation-name: s-tick-run;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+.s-tick-run > span {
+  font-family: var(--s-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  padding-right: 30px;
+}
+.s-tick-run i { font-style: normal; color: var(--s-rust-soft); padding-left: 30px; }
+@keyframes s-tick-run {
+  from { transform: translateX(0); }
+  /* Half, because the track holds two copies of the same run. */
+  to { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .s-tick-track { animation: none; }
+}
+
+/* One number, used by both, so they cannot drift apart. */
+.s-root[data-ticker="true"] { --s-tick-h: 38px; }
+.s-root[data-ticker="true"] .s-hdr { top: var(--s-tick-h); }
+.s-root[data-ticker="true"] main { padding-top: var(--s-tick-h); }
+
+.s-sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---- desktop: the light comp ---- */
+/* Clears the fixed header on its own, as every other first-section on
+   the site does. main only pads for the ticker, which is the part that
+   is new — the header was always something sections cleared for
+   themselves. Header measures 65px here, 77px on a phone. */
+.s-hh-light { padding-top: clamp(58px, 7vw, 94px); background: var(--s-paper); }
+.s-hh-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: clamp(24px, 4vw, 60px);
+  margin-top: 14px;
+}
+.s-hh-title {
+  font-family: var(--s-heavy);
+  /* Deliberately enormous. The comp's whole idea is that the type is
+     the image, so this is the one place on the site that shouts. */
+  font-size: clamp(56px, 9.4vw, 150px);
+  line-height: 0.86;
+  letter-spacing: -0.005em;
+  text-transform: uppercase;
+  margin: 0;
+}
+.s-hh-tail {
+  display: inline-block;
+  font-family: var(--s-ital);
+  font-style: italic;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.62em;
+  line-height: 1;
+  margin-top: 0.06em;
+}
+
+/* The cycling word. The ghost copy underneath holds the width so a
+   longer word cannot shove the line below it. */
+.s-cyc { position: relative; display: inline-block; color: var(--s-rust); }
+.s-cyc-ghost { display: block; visibility: hidden; height: 0; overflow: hidden; }
+.s-cyc-ghost span { display: block; }
+.s-cyc-live { display: block; animation: s-cyc-in 0.42s var(--s-bez) both; }
+@keyframes s-cyc-in {
+  from { opacity: 0; transform: translateY(0.16em); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .s-cyc-live { animation: none; }
+}
+
+.s-hh-apply {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: clamp(200px, 21vw, 300px);
+  aspect-ratio: 3 / 2;
+  background: var(--s-rust);
+  color: var(--s-bone);
+  border: 0;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.s-hh-apply:hover { background: var(--s-rust-2); }
+.s-hh-apply-word {
+  font-family: var(--s-heavy);
+  font-size: clamp(26px, 3vw, 46px);
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+.s-hh-apply-note {
+  font-family: var(--s-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+}
+
+.s-hh-list { list-style: none; margin: clamp(34px, 5vw, 64px) 0 0; padding: 0; border-top: 1px solid var(--s-line); }
+.s-hh-list li { border-bottom: 1px solid var(--s-line); }
+.s-hh-listrow {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  padding: clamp(16px, 2vw, 26px) var(--s-pad);
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.15s;
+}
+.s-hh-list li:hover { background: var(--s-paper-2); }
+.s-hh-fest {
+  font-family: var(--s-heavy);
+  font-size: clamp(22px, 2.6vw, 38px);
+  text-transform: uppercase;
+  letter-spacing: 0.005em;
+}
+.s-hh-campus {
+  margin-left: auto;
+  font-family: var(--s-mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  color: var(--s-grey);
+}
+.s-hh-when {
+  font-family: var(--s-mono);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  min-width: 7ch;
+  text-align: right;
+}
+
+/* ---- phone: the dark comp ---- */
+.s-hh-dark {
+  background: var(--s-ink-2);
+  color: var(--s-paper);
+  /* The phone header is the taller of the two at 77px. */
+  padding-top: clamp(96px, 26vw, 124px);
+  padding-bottom: clamp(34px, 9vw, 54px);
+}
+.s-hh-dark-eyebrow { color: var(--s-rust-soft); }
+.s-hh-dark-title {
+  font-family: var(--s-serif);
+  font-weight: 400;
+  font-size: clamp(30px, 8.4vw, 44px);
+  line-height: 1.14;
+  letter-spacing: -0.01em;
+  margin: 14px 0 0;
+}
+.s-hh-dark-title em { font-family: var(--s-ital); font-style: italic; }
+.s-hh-dark-art { margin-top: clamp(22px, 6vw, 34px); }
+
+.s-cd { margin-top: clamp(24px, 6vw, 34px); }
+.s-cd-label {
+  font-family: var(--s-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: var(--s-grey-2);
+}
+.s-cd-row { display: flex; gap: 10px; margin-top: 10px; }
+.s-cd-cell {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 4px 10px;
+  border: 1px solid rgba(247, 241, 232, 0.2);
+}
+.s-cd-num {
+  font-family: var(--s-mono);
+  font-size: clamp(20px, 6.4vw, 28px);
+  font-weight: 600;
+  /* Tabular figures, or the digits jitter every second. */
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.s-cd-unit {
+  font-family: var(--s-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  color: var(--s-grey-2);
+}
+
+.s-hh-dark-apply {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  margin-top: clamp(22px, 6vw, 30px);
+  background: var(--s-rust);
+  border-color: var(--s-rust);
+  color: var(--s-bone);
+  font-size: 14px;
+  padding-top: 17px;
+  padding-bottom: 17px;
+}

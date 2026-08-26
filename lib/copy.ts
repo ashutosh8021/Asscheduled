@@ -23,6 +23,35 @@ export const HOME = {
   heroSub: "We bring people, culture, and stories you will tell later.",
   heroCta: "APPLY",
 
+  /* ---- the two hero comps ---- */
+
+  /* Read straight off the light comp. The fourth line is cut off in
+     the image at "NO ITINERARY SURV…" — finished here as the obvious
+     completion. TODO(mannat): confirm, and add more if you have them. */
+  ticker: [
+    "YOU WILL MISS YOUR ALARM",
+    "SOMEONE CRIES AT THE STATION",
+    "WORTH IT",
+    "NO ITINERARY SURVIVES CONTACT",
+  ],
+
+  heroEyebrow: "SEASON 01",
+  heroLine1: "WE BRING",
+  /* The comp shows CULTURE and notes the word cycles. The rest are
+     written to match its register — short, concrete, one word.
+     TODO(mannat): approve or replace. */
+  heroWords: ["CULTURE", "CHAOS", "PEOPLE", "NOISE", "STORIES"],
+  heroLine3: "you will tell later.",
+  heroFormNote: "FORM 7A",
+
+  /* The dark comp's serif headline, in three lines as drawn. */
+  heroDarkLine1: "We bring people,",
+  heroDarkLine2: "culture, and stories",
+  heroDarkItalic: "you will tell later.",
+  countdownLabel: "NEXT DEPARTURE IN",
+  countdownUnits: ["DAYS", "HRS", "MIN", "SEC"],
+  trainCoach: "COACH B3 · SEAT 41",
+
   aboutEyebrow: "AS SCHEDULED",
   /* Comp headline. Profanity is the client's own brand voice —
      TODO(mannat): confirm this ships as written. */

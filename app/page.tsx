@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Shell from "@/components/as/Shell";
-import HeroVideo from "@/components/as/HeroVideo";
+import HomeHero from "@/components/as/HomeHero";
 import HomeSections from "@/components/as/home/HomeSections";
+import { HOME } from "@/lib/copy";
 import { abs } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -18,8 +19,10 @@ export const metadata: Metadata = {
 
 export default function HomePage() {
   return (
-    <Shell overHero>
-      <HeroVideo />
+    /* Not overHero any more: the hero is no longer a full-bleed image
+       for the header to float over, so it needs its own space. */
+    <Shell ticker={HOME.ticker}>
+      <HomeHero />
       <HomeSections />
     </Shell>
   );
