@@ -236,13 +236,12 @@ export const DEPARTURES: Departure[] = [
     included: [
       "As Scheduled Trip Host (2 Trip Hosts)",
       "Train 3rd AC – Round Trip (From Your City to Delhi)",
-      /* TODO(mannat): confirm. Derived from the Rendezvous pattern of
-         (days − 2) breakfasts, (days − 2) lunches, (days − 3) dinners,
-         which fits its 8-day trip exactly. Nobody stated it for a
-         5-day one — this is the only line here not taken from you. */
-      "Meals in total: 3 Breakfasts, 3 Lunches, 2 Dinners",
+      /* 18 confirmed by Mannat, 2026-08-29, replacing a count this
+         file had derived from the Rendezvous pattern. No breakdown was
+         given and none is invented — the total is what was stated. */
+      "Meals in total: 18",
       "Accommodation (Sharing Basis)",
-      "2 Entry Passes to Pulse",
+      "1 Entry Pass to Pulse",
       "Transfer from Airport / Station",
     ],
     excluded: [

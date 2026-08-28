@@ -138,7 +138,7 @@ const PULSE_PLANS: Plan[] = [
     name: "THE FESTIVAL",
     blurb: "Five days inside PULSE, and nothing else competing for them.",
     includes: [
-      "Entry passes to PULSE",
+      "Entry pass to PULSE",
       "Train 3AC — round trip, from your city",
       "Hotel, sharing basis",
       "Meals through the trip",
@@ -151,7 +151,7 @@ const PULSE_PLANS: Plan[] = [
     name: "THE FESTIVAL + DELHI",
     blurb: "The same five days, with two more spent on the city itself.",
     includes: [
-      "Entry passes to PULSE",
+      "Entry pass to PULSE",
       "Train 3AC — round trip, from your city",
       "Hotel, sharing basis",
       "Meals through the trip",
