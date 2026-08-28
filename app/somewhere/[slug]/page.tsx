@@ -123,7 +123,26 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
 
             <Reveal delay={1}>
               <div className="s-panel">
-                <p className="s-panel-h">🗓 {DETAIL.datesLabel}</p>
+                {/* Each sticker sits beside the thing it is about: the
+                    delegate pass with the dates, the discount with the
+                    price. Picked by name, so reordering the array
+                    cannot quietly swap them. */}
+                <div className="s-panel-top">
+                  <p className="s-panel-h">🗓 {DETAIL.datesLabel}</p>
+                  {d.stickers
+                    ?.filter((st) => st.slot === "header")
+                    .map((st) => (
+                      <Image
+                        key={st.src}
+                        className="s-sticker-float"
+                        src={st.small}
+                        alt={st.alt}
+                        width={st.width}
+                        height={st.height}
+                        sizes="170px"
+                      />
+                    ))}
+                </div>
 
                 <div style={{ marginTop: 14 }}>
                   {d.batches.map((b) => (
@@ -140,31 +159,25 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
                 {/* List price. The coupon is applied at the payment
                     step, so nothing is struck through here — the stamp
                     beside this panel is what says ₹1,000 comes off. */}
-                <p className="s-price-now">
-                  {priceRange({ price: d.price, priceMax: d.priceMax })}
-                  <span className="s-price-per">{SOMEWHERE.pricePer}</span>
-                </p>
-
-                {/* Beside the price, because that is what they are
-                    about: the figure above is the list price, and
-                    these two say what comes off it and what is
-                    already in it. Above the CTA so both are read
-                    before the decision, not after. */}
-                {d.stickers?.length ? (
-                  <ul className="s-stickers s-stickers-panel">
-                    {d.stickers.map((st, i) => (
-                      <li key={st.src} className="s-sticker" data-alt={i % 2 === 1}>
-                        <Image
-                          src={st.small}
-                          alt={st.alt}
-                          width={st.width}
-                          height={st.height}
-                          sizes="240px"
-                        />
-                      </li>
+                <div className="s-price-row">
+                  <p className="s-price-now">
+                    {priceRange({ price: d.price, priceMax: d.priceMax })}
+                    <span className="s-price-per">{SOMEWHERE.pricePer}</span>
+                  </p>
+                  {d.stickers
+                    ?.filter((st) => st.slot === "price")
+                    .map((st) => (
+                      <Image
+                        key={st.src}
+                        className="s-sticker-float"
+                        src={st.small}
+                        alt={st.alt}
+                        width={st.width}
+                        height={st.height}
+                        sizes="170px"
+                      />
                     ))}
-                  </ul>
-                ) : null}
+                </div>
 
                 {/* A span, not a disabled button: there is nothing to
                     press, so it should not look pressable or take focus. */}

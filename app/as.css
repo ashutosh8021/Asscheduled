@@ -2579,19 +2579,43 @@ body.s-locked { overflow: hidden; }
 }
 .s-stickers-sm .s-sticker[data-alt="true"] img { transform: rotate(1deg); }
 
-/* In the booking panel. Full width of the panel and barely tilted —
-   this sits inside a bordered box, where a big angle reads as a
-   layout fault rather than as something stuck on. */
-.s-stickers-panel { margin: 4px 0 18px; gap: 8px; align-items: flex-start; }
-.s-stickers-panel .s-sticker img {
-  /* Small. These are a note beside the price, not a second headline —
-     at full panel width they were louder than the figure they are
-     meant to qualify. */
-  width: clamp(150px, 52%, 220px);
-  transform: rotate(-1deg);
-  transform-origin: left center;
+/* In the booking panel, each one beside the thing it qualifies:
+   the delegate pass with the dates, the discount with the price.
+   Small and barely tilted — inside a bordered box a big angle reads
+   as a layout fault rather than as something stuck on. */
+.s-panel-top,
+.s-price-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
 }
-.s-stickers-panel .s-sticker[data-alt="true"] img { transform: rotate(0.8deg); }
+/* The price and its sticker share a line. nowrap because wrapping
+   put the discount underneath the figure, which reads as a second
+   price rather than as a note on the first. Both shrink instead. */
+.s-price-row {
+  margin-bottom: 16px;
+  flex-wrap: nowrap;
+  gap: 8px;
+}
+.s-price-row .s-price-now { margin: 0; min-width: 0; }
+
+.s-sticker-float {
+  flex: none;
+  width: clamp(120px, 34%, 170px);
+  height: auto;
+  transform: rotate(-2deg);
+}
+/* The one on the price line is the one that has to give way. */
+.s-price-row .s-sticker-float { width: clamp(96px, 30%, 145px); }
+.s-price-row .s-sticker-float { transform: rotate(1.5deg); }
+
+/* Below the split, the panel is full width and these have room to
+   breathe rather than being squeezed against the figure. */
+@media (max-width: 560px) {
+  .s-sticker-float { width: clamp(110px, 40%, 150px); }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .s-sticker img { transform: none; }
@@ -2613,10 +2637,43 @@ body.s-locked { overflow: hidden; }
 }
 .s-price-now {
   font-family: var(--s-mono);
-  font-size: clamp(22px, 2.6vw, 33px);
+  font-size: clamp(19px, 2.1vw, 27px);
   font-weight: 600;
   letter-spacing: -0.015em;
   margin: 0 0 16px;
+  white-space: nowrap;
   /* The range itself must not break mid-figure. */
   text-wrap: balance;
+}
+
+/* The stamp on a plan card. Same rubber-stamp device as the rest of
+   the brand — outer rule, hairline inset, a slight rotation so it
+   looks pressed on rather than laid out. Red, which is the only
+   thing red is used for here.
+
+   Text rather than the sticker artwork: three cards each carrying an
+   image would outweigh the prices they exist to annotate. */
+.s-plan-stamp {
+  position: relative;
+  display: inline-block;
+  margin-top: 12px;
+  padding: 8px 12px;
+  font-family: var(--s-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  line-height: 1.2;
+  color: var(--s-rust);
+  border: 2px solid var(--s-rust);
+  transform: rotate(-1.8deg);
+  opacity: 0.92;
+}
+.s-plan-stamp::after {
+  content: "";
+  position: absolute;
+  inset: 2.5px;
+  border: 1px solid currentColor;
+  opacity: 0.45;
+  pointer-events: none;
 }

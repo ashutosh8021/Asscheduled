@@ -231,7 +231,7 @@ export const DETAIL = {
   plansSubTail: "The fare depends on where you're travelling from.",
   plansStateLabel: "TRAVELLING FROM",
   plansStatePh: "Select your state",
-  plansPrompt: "Pick your state and both fares fill in.",
+  plansPrompt: "Pick your state to see your fare.",
   plansFrom: "FROM",
   plansPer: "per person",
   plansCta: "PROCEED",

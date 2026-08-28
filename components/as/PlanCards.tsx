@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useModal } from "./ModalProvider";
 import { DETAIL, STATES } from "@/lib/copy";
-import { inr } from "@/lib/departures";
+import { getDepartureById, inr } from "@/lib/departures";
 import { fareFor, planSpan, plansFor, statesByFare, type Plan } from "@/lib/packages";
 import NoFare from "./NoFare";
 
@@ -40,6 +40,7 @@ export default function PlanCards({
 
   const plans = plansFor(departureId);
   const { priced, unpriced } = statesByFare(departureId, STATES);
+  const priceNote = getDepartureById(departureId)?.priceNote;
   if (plans.length === 0) return null;
 
   return (
@@ -88,6 +89,7 @@ export default function PlanCards({
             plan={plan}
             state={state}
             soldOut={soldOut}
+            priceNote={priceNote}
             onProceed={() => openApply(departureId, "plan-card", plan.id)}
           />
         ))}
@@ -100,11 +102,13 @@ function PlanCard({
   plan,
   state,
   soldOut,
+  priceNote,
   onProceed,
 }: {
   plan: Plan;
   state: string;
   soldOut: boolean;
+  priceNote?: string;
   onProceed: () => void;
 }) {
   const fare = fareFor(plan, state);
@@ -152,6 +156,10 @@ function PlanCard({
               <span className="s-price-per">{DETAIL.plansPer}</span>
             </p>
             {fare === null ? <p className="s-hint">{DETAIL.plansPrompt}</p> : null}
+            {/* Stamped, not listed: it qualifies the figure directly
+                above it, and a stamp reads as an assertion where a
+                grey hint reads as small print. */}
+            {priceNote ? <p className="s-plan-stamp">{priceNote}</p> : null}
           </>
         )}
       </div>

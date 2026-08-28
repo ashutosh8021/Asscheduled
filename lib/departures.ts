@@ -172,6 +172,13 @@ export interface Departure {
   documentsAtApply?: boolean;
 
   /**
+   * One short line stamped on every plan card, qualifying the fare
+   * above it. Text rather than the sticker artwork: three cards each
+   * carrying an image would be heavier than the prices they annotate.
+   */
+  priceNote?: string;
+
+  /**
    * Sticker artwork for the two facts worth shouting about.
    *
    * Supplied as artwork rather than drawn in CSS, so the wording and
@@ -183,7 +190,20 @@ export interface Departure {
    * screen reader that says "sticker" tells somebody nothing about
    * ₹1,000 coming off.
    */
-  stickers?: { src: string; small: string; alt: string; width: number; height: number }[];
+  stickers?: {
+    /**
+     * Where it goes in the booking panel. Named rather than positional
+     * so the layout does not silently rearrange if the array order
+     * changes: "header" sits beside TRIP DATES, "price" beside the
+     * figure it qualifies.
+     */
+    slot: "header" | "price";
+    src: string;
+    small: string;
+    alt: string;
+    width: number;
+    height: number;
+  }[];
 
   /**
    * The festival we run this departure with, when it is a partnership.
@@ -238,8 +258,10 @@ export const DEPARTURES: Departure[] = [
     priceMax: departureSpan("PUL-26")!.max,
     /* AIIMS asks for ID up front — see the note on the field. */
     documentsAtApply: true,
+    priceNote: "₹1,000 off at final payment",
     stickers: [
       {
+        slot: "price",
         src: "/stickers/thousand-off.png",
         small: "/stickers/thousand-off-sm.png",
         alt: "Get ₹1,000 off at final payment",
@@ -247,6 +269,7 @@ export const DEPARTURES: Departure[] = [
         height: 315,
       },
       {
+        slot: "header",
         src: "/stickers/delegate-pass.png",
         small: "/stickers/delegate-pass-sm.png",
         alt: "PULSE delegate pass included",
@@ -684,6 +707,12 @@ export const DEPARTURES: Departure[] = [
  */
 export function sharedDepartureIds(): string[] {
   return DEPARTURES.filter((d) => d.sharedWith).map((d) => d.id);
+}
+
+/** By id, for the places that hold a departure code rather than a
+ *  slug — the plan cards, the admin, the sheet. */
+export function getDepartureById(id: string): Departure | undefined {
+  return DEPARTURES.find((d) => d.id === id);
 }
 
 export function getDeparture(slug: string): Departure | undefined {
