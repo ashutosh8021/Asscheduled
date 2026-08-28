@@ -364,8 +364,17 @@
 /* ------------------------------------------------------------
    SHEET RESYNC
    ------------------------------------------------------------ */
-.a-sync { display: inline-flex; align-items: center; gap: 10px; }
-.a-sync-said { font-size: 12px; color: #8a93a3; }
+.a-sync { display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
+.a-sync-said {
+  font-size: 12px;
+  color: #8a93a3;
+  /* Failures now say what actually went wrong, which can run to a
+     sentence. Wrap it rather than stretching the bar off-screen — an
+     error you cannot read is no better than no error. */
+  max-width: 42ch;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
 .a-sync-said[data-ok="true"] { color: #6ee7a8; }
 .a-sync-said[data-ok="false"] { color: #ff8a7a; }
 .a-sync-off {

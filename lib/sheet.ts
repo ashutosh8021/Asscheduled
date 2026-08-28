@@ -155,8 +155,13 @@ if (SHEET_HEADERS.length !== SHEET_COLUMNS.length) {
 }
 
 function sheetConfig(): { url: string; secret: string } | null {
-  const url = process.env.SHEET_WEBHOOK_URL;
-  const secret = process.env.SHEET_WEBHOOK_SECRET;
+  /* Trimmed, because these are pasted into a dashboard by hand and a
+     trailing newline or space is invisible there. A stray character on
+     the URL makes fetch throw "Invalid URL" — which reads as the sheet
+     rejecting us rather than as a typo in a settings field, and sends
+     you looking in entirely the wrong place. */
+  const url = process.env.SHEET_WEBHOOK_URL?.trim();
+  const secret = process.env.SHEET_WEBHOOK_SECRET?.trim();
   if (!url || !secret) return null;
   return { url, secret };
 }
@@ -182,9 +187,28 @@ export function departureLabel(code: string): string {
  * Returns whether it landed, for logging only. Callers must not treat
  * false as a failed application.
  */
-export async function mirrorApplications(rows: SheetRow[]): Promise<boolean> {
+export interface MirrorResult {
+  ok: boolean;
+  /** What actually happened, for the admin and the logs. Never guesses:
+   *  "check the script is deployed" is unhelpful when the real problem
+   *  is a space on the end of an environment variable. */
+  detail: string;
+}
+
+export async function mirrorApplications(rows: SheetRow[]): Promise<MirrorResult> {
   const cfg = sheetConfig();
-  if (!cfg) return false;
+  if (!cfg) return { ok: false, detail: "No sheet is configured." };
+
+  /* Caught here rather than by fetch, so the message names the setting
+     instead of surfacing a bare "Invalid URL". */
+  if (!/^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(cfg.url)) {
+    return {
+      ok: false,
+      detail:
+        `SHEET_WEBHOOK_URL does not look like an Apps Script web app URL ` +
+        `(got ${JSON.stringify(cfg.url.slice(0, 60))}). It should end in /exec.`,
+    };
+  }
   /* An empty push is still worth sending: it rewrites the header, so
      RESYNC repairs a sheet's headings even before anybody applies. */
 
@@ -209,14 +233,37 @@ export async function mirrorApplications(rows: SheetRow[]): Promise<boolean> {
       signal: AbortSignal.timeout(rows.length > 1 ? 25000 : 8000),
     });
 
+    const body = (await res.text()).slice(0, 200).trim();
+
     if (!res.ok) {
-      console.error(`[sheet] upsert failed (${res.status}): ${(await res.text()).slice(0, 200)}`);
-      return false;
+      const detail = `The sheet answered ${res.status}: ${body}`;
+      console.error(`[sheet] ${detail}`);
+      return { ok: false, detail };
     }
-    return true;
+
+    /* The script answers "no" — with a 200 — when the secret does not
+       match. Without this it counts as success and the sheet silently
+       never fills, which is the worst possible failure: everything
+       reports fine and nothing arrives. */
+    if (body === "no") {
+      const detail =
+        "The script rejected our secret. SHEET_WEBHOOK_SECRET does not match " +
+        "the one in the Apps Script.";
+      console.error(`[sheet] ${detail}`);
+      return { ok: false, detail };
+    }
+
+    return { ok: true, detail: body || "ok" };
   } catch (err) {
-    console.error("[sheet] upsert threw", err);
-    return false;
+    /* Names the two that actually happen, because "fetch failed" tells
+       nobody anything. */
+    const e = err as { name?: string; message?: string };
+    const detail =
+      e.name === "TimeoutError" || e.name === "AbortError"
+        ? `The sheet did not answer in time (${rows.length} row(s)).`
+        : `Could not reach the sheet: ${e.name ?? "Error"} ${e.message ?? ""}`.trim();
+    console.error(`[sheet] ${detail}`, err);
+    return { ok: false, detail };
   }
 }
 
@@ -238,6 +285,8 @@ export async function mirrorApplications(rows: SheetRow[]): Promise<boolean> {
  * without making the applicant wait for it.
  */
 export async function mirrorOne(row: SheetRow): Promise<void> {
-  const ok = await mirrorApplications([row]);
-  if (!ok && sheetConfigured()) console.error(`[sheet] missed ${row.reference}`);
+  const res = await mirrorApplications([row]);
+  if (!res.ok && sheetConfigured()) {
+    console.error(`[sheet] missed ${row.reference} — ${res.detail}`);
+  }
 }

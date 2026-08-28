@@ -37,15 +37,20 @@ export async function POST() {
   }
 
   const rows = await allSheetRows();
-  const ok = await mirrorApplications(rows);
+  const res = await mirrorApplications(rows);
 
-  console.info(`[admin] ${admin.email} resynced ${rows.length} row(s) to the sheet — ok=${ok}`);
+  console.info(
+    `[admin] ${admin.email} resynced ${rows.length} row(s) to the sheet — ` +
+      `ok=${res.ok} ${res.detail}`
+  );
 
-  if (!ok) {
-    return NextResponse.json(
-      { ok: false, error: "The sheet did not accept that. Check the script is still deployed." },
-      { status: 502 }
-    );
+  /* Hand back what actually went wrong. The first version of this said
+     "check the script is still deployed" whatever happened, which sent
+     somebody to inspect a perfectly healthy Apps Script while the real
+     problem was in an environment variable. A wrong diagnosis costs
+     more than no diagnosis. */
+  if (!res.ok) {
+    return NextResponse.json({ ok: false, error: res.detail }, { status: 502 });
   }
 
   return NextResponse.json({ ok: true, rows: rows.length });
