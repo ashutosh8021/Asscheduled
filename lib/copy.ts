@@ -403,6 +403,29 @@ export const APPLY = {
   next: "I'M IN",
   back: "BACK",
   submit: "SUBMIT",
+
+  /* ---- the booking payment ----
+     Shown only for departures with a bookingInr set, which is none of
+     them today. There is no gateway on this flow: they transfer, then
+     tell us the reference. Said plainly rather than dressed up.
+
+     TODO(mannat): payUpiId and payPayee are placeholders. Nothing can
+     be paid until they are real — and they should be the LLP's account,
+     not a personal one. The QR supplied (asset/paymentQR.jpeg, kept out
+     of the repo) is a personal Google Pay code: booking revenue paid
+     into an individual's account is a tax and accounting problem, and
+     an applicant told they are dealing with a registered LLP should not
+     be asked to pay a private person. */
+  payHead: "BOOKING AMOUNT",
+  payNote: "Pay this by UPI, then tell us the reference below.",
+  payUpiId: "TODO@upi",
+  payPayee: "ROITCOVE VENTURES LLP",
+  payUtrLabel: "UTR / TRANSACTION REFERENCE",
+  payUtrPh: "e.g. 412345678901",
+  payUtrHint: "Your UPI app shows this on the receipt, usually as UTR or Transaction ID.",
+  payCheckNote:
+    "We check every transfer against the bank by hand. If the reference does not match we will call you before anything is confirmed.",
+
   fields: {
     name: { label: "FULL NAME", ph: "Enter your full name" },
     phone: { label: "CONTACT NUMBER", ph: "Enter your number" },

@@ -9,9 +9,15 @@
  * feedback. The server uses them as the boundary that actually holds:
  * a limit enforced only in a file input stops nobody. */
 
-export type DocumentKind = "photo_id" | "college_id";
+export type DocumentKind = "photo_id" | "college_id" | "payment_proof";
 
+/** The two identity documents, asked for together. */
 export const DOCUMENT_KINDS: DocumentKind[] = ["photo_id", "college_id"];
+
+/** Proof of a UPI transfer. Separate from the list above because it is
+ *  asked for alongside the UTR in the payment block, not with the IDs,
+ *  and only where a departure takes a booking amount. */
+export const PAYMENT_KIND: DocumentKind = "payment_proof";
 
 export const ACCEPTED_MIME = ["image/jpeg", "image/png", "image/webp", "application/pdf"] as const;
 

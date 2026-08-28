@@ -147,6 +147,19 @@ export interface Departure {
     reels: Reel[];
   };
   /**
+   * Booking amount, in rupees, taken by UPI at application time.
+   *
+   * Omitted for departures that take no payment on the site — which is
+   * every one of them today. Setting it turns on the payment block in
+   * the form: the amount owed, where to send it, and a field for the
+   * UTR that comes back.
+   *
+   * A partner discount comes off this, and the server is what does the
+   * subtraction. See lib/partners.ts.
+   */
+  bookingInr?: number;
+
+  /**
    * Ask for a college ID and a government photo ID as part of applying,
    * rather than after acceptance.
    *

@@ -29,6 +29,10 @@ export const DOCUMENT_LABELS: Record<DocumentKind, { title: string; hint: string
     title: "College ID",
     hint: "Front of the card, with your name and the college readable.",
   },
+  payment_proof: {
+    title: "Payment screenshot",
+    hint: "The confirmation from your UPI app, showing the amount and the reference.",
+  },
 };
 
 export function SizeNote() {
@@ -48,7 +52,10 @@ export default function UploadFields({
   /** Kinds already uploaded, so a reload does not look like nothing happened. */
   already?: DocumentKind[];
 }) {
-  const [state, setState] = useState<Record<DocumentKind, ZoneState>>({
+  /* Partial: this surface handles the two identity documents, and a
+     payment screenshot is asked for elsewhere. Anything absent reads
+     as "idle". */
+  const [state, setState] = useState<Partial<Record<DocumentKind, ZoneState>>>({
     photo_id: already.includes("photo_id") ? "done" : "idle",
     college_id: already.includes("college_id") ? "done" : "idle",
   });
@@ -99,7 +106,7 @@ export default function UploadFields({
           id={`up-${kind}`}
           title={DOCUMENT_LABELS[kind].title}
           hint={DOCUMENT_LABELS[kind].hint}
-          state={state[kind]}
+          state={state[kind] ?? "idle"}
           file={files[kind] ?? null}
           error={errors[kind]}
           onPick={(f) => void send(kind, f)}

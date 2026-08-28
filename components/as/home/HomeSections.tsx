@@ -9,6 +9,7 @@ import { useModal } from "../ModalProvider";
 import { HOME, SOMEWHERE } from "@/lib/copy";
 import { GALLERY_ALL, GALLERY_WIDE } from "@/lib/gallery";
 import { DEPARTURES, shortPrice } from "@/lib/departures";
+import type { EffectivePrice } from "@/lib/partners";
 
 /* Homepage body, in the comp's order:
    NOW SCHEDULED rail → editorial brand moment → gallery strip → final CTA.
@@ -21,7 +22,13 @@ import { DEPARTURES, shortPrice } from "@/lib/departures";
    Real frames from trips that ran; see lib/gallery.ts. */
 const STRIP = GALLERY_ALL.slice(0, 8);
 
-export default function HomeSections() {
+export default function HomeSections({
+  /* Partner pricing per departure id, resolved on the server. This is a
+     client component and must never work a discount out for itself. */
+  pricing = {},
+}: {
+  pricing?: Record<string, EffectivePrice>;
+}) {
   const { openApply } = useModal();
 
   return (
@@ -104,7 +111,7 @@ export default function HomeSections() {
                         </Link>
 
                         <p style={{ marginTop: "auto", fontSize: 15, fontWeight: 500 }}>
-                          {shortPrice(d.price)}
+                          {shortPrice(pricing[d.id]?.price ?? d.price)}
                         </p>
                       </div>
                     </div>

@@ -75,6 +75,14 @@ export interface ApplicationRecord {
   college: string;
   instagram: string;
   why: string;
+  /* Partner pricing. All three are the server's own calculation — the
+     browser never sends an amount, so there is nothing here it could
+     have chosen. Null when nobody arrived on a partner link. */
+  partnerCode: string | null;
+  discountInr: number | null;
+  amountDue: number | null;
+  /** The UPI reference the applicant typed. Checked by hand. */
+  utr: string | null;
 }
 
 export function saveApplication(a: ApplicationRecord): Promise<boolean> {
@@ -92,6 +100,19 @@ export function saveApplication(a: ApplicationRecord): Promise<boolean> {
        "not provided" and "provided as blank" stay distinguishable. */
     instagram: a.instagram || null,
     why: a.why || null,
+
+    /* Only sent when there is something to say.
+​
+       These columns arrive with docs/schema-partner.sql, and PostgREST
+       rejects the whole insert if it is handed a column that does not
+       exist — including one set to null. Naming them unconditionally
+       would mean that deploying this code before running that SQL
+       broke every application, partner or not. Spread in only when
+       populated, so the ordinary path is byte-for-byte what it was. */
+    ...(a.partnerCode ? { partner_code: a.partnerCode } : {}),
+    ...(a.discountInr ? { discount_inr: a.discountInr } : {}),
+    ...(a.amountDue !== null ? { amount_due: a.amountDue } : {}),
+    ...(a.utr ? { utr: a.utr } : {}),
   });
 }
 

@@ -5,7 +5,8 @@ import Slot from "./Slot";
 import Stamp from "./Stamp";
 import Tilt from "./Tilt";
 import { SOMEWHERE } from "@/lib/copy";
-import { batchLabel, priceRange, type Departure } from "@/lib/departures";
+import { batchLabel, inr, priceRange, type Departure } from "@/lib/departures";
+import type { EffectivePrice } from "@/lib/partners";
 
 /* Two card shapes, both from the comps:
 
@@ -19,10 +20,24 @@ interface Props {
   variant?: "poster" | "detail";
   /** Card index — only used to keep placeholder labels distinguishable. */
   priority?: boolean;
+  /**
+   * Partner pricing, resolved on the server and passed down.
+   *
+   * This component is a client component and must never work the
+   * discount out for itself — the price is the server's to decide.
+   * Absent means full price.
+   */
+  pricing?: EffectivePrice;
 }
 
-export default function DepartureCard({ d, variant = "poster", priority = false }: Props) {
+export default function DepartureCard({
+  d,
+  variant = "poster",
+  priority = false,
+  pricing,
+}: Props) {
   const href = `/somewhere/${d.slug}`;
+  const shown = pricing ?? { price: d.price, priceMax: d.priceMax, discountInr: 0 };
 
   if (variant === "detail") {
     return (
@@ -69,11 +84,21 @@ export default function DepartureCard({ d, variant = "poster", priority = false 
           <hr className="s-rule" />
 
           <div>
+            {shown.partnerName ? (
+              <p className="s-partner">
+                {shown.partnerName} · {inr(shown.discountInr)} off
+              </p>
+            ) : null}
             <p className="s-eyebrow s-eyebrow-grey" style={{ marginBottom: 6 }}>
               {SOMEWHERE.priceLabel}
             </p>
             <p className="s-h3" style={{ fontFamily: "var(--s-mono)", fontWeight: 600 }}>
-              {priceRange(d)}
+              {shown.wasPrice !== undefined ? (
+                <span className="s-was">
+                  {priceRange({ price: shown.wasPrice, priceMax: shown.wasPriceMax })}
+                </span>
+              ) : null}
+              {priceRange({ price: shown.price, priceMax: shown.priceMax })}
               <span className="s-price-per">{SOMEWHERE.pricePer}</span>
             </p>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginTop: 12 }}>

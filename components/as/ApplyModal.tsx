@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import ModalShell from "./ModalShell";
 import { useModal } from "./ModalProvider";
 import { APPLY, STATES, CONTACT_EMAIL } from "@/lib/copy";
-import { DEPARTURES } from "@/lib/departures";
+import { DEPARTURES, inr } from "@/lib/departures";
 import { EVENTS, track } from "@/lib/analytics";
 import DropZone, { rejectReason, type ZoneState } from "./DropZone";
 import { DOCUMENT_LABELS, SizeNote } from "./UploadFields";
-import { DOCUMENT_KINDS, type DocumentKind } from "@/lib/documentRules";
+import { DOCUMENT_KINDS, PAYMENT_KIND, type DocumentKind } from "@/lib/documentRules";
 
 /* "I am coming." — the two-step application overlay from comps (12) and (14).
 
@@ -89,14 +89,23 @@ export default function ApplyModal() {
      reads as one action. */
   const [files, setFiles] = useState<Partial<Record<DocumentKind, File>>>({});
   const [fileErrors, setFileErrors] = useState<Partial<Record<DocumentKind, string>>>({});
-  const [docState, setDocState] = useState<Record<DocumentKind, ZoneState>>({
-    photo_id: "idle",
-    college_id: "idle",
-  });
+  /* Partial rather than complete: which kinds are in play depends on
+     the departure, and anything absent reads as "idle". */
+  const [docState, setDocState] = useState<Partial<Record<DocumentKind, ZoneState>>>({});
+  const [utr, setUtr] = useState("");
+  /* Its own state rather than a key on `errors`, which is typed to the
+     answers and does not have a UTR in it. */
+  const [utrError, setUtrError] = useState<string | null>(null);
+
+  const chosen = DEPARTURES.find((d) => d.id === a.event);
 
   /* Whether the chosen departure collects ID as part of applying. */
-  const needsDocuments =
-    DEPARTURES.find((d) => d.id === a.event)?.documentsAtApply === true;
+  const needsDocuments = chosen?.documentsAtApply === true;
+
+  /* Whether it takes a booking amount by UPI. The figure shown is the
+     full one — the partner discount is applied by the server, and the
+     confirmation reports what was actually charged. */
+  const needsPayment = typeof chosen?.bookingInr === "number" && chosen.bookingInr > 0;
 
   function pick(kind: DocumentKind, file: File) {
     const bad = rejectReason(file);
@@ -139,7 +148,13 @@ export default function ApplyModal() {
 
   /** Sends whatever step 2 collected, once there is a token for it. */
   async function sendHeldFiles(token: string) {
-    for (const kind of DOCUMENT_KINDS) {
+    /* The payment screenshot rides along with the identity documents —
+       same token, same route, same private bucket. */
+    const kinds: DocumentKind[] = needsPayment
+      ? [...DOCUMENT_KINDS, PAYMENT_KIND]
+      : [...DOCUMENT_KINDS];
+
+    for (const kind of kinds) {
       const file = files[kind];
       if (!file) continue;
 
@@ -184,12 +199,29 @@ export default function ApplyModal() {
       }
     }
 
+    /* A booking that cannot be matched to a transfer is worse than no
+       booking — it has to be chased by hand. Both are required. */
+    if (needsPayment) {
+      if (!/^[A-Za-z0-9]{8,24}$/.test(utr.trim())) {
+        setUtrError("Enter the UTR from your UPI app — 8 to 24 letters or digits.");
+        return;
+      }
+      setUtrError(null);
+      if (!files[PAYMENT_KIND]) {
+        setFileErrors((e) => ({ ...e, [PAYMENT_KIND]: "This one is required." }));
+        setDocState((s) => ({ ...s, [PAYMENT_KIND]: "error" }));
+        return;
+      }
+    }
+
     setSending(true);
     try {
       const res = await fetch("/api/somewhere/apply", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify(a),
+        /* The UTR travels; the amount does not. What is owed is the
+           server's to decide — see lib/partners.ts. */
+        body: JSON.stringify({ ...a, utr: utr.trim() }),
       });
       const json = (await res.json()) as {
         ok: boolean;
@@ -300,7 +332,7 @@ export default function ApplyModal() {
                     id={`re-${kind}`}
                     title={DOCUMENT_LABELS[kind].title}
                     hint={DOCUMENT_LABELS[kind].hint}
-                    state={docState[kind]}
+                    state={docState[kind] ?? "idle"}
                     file={files[kind] ?? null}
                     error={fileErrors[kind]}
                     doneHint="Sent"
@@ -574,7 +606,7 @@ export default function ApplyModal() {
                     id={`ap-${kind}`}
                     title={DOCUMENT_LABELS[kind].title}
                     hint={DOCUMENT_LABELS[kind].hint}
-                    state={docState[kind]}
+                    state={docState[kind] ?? "idle"}
                     file={files[kind] ?? null}
                     error={fileErrors[kind]}
                     doneHint="Tap to change"
@@ -585,6 +617,77 @@ export default function ApplyModal() {
                 <p className="s-hint">
                   Stored privately, never shown on the site, and deleted after the trip.
                 </p>
+              </div>
+            ) : null}
+
+            {/* The booking payment. Deliberately a transfer they make
+                themselves and a reference they type back: there is no
+                payment gateway on this flow, and pretending otherwise
+                would be worse than saying so plainly.
+
+                The amount shown is the full one. Any partner discount
+                is applied by the server, and the confirmation reports
+                what was actually charged — the browser is never told a
+                price it could then send back. */}
+            {needsPayment && chosen ? (
+              <div className="s-field s-field-full s-pay">
+                <hr className="s-rule" style={{ margin: "4px 0 2px" }} />
+                <p className="s-up-head">{APPLY.payHead}</p>
+
+                <div className="s-pay-amount">
+                  <span className="s-pay-figure">{inr(chosen.bookingInr ?? 0)}</span>
+                  <span className="s-pay-note">{APPLY.payNote}</span>
+                </div>
+
+                <dl className="s-pay-to">
+                  <div>
+                    <dt>UPI ID</dt>
+                    <dd>{APPLY.payUpiId}</dd>
+                  </div>
+                  <div>
+                    <dt>Payee</dt>
+                    <dd>{APPLY.payPayee}</dd>
+                  </div>
+                </dl>
+
+                <div className="s-field s-field-full" style={{ marginTop: 6 }}>
+                  <label htmlFor="ap-utr">
+                    {APPLY.payUtrLabel} <span className="s-req">*</span>
+                  </label>
+                  <input
+                    id="ap-utr"
+                    className="s-input"
+                    inputMode="text"
+                    autoComplete="off"
+                    spellCheck={false}
+                    placeholder={APPLY.payUtrPh}
+                    value={utr}
+                    aria-invalid={Boolean(utrError)}
+                    onChange={(e) => {
+                      setUtr(e.target.value);
+                      if (utrError) setUtrError(null);
+                    }}
+                  />
+                  <span className="s-hint">{APPLY.payUtrHint}</span>
+                  {utrError ? (
+                    <p className="s-err" role="alert">
+                      {utrError}
+                    </p>
+                  ) : null}
+                </div>
+
+                <DropZone
+                  id={`ap-${PAYMENT_KIND}`}
+                  title={DOCUMENT_LABELS[PAYMENT_KIND].title}
+                  hint={DOCUMENT_LABELS[PAYMENT_KIND].hint}
+                  state={docState[PAYMENT_KIND] ?? "idle"}
+                  file={files[PAYMENT_KIND] ?? null}
+                  error={fileErrors[PAYMENT_KIND]}
+                  doneHint="Tap to change"
+                  onPick={(f) => pick(PAYMENT_KIND, f)}
+                />
+
+                <p className="s-hint">{APPLY.payCheckNote}</p>
               </div>
             ) : null}
           </div>

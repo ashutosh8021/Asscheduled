@@ -38,3 +38,10 @@ asset/**/*.mov
 /.shots/
 /x
 .candidates/
+
+# Payment QR codes. The repo is public, and a UPI QR carries an account
+# holder's name, photo and UPI ID — publishing one is a disclosure, not
+# an asset. Keep them on the drive; the site references a UPI ID from
+# lib/copy.ts, which is a deliberate, reviewable line of text.
+asset/**/*QR*
+asset/**/*qr*

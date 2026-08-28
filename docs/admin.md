@@ -142,3 +142,81 @@ listing anything older than 120 days so nothing gets quietly forgotten.
 
 TODO(mannat): automate this. A promise in a privacy policy that depends on
 somebody remembering is a promise that eventually gets broken.
+
+## Partner referral links
+
+A festival links to us with `?p=<code>` — for PULSE, that is
+`https://asscheduled.com/somewhere/pulse-aiims-delhi?p=pulse`. Middleware
+turns the code into a cookie, and every price on the site drops by the
+partner's discount for as long as it is valid.
+
+**The discount is decided by the server, never by the browser.** The page
+reads the cookie to show a price; `app/api/somewhere/apply/route.ts` reads
+the same cookie and works the price out again before storing anything. A
+request that posts its own partner code, discount or amount is ignored —
+those values are derived, so there is nothing for a client to influence.
+
+Codes are configured in `lib/partners.ts`: which departures they cover, the
+flat rupee discount, and the date they stop working. An expired code, a code
+for the wrong departure, or an unknown one all mean full price rather than an
+error — somebody on a stale link should get a working page.
+
+Setup: run `docs/schema-partner.sql`, then fill in the `PARTNERS` entry. Until
+that entry exists nothing changes anywhere on the site.
+
+**The link is public.** Anyone who sees it can share it, so treat the expiry
+date as the real control.
+
+## The live Google Sheet
+
+Applications are mirrored into a sheet as they arrive. Nothing about this can
+fail an application — if the sheet is unreachable the row is already safe in
+Postgres and the failure is only logged.
+
+### One-time setup
+
+1. Create a Google Sheet you own.
+2. **Extensions → Apps Script**, and paste:
+
+```javascript
+function doPost(e) {
+  const b = JSON.parse(e.postData.contents);
+  if (b.secret !== 'PUT_THE_SECRET_HERE') {
+    return ContentService.createTextOutput('no');
+  }
+  SpreadsheetApp.getActiveSheet().appendRow([
+    new Date(), b.reference, b.departure, b.name, b.phone, b.gender, b.age,
+    b.state, b.occupation, b.college, b.instagram, b.why,
+    b.partner, b.discountInr, b.amountDue, b.utr,
+  ]);
+  return ContentService.createTextOutput('ok');
+}
+```
+
+3. **Deploy → New deployment → Web app.** Execute as **Me**, access
+   **Anyone**. Copy the URL it gives you.
+4. Put the URL in `SHEET_WEBHOOK_URL` and the same secret in
+   `SHEET_WEBHOOK_SECRET`, in Vercel.
+5. **Share → PULSE's Google account, Viewer.**
+
+"Anyone" is what lets us POST without credentials; it cannot read the sheet.
+The secret in the body is what stops strangers appending rows.
+
+### What it means to share it
+
+The sheet holds applicants' names, phone numbers, colleges and payment
+references. Sharing it with PULSE is **disclosure to a third party**, not just
+storage, and the privacy policy has to say so. It is also a second copy:
+deleting a row in Supabase does not delete it from the sheet, so a deletion
+request means clearing both.
+
+## Booking payments
+
+A departure with `bookingInr` set asks for a UPI transfer at application time:
+the amount owed, where to send it, the UTR, and a screenshot. The screenshot is
+a third document kind alongside the two IDs, in the same private bucket under
+the same rules.
+
+Nothing verifies a UTR. It is recorded as typed and **checked against the bank
+by hand** — the form says as much rather than implying a confirmation that has
+not happened.

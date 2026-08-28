@@ -2192,3 +2192,77 @@ body.s-locked { overflow: hidden; }
 @media (max-width: 720px) {
   .s-home-order .s-home-ed { order: -1; }
 }
+
+/* ------------------------------------------------------------
+   PARTNER PRICING
+   ------------------------------------------------------------
+   The badge is rendered text, never an input. There is nothing to
+   type and nothing to clear — the server decided this price, and
+   a field would only invite somebody to try changing it. */
+.s-partner {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 10px;
+  margin-bottom: 10px;
+  background: var(--s-rust);
+  color: var(--s-bone);
+  font-family: var(--s-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* The old figure, kept beside the new one so the saving is legible
+   rather than asserted. */
+.s-was {
+  margin-right: 10px;
+  color: var(--s-grey-2);
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+  font-weight: 400;
+}
+
+/* ------------------------------------------------------------
+   BOOKING PAYMENT
+   ------------------------------------------------------------ */
+.s-pay { display: flex; flex-direction: column; gap: 14px; }
+
+.s-pay-amount { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.s-pay-figure {
+  font-family: var(--s-mono);
+  font-size: clamp(26px, 3.4vw, 38px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--s-ink);
+}
+.s-pay-note { font-size: 13px; color: var(--s-grey); }
+
+/* Where to send it. A definition list because that is what it is —
+   two labelled facts, not a form. */
+.s-pay-to {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 10px 20px;
+  margin: 0;
+  padding: 12px 14px;
+  background: var(--s-paper-2);
+  border: 1px dashed var(--s-line-2, #c9c2b4);
+}
+.s-pay-to div { min-width: 0; }
+.s-pay-to dt {
+  font-family: var(--s-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--s-grey);
+  margin-bottom: 3px;
+}
+.s-pay-to dd {
+  margin: 0;
+  font-family: var(--s-mono);
+  font-size: 15px;
+  color: var(--s-ink);
+  overflow-wrap: anywhere;
+}

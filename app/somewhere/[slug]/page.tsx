@@ -8,7 +8,9 @@ import ApplyButton from "@/components/as/ApplyButton";
 import DepartureHero from "@/components/as/DepartureHero";
 import LastYear from "@/components/as/LastYear";
 import { DETAIL, SOMEWHERE } from "@/lib/copy";
-import { DEPARTURES, batchLabel, getDeparture, priceRange } from "@/lib/departures";
+import { cookies } from "next/headers";
+import { DEPARTURES, batchLabel, getDeparture, inr, priceRange } from "@/lib/departures";
+import { effectivePrice, resolvePartner, PARTNER_COOKIE } from "@/lib/partners";
 import { abs } from "@/lib/site";
 
 /* Experience detail — comps (7) and (8). One template, both departures;
@@ -17,6 +19,14 @@ import { abs } from "@/lib/site";
 export function generateStaticParams() {
   return DEPARTURES.map((d) => ({ slug: d.slug }));
 }
+
+/* The price on this page depends on the referral cookie, so it cannot
+   be prerendered — generateStaticParams alone would bake one visitor's
+   price into HTML served to everybody. The params above still describe
+   the valid slugs; this says render them per request.
+   Three pages, already fast on the server, in exchange for the price
+   being right on first paint. */
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -40,6 +50,16 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
   const { slug } = await params;
   const d = getDeparture(slug);
   if (!d) notFound();
+
+  /* Reading the referral cookie makes this page dynamic — it can no
+     longer be prerendered at build time. Three low-traffic pages that
+     already render fast on the server, in exchange for the price being
+     right on first paint rather than corrected by JavaScript after it.
+     The same resolvePartner runs in the apply route, so what is shown
+     here and what is charged there cannot drift apart. */
+  const jar = await cookies();
+  const partner = resolvePartner(jar.get(PARTNER_COOKIE)?.value, d.id);
+  const pricing = effectivePrice(d.price, d.priceMax, partner);
 
   return (
     /* overHero: the header floats transparent over the full-screen
@@ -123,6 +143,16 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
 
                 <hr className="s-rule" style={{ margin: "18px 0" }} />
 
+                {/* The badge is text. There is nothing to type and
+                    nothing to clear: the server decided this price, and
+                    a field here would only invite someone to try
+                    changing it. */}
+                {partner ? (
+                  <p className="s-partner">
+                    {partner.name} · {inr(pricing.discountInr)} off
+                  </p>
+                ) : null}
+
                 <p className="s-eyebrow s-eyebrow-grey">{DETAIL.fromLabel}</p>
                 <p
                   style={{
@@ -133,7 +163,12 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
                     margin: "6px 0 20px",
                   }}
                 >
-                  {priceRange(d)}
+                  {pricing.wasPrice !== undefined ? (
+                    <span className="s-was">
+                      {priceRange({ price: pricing.wasPrice, priceMax: pricing.wasPriceMax })}
+                    </span>
+                  ) : null}
+                  {priceRange({ price: pricing.price, priceMax: pricing.priceMax })}
                   <span className="s-price-per">{SOMEWHERE.pricePer}</span>
                 </p>
 

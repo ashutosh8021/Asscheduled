@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { deliver, isIndianMobile, readStrings } from "@/lib/inbox";
+import { effectivePrice, resolvePartner, PARTNER_COOKIE } from "@/lib/partners";
+import { appendToSheet } from "@/lib/sheet";
 import { newReference } from "@/lib/reference";
 import { DEPARTURES } from "@/lib/departures";
 import { findApplicationId, saveApplication, storeConfigured } from "@/lib/store";
@@ -80,6 +83,35 @@ export async function POST(request: Request) {
 
   const reference = newReference();
 
+  /* Pricing is decided here and nowhere else.
+​
+     The partner code comes from the cookie the middleware set, never
+     from the request body, and the discount is recomputed from the
+     config rather than trusted. A client that posts its own
+     partner_code, discount or amount is simply ignored — everything
+     below is derived, so there is nothing for it to influence.
+
+     An expired code, a code for another departure, or no code at all
+     all mean full price. None of them is an error: somebody on a stale
+     link should get a working application, not a refusal. */
+  const jar = await cookies();
+  const partner = resolvePartner(jar.get(PARTNER_COOKIE)?.value, departure!.id);
+  const pricing = effectivePrice(departure!.price, departure!.priceMax, partner);
+
+  /* What they owe now. Departures that take a booking amount charge
+     that; the rest charge nothing at this stage. */
+  const amountDue = departure!.bookingInr
+    ? Math.max(0, departure!.bookingInr - pricing.discountInr)
+    : null;
+
+  /* Read on its own rather than through readStrings, which requires
+     every key it is given. Listing `utr` there would have made it
+     mandatory for every application — including from a cached older
+     client that has never heard of it. Optional, and sanitised here. */
+  const rawUtr = (raw as Record<string, unknown>).utr;
+  const utr =
+    typeof rawUtr === "string" ? rawUtr.trim().toUpperCase().slice(0, 40) : "";
+
   /* Store first, then notify. The row is the record of the application;
      the email is a convenience. If the write fails we still try to mail
      it, so a database outage does not lose someone's application. */
@@ -95,6 +127,10 @@ export async function POST(request: Request) {
     college: a.college,
     instagram: a.instagram.replace(/^@/, ""),
     why: a.why,
+    partnerCode: partner?.code ?? null,
+    discountInr: pricing.discountInr || null,
+    amountDue,
+    utr: utr || null,
   });
 
   const delivered = await deliver(
@@ -111,9 +147,36 @@ export async function POST(request: Request) {
       college: a.college,
       instagram: a.instagram ? `@${a.instagram}` : null,
       why: a.why || null,
+      partner: partner ? `${partner.name} — ₹${pricing.discountInr} off` : null,
+      amountDue: amountDue === null ? null : `₹${amountDue}`,
+      utr: utr || null,
     },
     null
   );
+
+  /* The sheet is a mirror, never the record. It runs after the row is
+     safe, its result is logged and then dropped, and nothing below
+     reads it — a spreadsheet being unreachable must not tell somebody
+     their application failed. */
+  void appendToSheet({
+    reference,
+    departure: `${departure!.fest} — ${departure!.campus}`,
+    name: a.name,
+    phone: a.phone,
+    gender: a.gender,
+    age,
+    state: a.state,
+    occupation: a.occupation,
+    college: a.college,
+    instagram: a.instagram.replace(/^@/, ""),
+    why: a.why,
+    partner: partner?.name ?? "",
+    discountInr: pricing.discountInr,
+    amountDue: amountDue ?? 0,
+    utr,
+  }).then((ok) => {
+    if (!ok) console.error(`[apply] sheet mirror missed ${reference}`);
+  });
 
   /* `received` is the only thing the overlay should trust. The
      application is safe if it landed in either place — a Resend outage

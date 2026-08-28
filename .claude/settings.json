@@ -132,7 +132,21 @@
       "Bash(curl -s -o /dev/null -w \"  %{http_code} -> %{redirect_url}\\\\n\" --max-time 90 http://localhost:3000/admin)",
       "Bash(curl -s --max-time 90 http://localhost:3000/admin/login)",
       "Bash(curl -s --max-time 60 http://localhost:3000/admin/login)",
-      "Bash(curl -s --max-time 60 -X POST http://localhost:3000/api/admin/status -H 'content-type: application/json' -d '{\"id\":\"x\",\"status\":\"accepted\"}')"
+      "Bash(curl -s --max-time 60 -X POST http://localhost:3000/api/admin/status -H 'content-type: application/json' -d '{\"id\":\"x\",\"status\":\"accepted\"}')",
+      "Bash(python -c ' *)",
+      "Bash(rm -rf .next)",
+      "Bash(pnpm build *)",
+      "PowerShell(Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique | ForEach-Object { Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue; \"stopped $_\" })",
+      "Bash(node --env-file=.env.local -e ' *)",
+      "PowerShell(Get-NetTCPConnection -LocalPort 3000,9222 -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique | ForEach-Object { Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue; \"killed $_\" })",
+      "Bash(cat)",
+      "Bash(git add *)",
+      "Bash(grep -v \"serviceRoleKey\\\\|SUPABASE_SERVICE_ROLE_KEY=$\\\\|process.env\")",
+      "Bash(git reset *)",
+      "Bash(git rm *)",
+      "Bash(curl -s --max-time 20 https://api.github.com/repos/ashutosh8021/Asscheduled)",
+      "Bash(python -c \"import sys,json;d=json.load\\(sys.stdin\\);print\\('  private:',d.get\\('private'\\)\\)\")",
+      "Bash(git check-ignore *)"
     ]
   }
 }

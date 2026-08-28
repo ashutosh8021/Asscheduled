@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Shell from "@/components/as/Shell";
 import Reveal from "@/components/as/Reveal";
 import DepartureCard from "@/components/as/DepartureCard";
+import { cookies } from "next/headers";
+import { effectivePrice, resolvePartner, PARTNER_COOKIE } from "@/lib/partners";
 import { SOMEWHERE } from "@/lib/copy";
 import { DEPARTURES } from "@/lib/departures";
 import { abs } from "@/lib/site";
@@ -13,7 +15,15 @@ export const metadata: Metadata = {
   alternates: { canonical: abs("/somewhere") },
 };
 
-export default function SomewherePage() {
+export default async function SomewherePage() {
+  /* Resolved once for the page and handed to each card. The cards are
+     client components and must never work a discount out for
+     themselves — the price is the server's to decide. */
+  const jar = await cookies();
+  const partnerCode = jar.get(PARTNER_COOKIE)?.value;
+  const priceFor = (d: { id: string; price: number; priceMax?: number }) =>
+    effectivePrice(d.price, d.priceMax, resolvePartner(partnerCode, d.id));
+
   return (
     <Shell>
       {/* ---------- MASTHEAD ---------- */}
@@ -95,7 +105,7 @@ export default function SomewherePage() {
             <div className="s-cards">
               {DEPARTURES.map((d, i) => (
                 <Reveal key={d.id} delay={i === 0 ? 1 : 2}>
-                  <DepartureCard d={d} priority={i === 0} />
+                  <DepartureCard d={d} priority={i === 0} pricing={priceFor(d)} />
                 </Reveal>
               ))}
             </div>
@@ -150,7 +160,7 @@ export default function SomewherePage() {
             <div className="s-cards">
               {DEPARTURES.map((d, i) => (
                 <Reveal key={d.id} delay={i === 0 ? 1 : 2}>
-                  <DepartureCard d={d} variant="detail" />
+                  <DepartureCard d={d} variant="detail" pricing={priceFor(d)} />
                 </Reveal>
               ))}
             </div>
