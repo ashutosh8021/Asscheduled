@@ -53,7 +53,7 @@ export async function POST(request: Request) {
 
   if (action === "list") {
     const docs = await listDocuments(id);
-    /* Signed at view time, expiring in minutes. */
+    /* Signed at view time, expiring the same day. */
     const withUrls = await Promise.all(
       docs.map(async (d) => ({
         id: d.id,

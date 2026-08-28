@@ -82,7 +82,7 @@ Whichever door they came through, the link dies the moment an application is
 declined, and nothing is ever public.
 
 **Nothing is public.** Objects live in a private bucket. The admin views them
-through a signed URL that expires in five minutes, so a URL that ends up in a
+through a signed URL that expires the same day, so a URL that ends up in a
 screenshot, a browser history or a log is dead before anyone finds it.
 
 ### One-time setup
@@ -208,7 +208,7 @@ keeping a second account.
 
 Both parties admit people to a campus, so both need to check the person at the
 gate is the person who applied. Documents are shown through signed URLs that
-expire in minutes rather than handed over as copies, the panel is read-only,
+expire rather than being handed over as copies, the panel is read-only,
 and every read is logged with the email that made it.
 
 This is disclosed in the privacy policy, which was updated in the same change.

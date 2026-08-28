@@ -13,7 +13,7 @@
    open somebody's upload page.
 
    Storage is a private bucket. Objects are never public; the admin
-   views them through a signed URL that expires in minutes, so a URL
+   views them through a signed URL that expires the same day, so a URL
    that leaks out of a screenshot or a log is useless by the time
    anyone tries it.
 
@@ -29,8 +29,23 @@ export const BUCKET = "documents";
 /** How long an upload link stays usable. */
 const LINK_DAYS = 14;
 
-/** Signed-URL lifetime for admin viewing, in seconds. */
-const SIGNED_URL_TTL = 300;
+/**
+ * Signed-URL lifetime for viewing a document, in seconds.
+ *
+ * Twelve hours, not five minutes. Five was chosen for an admin
+ * glancing at a record and was wrong for the job this actually has:
+ * the partner is an accommodation partner checking people in at a
+ * gate, on a phone, against a list of dozens. Links that died while
+ * you were still scrolling turned every check into a page reload, and
+ * the images simply broke.
+ *
+ * The trade is real and worth stating: a signed URL is a bearer
+ * credential for that one file, so a longer life means a longer window
+ * if one leaks. It is still scoped to a single object, still
+ * unguessable, still on a private bucket, and it still expires — which
+ * is what makes it different from handing over a copy.
+ */
+const SIGNED_URL_TTL = 12 * 60 * 60;
 
 /* The acceptance rules live in lib/documentRules.ts so the upload form
    can import them without dragging node:crypto into the browser

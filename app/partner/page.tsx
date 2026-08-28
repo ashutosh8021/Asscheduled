@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-/* Never cache: signed document URLs expire in minutes, and this reads
+/* Never cache: signed document URLs are minted per render, and this reads
    live data behind a session. */
 export const dynamic = "force-dynamic";
 

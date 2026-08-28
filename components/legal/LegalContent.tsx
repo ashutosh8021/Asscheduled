@@ -114,8 +114,9 @@ export function PrivacyPane({ level: H = "h3" }: { level?: PaneLevel } = {}) {
       <p>
         Where a departure asks for them, they are part of the application. Where it does not, they
         are requested only after you are accepted. Either way they are stored in a private,
-        access-controlled store, are never public, are seen only by us, and are deleted after the
-        trip ends — see Retention below. You can ask us to delete them sooner.
+        access-controlled store, are never public, and are deleted after the trip ends — see
+        Retention below. You can ask us to delete them sooner. For departures we run with a
+        partner festival, that festival can view them too; see below.
       </p>
 
       <H>What we use it for</H>
@@ -153,8 +154,8 @@ export function PrivacyPane({ level: H = "h3" }: { level?: PaneLevel } = {}) {
       <p>
         The festival can view those documents because both of us have to be satisfied that the
         person arriving at the gate is the person who applied. They are shown through links that
-        expire within minutes rather than as copies handed over, the festival cannot alter any
-        record, and every view is logged against the person who opened it.
+        expire rather than as copies handed over, the festival cannot alter any record, and
+        every view is logged against the person who opened it.
       </p>
       <p>
         This is a disclosure to a separate organisation, not processing on our behalf: once the

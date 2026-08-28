@@ -221,8 +221,8 @@ export default function PartnerRoster({
 
       {tab !== "roster" ? (
         <p className="a-docs-meta" style={{ padding: "4px 2px 20px" }}>
-          These links expire within minutes. Reload the page to open them again. Please do not
-          download or forward them.
+          These images load for the rest of the day. If one stops showing, reload the page.
+          Please do not download or forward them.
         </p>
       ) : null}
     </>

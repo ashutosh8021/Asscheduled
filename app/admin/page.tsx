@@ -53,7 +53,7 @@ export default async function AdminPage({
       : Promise.resolve([]),
     tab === "messages" ? listMessages() : Promise.resolve([]),
     tab === "collabs" ? listCollaborations() : Promise.resolve([]),
-    /* Signed URLs are minted here and expire in minutes, so this is
+    /* Signed URLs are minted here and expire the same day, so this is
        fetched only for the tab that shows them. */
     tab === "documents" ? listDocumentBundles() : Promise.resolve([]),
   ]);

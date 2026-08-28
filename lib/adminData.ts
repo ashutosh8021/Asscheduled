@@ -299,9 +299,9 @@ interface RawDocument {
  * — the foreign key from documents to applications is what makes that
  * possible, and it keeps the two in step with no join written here.
  *
- * URLs are signed as the page renders. They expire in minutes, so this
- * is only ever correct for a freshly loaded page — which is why the
- * admin route is force-dynamic.
+ * URLs are signed as the page renders and expire the same day, so a
+ * page left open overnight needs reloading — which is also why the
+ * route is force-dynamic.
  */
 export async function listDocumentBundles(departure?: string): Promise<DocumentBundle[]> {
   const rows = await select<RawDocument>(
