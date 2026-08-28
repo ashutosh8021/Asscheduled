@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import Shell from "@/components/as/Shell";
 import Reveal from "@/components/as/Reveal";
@@ -119,6 +118,20 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
 
               <span className="s-tick" style={{ display: "block", marginTop: 26 }} />
 
+              {/* The intro column runs out long before the booking
+                  panel does, leaving a band of nothing above the
+                  plans. Stamped rather than a photographed sticker —
+                  the drawn stamp is the brand's own device and sits on
+                  the paper instead of on top of it. */}
+              {d.introStamps?.length ? (
+                <ul className="s-intro-stamps">
+                  {d.introStamps.map((note, i) => (
+                    <li key={note} className="s-intro-stamp" data-alt={i % 2 === 1}>
+                      {note}
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
             </Reveal>
 
             <Reveal delay={1}>
@@ -127,22 +140,7 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
                     delegate pass with the dates, the discount with the
                     price. Picked by name, so reordering the array
                     cannot quietly swap them. */}
-                <div className="s-panel-top">
-                  <p className="s-panel-h">🗓 {DETAIL.datesLabel}</p>
-                  {d.stickers
-                    ?.filter((st) => st.slot === "header")
-                    .map((st) => (
-                      <Image
-                        key={st.src}
-                        className="s-sticker-float"
-                        src={st.small}
-                        alt={st.alt}
-                        width={st.width}
-                        height={st.height}
-                        sizes="170px"
-                      />
-                    ))}
-                </div>
+                <p className="s-panel-h">🗓 {DETAIL.datesLabel}</p>
 
                 <div style={{ marginTop: 14 }}>
                   {d.batches.map((b) => (
@@ -164,19 +162,7 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
                     {priceRange({ price: d.price, priceMax: d.priceMax })}
                     <span className="s-price-per">{SOMEWHERE.pricePer}</span>
                   </p>
-                  {d.stickers
-                    ?.filter((st) => st.slot === "price")
-                    .map((st) => (
-                      <Image
-                        key={st.src}
-                        className="s-sticker-float"
-                        src={st.small}
-                        alt={st.alt}
-                        width={st.width}
-                        height={st.height}
-                        sizes="170px"
-                      />
-                    ))}
+                  {d.priceNote ? <p className="s-price-stamp">{d.priceNote}</p> : null}
                 </div>
 
                 {/* A span, not a disabled button: there is nothing to

@@ -172,38 +172,18 @@ export interface Departure {
   documentsAtApply?: boolean;
 
   /**
+   * Stamped into the band the intro column leaves empty above the
+   * plans. Text, not artwork: the drawn stamp is the brand's own
+   * device and sits on the paper better than a photographed sticker.
+   */
+  introStamps?: string[];
+
+  /**
    * One short line stamped on every plan card, qualifying the fare
    * above it. Text rather than the sticker artwork: three cards each
    * carrying an image would be heavier than the prices they annotate.
    */
   priceNote?: string;
-
-  /**
-   * Sticker artwork for the two facts worth shouting about.
-   *
-   * Supplied as artwork rather than drawn in CSS, so the wording and
-   * the look are the designer's rather than mine. Each carries a
-   * second, smaller cut for the cards: the same image scaled down in
-   * the browser would ship a 1000px file to render at 220.
-   *
-   * `alt` is the sticker's words, because that IS the content — a
-   * screen reader that says "sticker" tells somebody nothing about
-   * ₹1,000 coming off.
-   */
-  stickers?: {
-    /**
-     * Where it goes in the booking panel. Named rather than positional
-     * so the layout does not silently rearrange if the array order
-     * changes: "header" sits beside TRIP DATES, "price" beside the
-     * figure it qualifies.
-     */
-    slot: "header" | "price";
-    src: string;
-    small: string;
-    alt: string;
-    width: number;
-    height: number;
-  }[];
 
   /**
    * The festival we run this departure with, when it is a partnership.
@@ -258,25 +238,8 @@ export const DEPARTURES: Departure[] = [
     priceMax: departureSpan("PUL-26")!.max,
     /* AIIMS asks for ID up front — see the note on the field. */
     documentsAtApply: true,
+    introStamps: ["Delegate pass included"],
     priceNote: "₹1,000 off at final payment",
-    stickers: [
-      {
-        slot: "price",
-        src: "/stickers/thousand-off.png",
-        small: "/stickers/thousand-off-sm.png",
-        alt: "Get ₹1,000 off at final payment",
-        width: 1000,
-        height: 315,
-      },
-      {
-        slot: "header",
-        src: "/stickers/delegate-pass.png",
-        small: "/stickers/delegate-pass-sm.png",
-        alt: "PULSE delegate pass included",
-        width: 1000,
-        height: 523,
-      },
-    ],
     /* Run with PULSE, so PULSE is told who is coming. This is what
        turns the sheet mirror on and what makes the form say so. */
     sharedWith: "PULSE, AIIMS New Delhi",

@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import Slot from "./Slot";
 import Stamp from "./Stamp";
@@ -82,25 +81,6 @@ export default function DepartureCard({
             ))}
           </div>
 
-          {/* The small cut. Sits above the price because that is what
-              it is about — seeing "₹1,000 off" after the number has
-              already been read is too late to change how it lands. */}
-          {d.stickers?.length ? (
-            <ul className="s-stickers s-stickers-sm">
-              {d.stickers.map((st, i) => (
-                <li key={st.src} className="s-sticker" data-alt={i % 2 === 1}>
-                  <Image
-                    src={st.small}
-                    alt={st.alt}
-                    width={st.width}
-                    height={st.height}
-                    sizes="220px"
-                  />
-                </li>
-              ))}
-            </ul>
-          ) : null}
-
           <hr className="s-rule" />
 
           <div>
@@ -121,6 +101,8 @@ export default function DepartureCard({
               {priceRange({ price: shown.price, priceMax: shown.priceMax })}
               <span className="s-price-per">{SOMEWHERE.pricePer}</span>
             </p>
+            {/* Stamped under the figure it qualifies. */}
+            {d.priceNote ? <p className="s-price-stamp">{d.priceNote}</p> : null}
             <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginTop: 12 }}>
               {SOMEWHERE.priceIncludes.map((p) => (
                 <span key={p} className="s-card-note">

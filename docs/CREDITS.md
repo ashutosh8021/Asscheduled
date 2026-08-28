@@ -72,3 +72,20 @@ and nothing else may be presented as one.
 **Open item.** Provenance is not recorded. Establish where this footage came
 from and add it here, or replace it. A hero film with no known licence is the
 single largest unlogged risk on the site.
+
+## PULSE'26 sticker artwork and brochure
+
+`public/brochure/pulse-2026.pdf`, and the sticker artwork in
+`asset/1000offsticker.jpeg` and `asset/delegatesticker.jpeg`.
+
+The stickers are **not published** — the site draws those two facts as CSS
+stamps instead, which sit on the paper better than a photographed sticker.
+The artwork is kept because it is the source for anything printed.
+
+Supplied by Mannat and produced for this collaboration. The delegate-pass
+sticker and the brochure carry PULSE's own branding; **Mannat confirmed on
+2026-08-29 that PULSE has given permission for all of it.**
+
+The source JPEGs are in `asset/`. The published PNGs are the same artwork
+cropped to their content with the white background keyed to transparency —
+no part of the artwork itself was altered.

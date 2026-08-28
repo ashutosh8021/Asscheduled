@@ -2543,137 +2543,117 @@ body.s-locked { overflow: hidden; }
   color: var(--s-grey);
 }
 
-/* ------------------------------------------------------------
-   PERK STICKERS
-   ------------------------------------------------------------
-   Supplied artwork, not drawn here — torn paper on a transparent
-   ground, so it sits on the page rather than in a box. The only
-   job of this CSS is placement and a slight tilt, so two of them
-   read as stuck on by hand rather than laid out on a grid. */
-.s-stickers {
+/* Stamped into the band the intro column leaves empty above the
+   plans. Bigger than the one on a plan card, because here it is
+   filling space rather than annotating a figure beside it. */
+.s-intro-stamps {
   list-style: none;
-  margin: 26px 0 0;
+  margin: clamp(24px, 3.4vw, 44px) 0 0;
   padding: 0;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: clamp(10px, 1.6vw, 18px);
-}
-
-.s-sticker { margin: 0; line-height: 0; }
-.s-sticker img {
-  display: block;
-  width: clamp(230px, 30vw, 420px);
-  height: auto;
-  transform: rotate(-2deg);
-  transform-origin: left center;
-}
-.s-sticker[data-alt="true"] img { transform: rotate(1.6deg); }
-
-/* On a card. Narrower, and tilted less — a card is already a small
-   object and a big angle inside one reads as a mistake. */
-.s-stickers-sm { margin: 4px 0 2px; gap: 8px; }
-.s-stickers-sm .s-sticker img {
-  width: clamp(160px, 62%, 230px);
-  transform: rotate(-1.4deg);
-}
-.s-stickers-sm .s-sticker[data-alt="true"] img { transform: rotate(1deg); }
-
-/* In the booking panel, each one beside the thing it qualifies:
-   the delegate pass with the dates, the discount with the price.
-   Small and barely tilted — inside a bordered box a big angle reads
-   as a layout fault rather than as something stuck on. */
-.s-panel-top,
-.s-price-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
   flex-wrap: wrap;
+  gap: 14px 16px;
 }
-/* The price and its sticker share a line. nowrap because wrapping
-   put the discount underneath the figure, which reads as a second
-   price rather than as a note on the first. Both shrink instead. */
-.s-price-row {
-  margin-bottom: 16px;
-  flex-wrap: nowrap;
-  gap: 8px;
+.s-intro-stamp {
+  position: relative;
+  display: inline-block;
+  padding: 14px 20px;
+  font-family: var(--s-mono);
+  font-size: clamp(11px, 1.15vw, 13.5px);
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  line-height: 1.2;
+  color: var(--s-rust);
+  border: 2px solid var(--s-rust);
+  transform: rotate(-2.2deg);
+  opacity: 0.92;
 }
-.s-price-row .s-price-now { margin: 0; min-width: 0; }
-
-.s-sticker-float {
-  flex: none;
-  width: clamp(120px, 34%, 170px);
-  height: auto;
-  transform: rotate(-2deg);
+.s-intro-stamp::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border: 1px solid currentColor;
+  opacity: 0.45;
+  pointer-events: none;
 }
-/* The one on the price line is the one that has to give way. */
-.s-price-row .s-sticker-float { width: clamp(96px, 30%, 145px); }
-.s-price-row .s-sticker-float { transform: rotate(1.5deg); }
-
-/* Below the split, the panel is full width and these have room to
-   breathe rather than being squeezed against the figure. */
-@media (max-width: 560px) {
-  .s-sticker-float { width: clamp(110px, 40%, 150px); }
-}
+.s-intro-stamp[data-alt="true"] { transform: rotate(1.6deg); }
 
 @media (prefers-reduced-motion: reduce) {
-  .s-sticker img { transform: none; }
-  .s-sticker[data-alt="true"] img { transform: none; }
+  .s-intro-stamp { transform: none; }
+  .s-intro-stamp[data-alt="true"] { transform: none; }
 }
 
-/* The booking panel's price. Two lines, never one: both figures are
+/* ------------------------------------------------------------
+   BOOKING PANEL PRICE
+   ------------------------------------------------------------
+   Two lines, never one: with a discounted range both figures are
    ranges, and inline they wrapped into each other so the old range's
    tail sat beside the new range's head. */
 .s-price-was-line {
   font-family: var(--s-mono);
   font-size: clamp(15px, 1.7vw, 20px);
   font-weight: 500;
-  color: var(--s-grey-2, var(--s-grey));
+  color: var(--s-grey);
   text-decoration: line-through;
   text-decoration-thickness: 1px;
   margin: 6px 0 2px;
   white-space: nowrap;
+}
+
+/* The price and the stamp that qualifies it share a line. nowrap
+   because wrapping put the stamp under the figure, where it read as a
+   second price rather than as a note on the first. */
+.s-price-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: nowrap;
+  margin: 6px 0 18px;
 }
 .s-price-now {
   font-family: var(--s-mono);
   font-size: clamp(19px, 2.1vw, 27px);
   font-weight: 600;
   letter-spacing: -0.015em;
-  margin: 0 0 16px;
+  margin: 0;
+  min-width: 0;
   white-space: nowrap;
-  /* The range itself must not break mid-figure. */
-  text-wrap: balance;
 }
 
-/* The stamp on a plan card. Same rubber-stamp device as the rest of
-   the brand — outer rule, hairline inset, a slight rotation so it
-   looks pressed on rather than laid out. Red, which is the only
-   thing red is used for here.
-
-   Text rather than the sticker artwork: three cards each carrying an
-   image would outweigh the prices they exist to annotate. */
-.s-plan-stamp {
+/* Compact stamp beside a price — the same rubber-stamp device as the
+   plan cards, sized to sit next to a figure rather than under one. */
+.s-price-stamp {
   position: relative;
+  flex: none;
   display: inline-block;
-  margin-top: 12px;
-  padding: 8px 12px;
+  margin: 12px 0 0;
+  padding: 7px 10px;
   font-family: var(--s-mono);
-  font-size: 10px;
+  font-size: 9.5px;
   font-weight: 600;
-  letter-spacing: 0.11em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  line-height: 1.2;
+  line-height: 1.25;
+  text-align: center;
   color: var(--s-rust);
   border: 2px solid var(--s-rust);
-  transform: rotate(-1.8deg);
+  transform: rotate(1.6deg);
   opacity: 0.92;
 }
-.s-plan-stamp::after {
+.s-price-stamp::after {
   content: "";
   position: absolute;
   inset: 2.5px;
   border: 1px solid currentColor;
   opacity: 0.45;
   pointer-events: none;
+}
+/* Inside the price row it sits beside the figure, so no top margin
+   and a cap on how much of the line it may take. */
+.s-price-row .s-price-stamp { margin: 0; max-width: 44%; }
+
+@media (max-width: 560px) {
+  .s-price-stamp { font-size: 9px; padding: 6px 8px; }
 }
