@@ -257,7 +257,7 @@ export const DEPARTURES: Departure[] = [
       { n: "DAY 04", date: "20 SEP", title: "THE MAIN EVENT", detail: null },
       { n: "DAY 05", date: "21 SEP", title: "FAREWELL", detail: null },
     ],
-    brochure: null,
+    brochure: "/brochure/pulse-2026.pdf",
     hero: {
       src: "/img/aiims/crowd.jpg",
       alt: "A performer crouched at the edge of the stage, the crowd filling the ground behind",

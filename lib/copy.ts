@@ -426,6 +426,11 @@ export const APPLY = {
      Only for departures sold as plans. The state came from step 1, so
      by the time this shows there is a real fare to put on each card. */
   planHead: "WHICH ONE",
+  /* The brochure, offered where the plans are compared — which is the
+     moment somebody wants more than four bullet points. */
+  planBrochure: "See the full brochure",
+  planBrochureHint: "click here to download",
+
   planNote: "Both fares are for travelling from",
   planNoFare:
     "We haven't worked out the fare from your state yet. Pick the plan you want and send this in — nothing is due now, and we'll come back with the amount. If you'd rather ask first:",

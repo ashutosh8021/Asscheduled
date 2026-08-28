@@ -754,7 +754,9 @@ export default function ApplyModal() {
                       >
                         <span className="s-plan-top">
                           <span className="s-plan-radio" aria-hidden="true" />
-                          <span className="s-plan-n">{p.n}</span>
+                          <span className="s-plan-n">
+                            {p.n} <span className="s-plan-dur">{p.duration}</span>
+                          </span>
                           <span className="s-plan-picked">{picked ? "SELECTED" : "TAP TO PICK"}</span>
                         </span>
                         <h3 className="s-plan-name">{p.name}</h3>
@@ -775,6 +777,20 @@ export default function ApplyModal() {
                     );
                   })}
                 </div>
+
+                {/* The brochure. `download` asks the browser to save
+                    rather than navigate, which matters here: opening a
+                    PDF in a new tab on a phone can bury the half-filled
+                    form behind it. */}
+                {chosen?.brochure ? (
+                  <a className="s-plan-doc" href={chosen.brochure} download>
+                    <span aria-hidden="true">⬇</span>
+                    <span>
+                      {APPLY.planBrochure}
+                      <i>{APPLY.planBrochureHint}</i>
+                    </span>
+                  </a>
+                ) : null}
 
                 {planError ? (
                   <p className="s-err" role="alert">

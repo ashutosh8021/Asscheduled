@@ -105,15 +105,20 @@ function PlanCard({
 }) {
   const fare = fareFor(plan, state);
   const span = planSpan(plan);
+  /* A plan with no fares at all — priced later. Says so rather than
+     rendering an empty figure. */
+  const unpriced_plan = span === null;
 
   /* Three states, and they are genuinely different things:
      no state chosen yet (show the span), a state we price (show the
      fare), and a state we do not price yet (say so — never a guess). */
-  const unpriced = state !== "" && fare === null;
+  const unpriced = unpriced_plan || (state !== "" && fare === null);
 
   return (
     <article className="s-plan">
-      <p className="s-plan-n">{plan.n}</p>
+      <p className="s-plan-n">
+        {plan.n} <span className="s-plan-dur">{plan.duration}</span>
+      </p>
       <h3 className="s-plan-name">{plan.name}</h3>
       <p className="s-plan-blurb">{plan.blurb}</p>
 
@@ -135,7 +140,11 @@ function PlanCard({
               {fare === null ? DETAIL.plansFrom : state}
             </p>
             <p className="s-plan-figure">
-              {fare === null ? `${inr(span.min)} – ${inr(span.max)}` : inr(fare)}
+              {fare === null && span
+                ? `${inr(span.min)} – ${inr(span.max)}`
+                : fare !== null
+                  ? inr(fare)
+                  : "—"}
               <span className="s-price-per">{DETAIL.plansPer}</span>
             </p>
             {fare === null ? <p className="s-hint">{DETAIL.plansPrompt}</p> : null}

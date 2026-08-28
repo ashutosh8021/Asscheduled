@@ -2510,3 +2510,35 @@ body.s-locked { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
   .s-plan-opt { transition: none; }
 }
+
+/* Plan length, beside the plan number. The plans are different
+   lengths, and that is the first thing to know about them. */
+.s-plan-dur {
+  color: var(--s-grey);
+  letter-spacing: 0.08em;
+}
+
+/* The brochure link under the plan cards. Sized as a real tap target,
+   because it sits between two large cards and a small underlined word
+   would be missed on a phone. */
+.s-plan-doc {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  border: 1px dashed var(--s-line-2, #c9c2b4);
+  background: var(--s-paper-2);
+  color: var(--s-ink);
+  text-decoration: none;
+}
+.s-plan-doc:hover { border-color: var(--s-ink); }
+.s-plan-doc span:first-child { font-size: 15px; color: var(--s-rust); }
+.s-plan-doc span:last-child { display: flex; flex-direction: column; gap: 1px; }
+.s-plan-doc span:last-child { font-size: 13.5px; }
+.s-plan-doc i {
+  font-style: normal;
+  font-family: var(--s-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  color: var(--s-grey);
+}

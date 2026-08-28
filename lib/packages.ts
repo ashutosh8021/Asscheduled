@@ -36,6 +36,12 @@ export interface Plan {
   n: string;
   /** "THE FESTIVAL" */
   name: string;
+  /**
+   * "6D/5N". Per plan, not per departure, because the plans are
+   * different lengths — which is also why the departure's own dates
+   * and itinerary describe the shortest one only.
+   */
+  duration: string;
   /** One line under the name, in the editorial voice. */
   blurb: string;
   /** What the fare covers, as the card lists it. */
@@ -133,22 +139,33 @@ const PULSE_FESTIVAL_PLUS_DELHI: Fares = {
 
 const PULSE_PLANS: Plan[] = [
   {
-    id: "pulse-festival",
+    /* ⚠️ TODO(mannat): this plan has NO FARES. It is the short Delhi
+       variant, added on instruction, and nobody has priced it yet.
+
+       Until the table below is filled in, every state shows no price
+       and anybody choosing it is told we will confirm the amount — the
+       same honest path an unpriced state already takes. It is not
+       sellable in that state. Send the 25 figures and it goes live
+       with no code change. */
+    id: "pulse-delhi-short",
     n: "PLAN 01",
-    name: "THE FESTIVAL",
-    blurb: "Five days inside PULSE, and nothing else competing for them.",
+    name: "THE FESTIVAL + DELHI",
+    duration: "6D/5N",
+    blurb: "Two days on the city first, then the three main days of PULSE.",
     includes: [
       "Entry pass to PULSE",
       "Train 3AC — round trip, from your city",
       "Hotel, sharing basis",
       "Meals through the trip",
+      "2 days of Delhi, guided",
     ],
-    fares: PULSE_FESTIVAL,
+    fares: {},
   },
   {
     id: "pulse-festival-delhi",
     n: "PLAN 02",
     name: "THE FESTIVAL + DELHI",
+    duration: "8D/7N",
     blurb: "The same five days, with two more spent on the city itself.",
     includes: [
       "Entry pass to PULSE",
@@ -158,6 +175,20 @@ const PULSE_PLANS: Plan[] = [
       "2 days of Delhi, guided",
     ],
     fares: PULSE_FESTIVAL_PLUS_DELHI,
+  },
+  {
+    id: "pulse-festival",
+    n: "PLAN 03",
+    name: "THE FESTIVAL",
+    duration: "5D/4N",
+    blurb: "Five days inside PULSE, and nothing else competing for them.",
+    includes: [
+      "Entry pass to PULSE",
+      "Train 3AC — round trip, from your city",
+      "Hotel, sharing basis",
+      "Meals through the trip",
+    ],
+    fares: PULSE_FESTIVAL,
   },
 ];
 
@@ -203,8 +234,11 @@ export function fareFor(plan: Plan | null, state: string): number | null {
 }
 
 /** Cheapest and dearest fare in a plan, for a range on a card. */
-export function planSpan(plan: Plan): { min: number; max: number } {
-  const fares = Object.values(plan.fares);
+export function planSpan(plan: Plan): { min: number; max: number } | null {
+  const fares = Object.values(plan.fares).filter((f): f is number => typeof f === "number");
+  /* Null rather than Infinity. An unpriced plan has no span, and
+     Math.min() of nothing is Infinity, which would render as a price. */
+  if (fares.length === 0) return null;
   return { min: Math.min(...fares), max: Math.max(...fares) };
 }
 
@@ -219,7 +253,9 @@ export function departureSpan(departureId: string): { min: number; max: number }
   const plans = plansFor(departureId);
   if (plans.length === 0) return null;
 
-  const spans = plans.map(planSpan);
+  const spans = plans.map(planSpan).filter((x): x is { min: number; max: number } => x !== null);
+  if (spans.length === 0) return null;
+
   return {
     min: Math.min(...spans.map((s) => s.min)),
     max: Math.max(...spans.map((s) => s.max)),
