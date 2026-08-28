@@ -7,6 +7,7 @@ import {
   storeDocument,
   type DocumentKind,
 } from "@/lib/documents";
+import { mirrorApplication } from "@/lib/adminData";
 
 /* Document upload for an accepted applicant.
 
@@ -89,6 +90,12 @@ export async function POST(request: Request) {
   if (!stored) {
     return fail("We could not save that. Try again, or write to us.", 502);
   }
+
+  /* The sheet's documents column says what has come in, so it has to
+     be told when something does. Names only, never a link — a signed
+     URL sitting in a shared spreadsheet would hand a partner
+     somebody's Aadhaar. */
+  void mirrorApplication({ id: target.id });
 
   return NextResponse.json({ ok: true, kind });
 }

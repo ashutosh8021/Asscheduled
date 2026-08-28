@@ -2214,6 +2214,38 @@ body.s-locked { overflow: hidden; }
   text-transform: uppercase;
 }
 
+/* The coupon, shown already applied.
+​
+   A tag rather than a field, and that is the whole design: there is
+   nothing to type, nothing to submit and nothing to get wrong. The
+   server decided this from the link somebody arrived on, so an input
+   here would only invite people to try their luck. */
+.s-coupon {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.s-coupon-tag {
+  padding: 5px 10px;
+  background: var(--s-rust);
+  color: var(--s-bone);
+  font-family: var(--s-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  /* Dashed edge so it reads as a torn-off coupon rather than a button. */
+  border: 1px dashed var(--s-bone);
+  outline: 1px solid var(--s-rust);
+}
+.s-coupon-said {
+  font-family: var(--s-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  color: var(--s-grey);
+}
+
 /* The old figure, kept beside the new one so the saving is legible
    rather than asserted. */
 .s-was {
@@ -2265,4 +2297,156 @@ body.s-locked { overflow: hidden; }
   font-size: 15px;
   color: var(--s-ink);
   overflow-wrap: anywhere;
+}
+
+/* The QR. Sits on its own white plate rather than the page, because a
+   code printed on a tinted background is measurably harder for a
+   camera to lock onto — and this one has to work first time, in a
+   hostel corridor, on somebody's cracked screen. */
+.s-pay-qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid var(--s-line);
+  /* Hugs the code rather than stretching the plate across the form —
+     a small square of white around a QR reads as a thing to scan; a
+     full-width white band reads as a rendering fault. */
+  width: fit-content;
+  margin: 0 auto;
+}
+.s-pay-qr-img {
+  display: block;
+  width: min(220px, 68vw);
+  height: auto;
+}
+
+/* ------------------------------------------------------------
+   PLANS
+   ------------------------------------------------------------
+   A departure sold as more than one package. The fare is per state,
+   so the section asks where somebody is starting from and fills both
+   cards in from that — comparing two real numbers beats comparing two
+   ranges you then have to interpret. */
+.s-plans { display: flex; flex-direction: column; gap: clamp(18px, 2.4vw, 26px); }
+
+.s-plans-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.s-plans-state { min-width: min(260px, 100%); }
+
+.s-plan-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: clamp(14px, 1.8vw, 22px);
+  align-items: stretch;
+}
+/* Inside the application overlay, where there is far less room. */
+.s-plan-grid-tight { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+
+.s-plan {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: clamp(18px, 2.4vw, 28px);
+  background: var(--s-bone);
+  border: 1px solid var(--s-line);
+  /* So the two cards line up however uneven their contents are. */
+  height: 100%;
+}
+.s-plan-n {
+  font-family: var(--s-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--s-rust);
+}
+.s-plan-name {
+  font-family: var(--s-heavy);
+  font-size: clamp(19px, 2.1vw, 26px);
+  line-height: 1.06;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+.s-plan-blurb { font-size: 14px; color: var(--s-grey); }
+.s-plan-list { margin-top: 4px; gap: 8px; font-size: 14px; }
+
+/* Pushed to the bottom so the figure sits on the same line across
+   both cards even when one lists an extra inclusion. */
+.s-plan-price { margin-top: auto; padding-top: 14px; }
+.s-plan-figure {
+  font-family: var(--s-mono);
+  font-size: clamp(24px, 2.9vw, 34px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--s-ink);
+}
+.s-plan-figure-sm { font-size: clamp(18px, 2.2vw, 22px); margin-top: auto; padding-top: 10px; }
+.s-plan-cta { width: 100%; justify-content: center; margin-top: 14px; }
+
+/* The same card as a control, inside the form. A real <button>, so
+   Tab, Enter and Space all work without reimplementing any of it. */
+.s-plan-opt {
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  background: var(--s-paper);
+  transition: border-color 0.18s var(--s-bez), background 0.18s var(--s-bez);
+}
+.s-plan-opt:hover { border-color: var(--s-grey); }
+.s-plan-opt[data-picked="true"] {
+  border-color: var(--s-ink);
+  /* Two signals, not one: colour alone would leave the choice
+     invisible to anyone who cannot see the difference. */
+  box-shadow: inset 0 0 0 1px var(--s-ink);
+  background: var(--s-bone);
+}
+.s-plan-opt[data-picked="true"] .s-plan-n { color: var(--s-forest); }
+
+.s-plan-pick { display: flex; flex-direction: column; gap: 12px; }
+
+/* ------------------------------------------------------------
+   NO FARE FROM THIS STATE
+   ------------------------------------------------------------
+   Eleven states are unpriced. A blank price with no way forward
+   reads as "we don't go there", so this hands over a person. */
+.s-nofare { display: flex; flex-direction: column; gap: 7px; }
+.s-nofare-line { font-size: 13.5px; color: var(--s-grey); line-height: 1.45; }
+.s-nofare-reach {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  font-family: var(--s-mono);
+  font-size: 13px;
+}
+.s-nofare-reach a {
+  color: var(--s-rust);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  /* Long enough to hit on a phone without enlarging the row. */
+  padding: 2px 0;
+}
+.s-nofare-reach a:hover { color: var(--s-ink); }
+
+/* One quiet line above the submit button. Deliberately small — it is
+   a pointer to the policy, not a notice competing with the form. */
+.s-consent { font-size: 12.5px; color: var(--s-grey); }
+.s-consent a {
+  color: var(--s-rust);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.s-consent a:hover { color: var(--s-ink); }
+
+@media (prefers-reduced-motion: reduce) {
+  .s-plan-opt { transition: none; }
 }

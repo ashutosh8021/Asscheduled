@@ -17,6 +17,8 @@ import MessagesTable from "./MessagesTable";
 import CollabsTable from "./CollabsTable";
 import DocumentsTab from "./DocumentsTab";
 import SignOut from "./SignOut";
+import ResyncSheet from "./ResyncSheet";
+import { sheetConfigured } from "@/lib/sheet";
 import "./admin.css";
 
 export const metadata: Metadata = {
@@ -85,6 +87,7 @@ export default async function AdminPage({
             </Link>
           </div>
 
+          <ResyncSheet connected={sheetConfigured()} />
           <SignOut email={admin.email} />
         </div>
 

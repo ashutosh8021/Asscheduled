@@ -167,16 +167,59 @@ that entry exists nothing changes anywhere on the site.
 **The link is public.** Anyone who sees it can share it, so treat the expiry
 date as the real control.
 
+## Plans and per-state fares
+
+PULSE is sold as two plans, and each one is priced per state, because the
+train is. Both fare tables live in `lib/packages.ts` and that is the only
+place a fare is written down.
+
+The browser reads that table to **show** a price; `app/api/somewhere/apply/route.ts`
+reads it again to **record** one, from the plan and state that were submitted.
+The form never posts an amount, so there is nothing there for anyone to edit.
+A plan id is only accepted for a departure that actually sells it — a PULSE
+plan posted against Thomso resolves to nothing rather than to a PULSE fare.
+
+**To change a fare**, edit the table. The card, the detail page, the price
+range on the homepage and the amount the form asks for all follow, because
+all four are derived from it.
+
+**Eleven states and union territories have no fare yet** — Kerala, Tamil Nadu,
+Tripura, Delhi, Jammu and Kashmir, Ladakh, Puducherry, Chandigarh, Andaman and
+Nicobar Islands, Lakshadweep, and Dadra and Nagar Haveli and Daman and Diu.
+Somebody from one of those can still apply: they are told we will confirm
+their fare, are not asked for a payment or a UTR, and the row is stored with
+no amount due. **Those applications need chasing by hand** — check the admin
+for a PULSE row with a plan and no amount.
+
+**By default the whole fare is due at application time.** If that should be a
+smaller deposit instead, set `bookingInr` on the departure in
+`lib/departures.ts` — that is the entire change. The form then shows the
+deposit, the route records it, and the fare table is only used for display.
+
 ## The live Google Sheet
 
-Applications are mirrored into a sheet as they arrive. Nothing about this can
-fail an application — if the sheet is unreachable the row is already safe in
-Postgres and the failure is only logged.
+The sheet mirrors what the admin panel shows, as it changes — not just what
+arrived. An application is pushed when it is submitted, when you move it
+between new / reviewing / accepted / declined, and when a document comes in.
+
+**PULSE only.** `MIRRORED_DEPARTURES` in `lib/sheet.ts` is the single gate, and
+every path into the sheet goes through it, so Thomso and Rendezvous applicants
+are never sent. The sheet is shared with PULSE; it must not carry people they
+have nothing to do with.
+
+Nothing about this can fail an application — if the sheet is unreachable the
+row is already safe in Postgres and the failure is only logged.
 
 ### One-time setup
 
 1. Create a Google Sheet you own.
-2. **Extensions → Apps Script**, and paste:
+2. Leave row 1 empty. The script writes the header itself, bolds it and
+   freezes it — `SHEET_HEADERS` in `lib/sheet.ts` is where the labels live.
+   (Pasting a tab-separated header by hand drops the tabs and lands the whole
+   thing in cell A1, which then looks exactly like every column being
+   misaligned. Hence sending it.)
+
+3. **Extensions → Apps Script**, and paste:
 
 ```javascript
 function doPost(e) {
@@ -184,31 +227,85 @@ function doPost(e) {
   if (b.secret !== 'PUT_THE_SECRET_HERE') {
     return ContentService.createTextOutput('no');
   }
-  SpreadsheetApp.getActiveSheet().appendRow([
-    new Date(), b.reference, b.departure, b.name, b.phone, b.gender, b.age,
-    b.state, b.occupation, b.college, b.instagram, b.why,
-    b.partner, b.discountInr, b.amountDue, b.utr,
-  ]);
-  return ContentService.createTextOutput('ok');
+
+  const sh = SpreadsheetApp.getActiveSheet();
+  const cols = b.columns;
+  const rows = b.rows || [];
+
+  // Write the header ourselves, every push, so it is right the first
+  // time and repairs itself if somebody edits it.
+  if (b.header && b.header.length) {
+    sh.getRange(1, 1, 1, b.header.length)
+      .setValues([b.header])
+      .setFontWeight('bold');
+    if (sh.getFrozenRows() < 1) sh.setFrozenRows(1);
+  }
+
+  // Index the references already in the sheet (column B), so a row
+  // that is already here gets updated in place instead of duplicated.
+  const last = sh.getLastRow();
+  const index = {};
+  if (last > 1) {
+    const refs = sh.getRange(2, 2, last - 1, 1).getValues();
+    for (let i = 0; i < refs.length; i++) index[String(refs[i][0])] = i + 2;
+  }
+
+  const append = [];
+  rows.forEach(function (r) {
+    const line = cols.map(function (c) { return r[c] === null ? '' : r[c]; });
+    const at = index[r.reference];
+    // Only the mirrored columns are written. Anything you add to the
+    // right of them — notes, a follow-up column — is never touched.
+    if (at) sh.getRange(at, 1, 1, line.length).setValues([line]);
+    else append.push(line);
+  });
+
+  if (append.length) {
+    sh.getRange(sh.getLastRow() + 1, 1, append.length, append[0].length)
+      .setValues(append);
+  }
+
+  return ContentService.createTextOutput('ok ' + rows.length);
 }
 ```
 
-3. **Deploy → New deployment → Web app.** Execute as **Me**, access
+4. **Deploy → New deployment → Web app.** Execute as **Me**, access
    **Anyone**. Copy the URL it gives you.
-4. Put the URL in `SHEET_WEBHOOK_URL` and the same secret in
-   `SHEET_WEBHOOK_SECRET`, in Vercel.
-5. **Share → PULSE's Google account, Viewer.**
+5. Put the URL in `SHEET_WEBHOOK_URL` and the same secret in
+   `SHEET_WEBHOOK_SECRET` — in `.env.local` to try it locally, and in Vercel
+   for the live site.
+6. In the admin, press **RESYNC SHEET**. That fills the new sheet with
+   everything that arrived before it existed.
+7. **Share → PULSE's Google account, Viewer.**
 
 "Anyone" is what lets us POST without credentials; it cannot read the sheet.
 The secret in the body is what stops strangers appending rows.
 
+### RESYNC SHEET
+
+The live mirror is fire-and-forget: it must never hold an applicant or an admin
+waiting on Google, which means an update can be missed — an outage, a
+redeployed script, a revoked URL. RESYNC is the repair.
+
+Safe to run whenever. Rows are keyed on the reference, so it updates what is
+there and appends what is not. It never duplicates, and it never clears a
+column you added yourself.
+
+**Redeploying the Apps Script changes the URL** unless you deploy to the same
+version. If the sheet quietly stops updating, that is the first thing to check.
+
 ### What it means to share it
 
-The sheet holds applicants' names, phone numbers, colleges and payment
-references. Sharing it with PULSE is **disclosure to a third party**, not just
-storage, and the privacy policy has to say so. It is also a second copy:
-deleting a row in Supabase does not delete it from the sheet, so a deletion
-request means clearing both.
+The sheet holds applicants' names, phone numbers, colleges, payment references
+and now their status and which documents they have sent. Sharing it with PULSE
+is **disclosure to a third party**, not just storage, and the privacy policy
+has to say so.
+
+Document *names* go in the sheet — never links. A signed URL sitting in a
+shared spreadsheet would hand a partner somebody's Aadhaar.
+
+It is also a second copy: deleting a row in Supabase does not delete it from
+the sheet, so a deletion request means clearing both.
 
 ## Booking payments
 

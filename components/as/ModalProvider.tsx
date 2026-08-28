@@ -16,13 +16,17 @@ interface Ctx {
    * `event` preselects the departure in the application form.
    * `source` names the surface the CTA sat on, so the funnel can show
    * which part of the site actually produces applications.
+   * `plan` preselects a package, for CTAs that sit on one — pressing
+   * PROCEED on a specific card should not make you choose it twice.
    */
-  openApply: (event?: string, source?: string) => void;
+  openApply: (event?: string, source?: string, plan?: string) => void;
   openCollab: () => void;
   close: () => void;
   preselect: string | null;
   /** Where the open came from. Analytics only. */
   source: string | null;
+  /** The plan the CTA sat on, if any. A plan id, never a price. */
+  preselectPlan: string | null;
 }
 
 const ModalCtx = createContext<Ctx | null>(null);
@@ -37,11 +41,13 @@ export default function ModalProvider({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState<Which>(null);
   const [preselect, setPreselect] = useState<string | null>(null);
   const [source, setSource] = useState<string | null>(null);
+  const [preselectPlan, setPreselectPlan] = useState<string | null>(null);
 
   const close = useCallback(() => setOpen(null), []);
-  const openApply = useCallback((event?: string, from?: string) => {
+  const openApply = useCallback((event?: string, from?: string, plan?: string) => {
     setPreselect(event ?? null);
     setSource(from ?? null);
+    setPreselectPlan(plan ?? null);
     setOpen("apply");
   }, []);
   const openCollab = useCallback(() => setOpen("collab"), []);
@@ -63,8 +69,8 @@ export default function ModalProvider({ children }: { children: ReactNode }) {
   }, [open, close]);
 
   const value = useMemo(
-    () => ({ open, openApply, openCollab, close, preselect, source }),
-    [open, openApply, openCollab, close, preselect, source]
+    () => ({ open, openApply, openCollab, close, preselect, source, preselectPlan }),
+    [open, openApply, openCollab, close, preselect, source, preselectPlan]
   );
 
   return (

@@ -18,10 +18,25 @@
  */
 
 export interface Partner {
-  /** What appears in the link: /somewhere/…?p=pulse */
+  /** What appears in the link: /somewhere/…?p=pulse2026
+   *  Lower case — findPartner folds the incoming value, so the link
+   *  can be written in caps without breaking. */
   code: string;
+  /** The coupon as the applicant sees it: "PULSE2026". Shown applied
+   *  and not editable — there is no field to type it into, because a
+   *  code the browser can supply is a discount the browser can invent. */
+  coupon: string;
   /** Shown to the applicant, so they know why the price dropped. */
   name: string;
+  /**
+   * Where to also send the application, beyond our own inbox.
+   *
+   * A partner running the festival needs to know who is coming. This
+   * is a disclosure to a third party, so it applies ONLY to people who
+   * arrived on the partner's own link — somebody who found us on their
+   * own and applied to the same departure is not shared with anyone.
+   */
+  notify?: string;
   /** Departure ids this covers. A code for one fest must not discount another. */
   departures: string[];
   /** Flat rupees off. Not a percentage — a range priced 8,799–12,799
@@ -31,29 +46,90 @@ export interface Partner {
   /** ISO date. After this the link still opens the page; it just stops
    *  discounting. An expiry needs no counter and has no race. */
   validUntil: string;
+
+  /**
+   * Applies to everyone on the departure, with or without a referral.
+   *
+   * PULSE is this: the arrangement is with the festival, and everybody
+   * going to the festival is covered by it, however they found us.
+   * There is nothing to arrive on and nothing to miss out on.
+   *
+   * A partner without this is referral-only — the cookie the
+   * middleware sets from `?p=` is what turns it on, and somebody who
+   * found us independently pays the list price.
+   */
+  auto?: boolean;
 }
 
 /* ------------------------------------------------------------------
-   TODO(mannat): these three numbers are placeholders and the feature
-   is deliberately inert until they are real.
+   PULSE'26 — AIIMS New Delhi.
 
-   PARTNERS is empty, so `resolvePartner` returns null for every code,
-   every price shows in full, and nothing about the live site changes.
-   Fill in the entry below — discount, expiry — and it switches on.
+   Everyone applying to PULSE gets PULSE2026: ₹1,000 off, applied
+   automatically, no field to type it into and no link to arrive on.
+   The arrangement is with the festival, so it covers everybody going
+   to the festival however they found us — which is what `auto` says.
 
-   Needed:
-     • discountInr — flat ₹ off PULSE
-     • validUntil  — the date the link stops discounting
+   ⚠️ TODO(mannat): the ₹1,000 is funded by ₹1,000 added to both fare
+   tables in lib/packages.ts. That made sense while the coupon was
+   referral-only, because the list price was then a real price that
+   real people paid. Now that it applies to everyone, nobody is ever
+   charged the list price — so the struck-through figure on the card
+   is a number no applicant will ever pay. Either drop the ₹1,000 from
+   both tables and retire the coupon, or keep the coupon as branding
+   and stop showing a "was" price. See the note in lib/packages.ts.
    ------------------------------------------------------------------ */
 export const PARTNERS: Partner[] = [
-  // {
-  //   code: "pulse",
-  //   name: "PULSE, AIIMS New Delhi",
-  //   departures: ["PUL-26"],
-  //   discountInr: 0,            // TODO(mannat)
-  //   validUntil: "2026-09-16",  // TODO(mannat)
-  // },
+  {
+    code: "pulse2026",
+    coupon: "PULSE2026",
+    name: "PULSE, AIIMS New Delhi",
+    departures: ["PUL-26"],
+    discountInr: 1000,
+    /* TODO(mannat): confirm. Set to the day before the trip starts,
+       so the link stops discounting once there is nothing left to
+       apply for. Move it earlier if applications close sooner. */
+    validUntil: "2026-09-16",
+    notify: "studentsunion@aiims.edu",
+    auto: true,
+  },
 ];
+
+/**
+ * The partner in force for a departure, for a given visitor.
+ *
+ * Two ways one applies, and this is the single place that decides:
+ *
+ *   • automatic — the arrangement covers the whole departure, so
+ *     everybody gets it and no link is involved;
+ *   • referral — only somebody carrying the partner's code, from the
+ *     cookie the middleware set.
+ *
+ * Everything calls this: the page that shows a price, the endpoint the
+ * form asks, and the route that records what is owed. One function, so
+ * the price quoted and the price charged cannot come apart.
+ */
+export function partnerFor(
+  departureCode: string,
+  code?: string | null,
+  now: Date = new Date()
+): Partner | null {
+  /* Automatic first. It needs nothing from the visitor, so it cannot
+     be missed by somebody who cleared their cookies or arrived on a
+     plain link. */
+  const automatic = PARTNERS.find(
+    (p) => p.auto && p.departures.includes(departureCode) && !expired(p, now)
+  );
+  if (automatic) return automatic;
+
+  return resolvePartner(code, departureCode, now);
+}
+
+/** End of the day in IST, so a code valid "until the 16th" works all of
+ *  the 16th rather than expiring at 05:30 that morning. */
+function expired(partner: Partner, now: Date): boolean {
+  const at = new Date(`${partner.validUntil}T23:59:59+05:30`);
+  return Number.isNaN(at.getTime()) || now > at;
+}
 
 /** Look a code up. Case and whitespace are forgiving; a link gets typed
  *  by hand more often than anyone expects. */
@@ -83,12 +159,7 @@ export function resolvePartner(
   const partner = findPartner(code);
   if (!partner) return null;
   if (!partner.departures.includes(departureCode)) return null;
-
-  /* End of the day in IST, so a link valid "until the 16th" works all
-     of the 16th rather than expiring at midnight UTC — which is 05:30
-     on the 16th in India, and would surprise everyone. */
-  const expires = new Date(`${partner.validUntil}T23:59:59+05:30`);
-  if (Number.isNaN(expires.getTime()) || now > expires) return null;
+  if (expired(partner, now)) return null;
 
   return partner;
 }

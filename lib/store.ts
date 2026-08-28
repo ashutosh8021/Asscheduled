@@ -75,6 +75,9 @@ export interface ApplicationRecord {
   college: string;
   instagram: string;
   why: string;
+  /** Which package they chose, for departures sold as more than one.
+   *  A plan id, resolved against the departure — never a price. */
+  plan: string | null;
   /* Partner pricing. All three are the server's own calculation — the
      browser never sends an amount, so there is nothing here it could
      have chosen. Null when nobody arrived on a partner link. */
@@ -85,8 +88,10 @@ export interface ApplicationRecord {
   utr: string | null;
 }
 
-export function saveApplication(a: ApplicationRecord): Promise<boolean> {
-  return insert("applications", {
+export async function saveApplication(a: ApplicationRecord): Promise<boolean> {
+  /* The columns that have always existed. An application consists of
+     these; everything below is extra detail about it. */
+  const core = {
     reference: a.reference,
     departure_code: a.departureCode,
     name: a.name,
@@ -100,20 +105,42 @@ export function saveApplication(a: ApplicationRecord): Promise<boolean> {
        "not provided" and "provided as blank" stay distinguishable. */
     instagram: a.instagram || null,
     why: a.why || null,
+  };
 
-    /* Only sent when there is something to say.
-​
-       These columns arrive with docs/schema-partner.sql, and PostgREST
-       rejects the whole insert if it is handed a column that does not
-       exist — including one set to null. Naming them unconditionally
-       would mean that deploying this code before running that SQL
-       broke every application, partner or not. Spread in only when
-       populated, so the ordinary path is byte-for-byte what it was. */
+  /* Plan and payment. Only sent when there is something to say, and
+     kept separate because these columns arrive with a migration —
+     docs/schema-partner.sql — that may not have been run yet. */
+  const extra = {
+    ...(a.plan ? { plan: a.plan } : {}),
     ...(a.partnerCode ? { partner_code: a.partnerCode } : {}),
     ...(a.discountInr ? { discount_inr: a.discountInr } : {}),
     ...(a.amountDue !== null ? { amount_due: a.amountDue } : {}),
     ...(a.utr ? { utr: a.utr } : {}),
-  });
+  };
+
+  if (Object.keys(extra).length === 0) return insert("applications", core);
+
+  if (await insert("applications", { ...core, ...extra })) return true;
+
+  /* PostgREST rejects the entire insert when it is handed a column
+     that does not exist — so before that SQL is run, every PULSE
+     application fails on `plan` and is lost to a migration nobody had
+     got round to. It is not a hypothetical: it happened in testing.
+
+     So the application goes in without the extras rather than not at
+     all. It is the right trade in both directions — a row missing its
+     plan can be repaired from the email, and a row that was never
+     written cannot be repaired from anything. It also means no upload
+     token is issued, so the ID documents cannot go up either.
+
+     Loud, because this is a state somebody has to come and fix: the
+     data really is incomplete until the migration runs. */
+  console.error(
+    `[store] applications insert failed with plan/payment columns for ${a.reference} — ` +
+      `retrying without them. Run docs/schema-partner.sql: until then ` +
+      `${Object.keys(extra).join(", ")} are NOT being recorded.`
+  );
+  return insert("applications", core);
 }
 
 export interface CollabRecord {

@@ -7,10 +7,12 @@ import Accordion from "@/components/as/Accordion";
 import ApplyButton from "@/components/as/ApplyButton";
 import DepartureHero from "@/components/as/DepartureHero";
 import LastYear from "@/components/as/LastYear";
+import PlanCards from "@/components/as/PlanCards";
+import { hasPlans } from "@/lib/packages";
 import { DETAIL, SOMEWHERE } from "@/lib/copy";
 import { cookies } from "next/headers";
 import { DEPARTURES, batchLabel, getDeparture, inr, priceRange } from "@/lib/departures";
-import { effectivePrice, resolvePartner, PARTNER_COOKIE } from "@/lib/partners";
+import { effectivePrice, partnerFor, PARTNER_COOKIE } from "@/lib/partners";
 import { abs } from "@/lib/site";
 
 /* Experience detail — comps (7) and (8). One template, both departures;
@@ -58,7 +60,7 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
      The same resolvePartner runs in the apply route, so what is shown
      here and what is charged there cannot drift apart. */
   const jar = await cookies();
-  const partner = resolvePartner(jar.get(PARTNER_COOKIE)?.value, d.id);
+  const partner = partnerFor(d.id, jar.get(PARTNER_COOKIE)?.value);
   const pricing = effectivePrice(d.price, d.priceMax, partner);
 
   return (
@@ -148,8 +150,11 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
                     a field here would only invite someone to try
                     changing it. */}
                 {partner ? (
-                  <p className="s-partner">
-                    {partner.name} · {inr(pricing.discountInr)} off
+                  <p className="s-coupon">
+                    <span className="s-coupon-tag">{partner.coupon}</span>
+                    <span className="s-coupon-said">
+                      {inr(pricing.discountInr)} off, applied
+                    </span>
                   </p>
                 ) : null}
 
@@ -200,6 +205,19 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
             </Reveal>
           </div>
         </section>
+
+        {/* ---------- PLANS ----------
+            Only for departures sold as more than one package. It sits
+            directly under the price panel because that panel shows a
+            range, and this is what resolves the range into the one
+            number that applies to whoever is reading. */}
+        {hasPlans(d.id) ? (
+          <section className="s-wrap s-sec-tight">
+            <Reveal>
+              <PlanCards departureId={d.id} soldOut={d.soldOut === true} />
+            </Reveal>
+          </section>
+        ) : null}
 
         {/* ---------- INCLUDED / EXCLUDED ---------- */}
         <section className="s-wrap s-sec-tight">

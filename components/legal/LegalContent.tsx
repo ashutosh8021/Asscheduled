@@ -128,10 +128,38 @@ export function PrivacyPane({ level: H = "h3" }: { level?: PaneLevel } = {}) {
 
       <H>Who else processes it</H>
       <p>
-        Supabase (database and document storage), Vercel (hosting), and Resend (email delivery)
+        Supabase (database and document storage), Vercel (hosting), Resend (email delivery), and
+        Google Sheets (an operational copy of applications for the departures described below)
         process data on our behalf under contract. Google Analytics receives anonymous usage
         statistics as described below. Rail and hotel bookings require passing your travel details
         to the relevant operator. Some of these providers process data outside India.
+      </p>
+
+      <H>Departures we run with a partner festival</H>
+      <p>
+        Some departures are run in partnership with the festival itself. PULSE&nbsp;2026 at AIIMS
+        New Delhi is one. If you apply to a departure like that, your application is shared with
+        the festival — by email as it arrives, and in a spreadsheet they can read that stays up to
+        date. They admit you to their campus and their event, so they are told who is coming,
+        however you found us.
+      </p>
+      <p>
+        We share, on an ongoing basis: your name, phone number, age, gender, state, occupation,
+        college, Instagram handle if you gave one, what you wrote in your application, which plan
+        you chose, the amount due, the payment reference you entered, whether we have accepted you,
+        and <em>whether</em> your ID documents have been received. The documents themselves are
+        never shared — the festival is told that a college ID arrived, never shown it.
+      </p>
+      <p>
+        This is a disclosure to a separate organisation, not processing on our behalf: once the
+        festival holds your details they are responsible for them, and their own handling is
+        outside our control.
+      </p>
+      <p>
+        It applies only to partnered departures. If you apply to one we run on our own, nothing
+        about you goes to any festival. If you would rather it did not happen at all, do not apply
+        to a partnered departure — we cannot take you to a festival without telling the festival
+        you are coming. You can ask us at any time what has been shared about you.
       </p>
 
       <H>Cookies and analytics</H>
@@ -154,6 +182,12 @@ export function PrivacyPane({ level: H = "h3" }: { level?: PaneLevel } = {}) {
         requires, then archived. Identity documents: deleted after the departure ends, and sooner
         if you ask. Mailing list: until you unsubscribe. Enquiries and collaboration proposals:
         two years.
+      </p>
+      <p>
+        For partnered departures there is a second copy, in the shared spreadsheet described above.
+        Deleting your application from our database does not remove it from there, so a deletion
+        request means clearing both — we do that, and we will confirm when it is done. We cannot
+        delete anything the festival has already copied elsewhere; ask them directly for that.
       </p>
 
       <H>Your rights</H>

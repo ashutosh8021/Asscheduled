@@ -1,4 +1,4 @@
-/* Mirrors each application into a Google Sheet, live.
+/* Mirrors PULSE applications into a Google Sheet, live.
  *
  * Deliberately a Google Apps Script Web App rather than the Sheets
  * API: no npm dependency (CLAUDE.md wants a conversation before one is
@@ -18,9 +18,57 @@
  * See docs/admin.md for the script itself and the deployment steps.
  */
 
+import { DEPARTURES } from "./departures";
+
+/* ------------------------------------------------------------------
+   WHAT GETS MIRRORED
+
+   Only departures run with a partner festival — PULSE today. Everyone
+   on such a departure is mirrored, however they found us: the festival
+   admits all of them, so a partial list would be no use to anybody.
+
+   A shared spreadsheet is still a disclosure to a third party, so the
+   gate stays as narrow as the job allows — by departure, never the
+   whole applications table. PULSE has no business seeing who applied
+   to Thomso.
+
+   Derived from `sharedWith` on the departure rather than listed here,
+   so it cannot come apart from what the application form tells people.
+   The same field that puts somebody's details in front of a festival
+   is the field that makes the form say so before they submit. A list
+   maintained separately would let those two drift, and the direction
+   it would drift is the bad one.
+
+   This is the only gate. Every path into the sheet goes through
+   mirrorApplications below, so a new call site cannot widen it.
+   ------------------------------------------------------------------ */
+export const MIRRORED_DEPARTURES: string[] = DEPARTURES.filter((d) => d.sharedWith).map(
+  (d) => d.id
+);
+
+export function isMirrored(departureCode: string): boolean {
+  return MIRRORED_DEPARTURES.includes(departureCode);
+}
+
+/**
+ * One line of the sheet.
+ *
+ * Keyed on `reference`: the script looks that up and overwrites the
+ * matching row, or appends when it is new. An upsert rather than an
+ * append, because the sheet has to show the application as it is NOW —
+ * accepted, documents in, paid — not as it was the second it arrived.
+ *
+ * Upsert rather than rewriting the sheet wholesale so that row
+ * positions never move and columns past the mirrored range are never
+ * touched. Somebody will add a notes column, and it has to stay next
+ * to the right person.
+ */
 export interface SheetRow {
+  receivedAt: string;
   reference: string;
+  status: string;
   departure: string;
+  plan: string;
   name: string;
   phone: string;
   gender: string;
@@ -31,9 +79,79 @@ export interface SheetRow {
   instagram: string;
   why: string;
   partner: string;
-  discountInr: number;
-  amountDue: number;
+  discountInr: number | "";
+  amountDue: number | "";
   utr: string;
+  documents: string;
+}
+
+/**
+ * The header row, sent on every push so the script can write it.
+ *
+ * Sent rather than typed into the sheet by hand, because pasting a
+ * tab-separated line into Google Sheets silently drops the tabs and
+ * lands the whole thing in A1 — which looks exactly like every column
+ * being misaligned, and is the first thing anybody reports. Writing it
+ * from here means it is correct on the first push and self-heals if
+ * somebody edits it.
+ *
+ * Index-matched to SHEET_COLUMNS below. Both are checked against each
+ * other at module load, so they cannot drift apart unnoticed.
+ */
+export const SHEET_HEADERS: string[] = [
+  "Received",
+  "Reference",
+  "Status",
+  "Departure",
+  "Plan",
+  "Name",
+  "Phone",
+  "Gender",
+  "Age",
+  "State",
+  "Occupation",
+  "College",
+  "Instagram",
+  "Why",
+  "Partner",
+  "Discount",
+  "Amount due",
+  "UTR",
+  "Documents",
+];
+
+/** Column order, and the header row. The script writes values in this
+ *  order, so the two must not drift — change one, change the other. */
+export const SHEET_COLUMNS: (keyof SheetRow)[] = [
+  "receivedAt",
+  "reference",
+  "status",
+  "departure",
+  "plan",
+  "name",
+  "phone",
+  "gender",
+  "age",
+  "state",
+  "occupation",
+  "college",
+  "instagram",
+  "why",
+  "partner",
+  "discountInr",
+  "amountDue",
+  "utr",
+  "documents",
+];
+
+/* A header that has drifted from the columns would silently mislabel
+   every row in a spreadsheet somebody else reads — a wrong heading is
+   worse than no heading. Cheap to check, and it fails at startup
+   rather than in front of a partner. */
+if (SHEET_HEADERS.length !== SHEET_COLUMNS.length) {
+  throw new Error(
+    `[sheet] ${SHEET_HEADERS.length} headers for ${SHEET_COLUMNS.length} columns — they must match.`
+  );
 }
 
 function sheetConfig(): { url: string; secret: string } | null {
@@ -48,15 +166,27 @@ export function sheetConfigured(): boolean {
   return sheetConfig() !== null;
 }
 
+/** The display name a sheet row uses for a departure. */
+export function departureLabel(code: string): string {
+  const d = DEPARTURES.find((x) => x.id === code);
+  return d ? `${d.fest} — ${d.campus}` : code;
+}
+
 /**
- * Append one application to the sheet.
+ * Push rows into the sheet, creating or updating each by reference.
  *
- * Returns whether it landed, for logging only — callers must not treat
+ * Takes an array so a resync is one request rather than one per
+ * applicant — Apps Script is slow and rate-limited, and rewriting two
+ * hundred rows one POST at a time would take minutes and trip quotas.
+ *
+ * Returns whether it landed, for logging only. Callers must not treat
  * false as a failed application.
  */
-export async function appendToSheet(row: SheetRow): Promise<boolean> {
+export async function mirrorApplications(rows: SheetRow[]): Promise<boolean> {
   const cfg = sheetConfig();
   if (!cfg) return false;
+  /* An empty push is still worth sending: it rewrites the header, so
+     RESYNC repairs a sheet's headings even before anybody applies. */
 
   try {
     /* Apps Script redirects to a googleusercontent URL before running,
@@ -65,20 +195,41 @@ export async function appendToSheet(row: SheetRow): Promise<boolean> {
     const res = await fetch(cfg.url, {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ secret: cfg.secret, ...row }),
+      body: JSON.stringify({
+        secret: cfg.secret,
+        header: SHEET_HEADERS,
+        columns: SHEET_COLUMNS,
+        rows,
+      }),
       redirect: "follow",
       cache: "no-store",
-      /* A spreadsheet must not hold an applicant waiting. */
-      signal: AbortSignal.timeout(8000),
+      /* A spreadsheet must not hold an applicant waiting. Longer than
+         a single row needs, because a resync sends everything at once
+         and Apps Script is not quick. */
+      signal: AbortSignal.timeout(rows.length > 1 ? 25000 : 8000),
     });
 
     if (!res.ok) {
-      console.error(`[sheet] append failed (${res.status}): ${(await res.text()).slice(0, 200)}`);
+      console.error(`[sheet] upsert failed (${res.status}): ${(await res.text()).slice(0, 200)}`);
       return false;
     }
     return true;
   } catch (err) {
-    console.error("[sheet] append threw", err);
+    console.error("[sheet] upsert threw", err);
     return false;
   }
+}
+
+/**
+ * Mirror one application, in the background.
+ *
+ * Fire-and-forget on purpose: every caller is on a path where somebody
+ * is waiting — an applicant submitting, an admin pressing ACCEPT — and
+ * none of them should wait on Google. Failures are logged and the
+ * RESYNC button repairs whatever was missed.
+ */
+export function mirrorOne(row: SheetRow): void {
+  void mirrorApplications([row]).then((ok) => {
+    if (!ok && sheetConfigured()) console.error(`[sheet] missed ${row.reference}`);
+  });
 }

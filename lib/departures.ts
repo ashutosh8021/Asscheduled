@@ -11,6 +11,8 @@
    carries a TODO — nothing is invented.
    ============================================================ */
 
+import { departureSpan } from "./packages";
+
 /** An image slot. `src` stays null until approved photography exists;
  *  components render a labelled placeholder with identical geometry. */
 export interface Slot {
@@ -168,6 +170,20 @@ export interface Departure {
    * holding documents for applicants you go on to decline. Purge those.
    */
   documentsAtApply?: boolean;
+
+  /**
+   * The festival we run this departure with, when it is a partnership.
+   *
+   * Setting it has two consequences that must never come apart: the
+   * application is mirrored into the spreadsheet that festival can
+   * read (lib/sheet.ts derives what it mirrors from this field), and
+   * the form tells the applicant so before they submit.
+   *
+   * One field driving both is the point. Sharing somebody's details
+   * with a third party while the form stays silent about it is not a
+   * bug we want to be able to introduce by editing one list.
+   */
+  sharedWith?: string;
 }
 
 export const DEPARTURES: Departure[] = [
@@ -198,10 +214,19 @@ export const DEPARTURES: Departure[] = [
     ],
     days: 5,
     nights: 4,
-    price: 8799,
-    priceMax: 12799,
+    /* Derived, not typed. PULSE is sold as two plans with a fare per
+       state (lib/packages.ts), so the range on a card is the cheapest
+       and dearest of those — ₹9,679 from Haryana on Plan 01, ₹16,479
+       from Assam on Plan 02. Writing the figures here as well would
+       give the site two prices that could disagree, and the one an
+       applicant is actually quoted is the one in the fare table. */
+    price: departureSpan("PUL-26")!.min,
+    priceMax: departureSpan("PUL-26")!.max,
     /* AIIMS asks for ID up front — see the note on the field. */
     documentsAtApply: true,
+    /* Run with PULSE, so PULSE is told who is coming. This is what
+       turns the sheet mirror on and what makes the form say so. */
+    sharedWith: "PULSE, AIIMS New Delhi",
     spotsLeft: null,
     intro: [
       "Five days that start the moment the gates open and don't ease off until the last set ends.",

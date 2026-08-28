@@ -3,7 +3,8 @@
 import { useRouter } from "next/navigation";
 import { Fragment, useState } from "react";
 import type { ApplicationRow, ApplicationStatus } from "@/lib/adminData";
-import { DEPARTURES } from "@/lib/departures";
+import { DEPARTURES, inr } from "@/lib/departures";
+import { findPlan } from "@/lib/packages";
 import { Detail, fullWhen, type Field } from "./Detail";
 import DocumentsPanel from "./DocumentsPanel";
 
@@ -71,7 +72,28 @@ export default function ApplicationsTable({ rows }: { rows: ApplicationRow[] }) 
       ? [{ label: "Documents", value: <DocumentsPanel id={r.id} />, wide: true }]
       : [];
 
-    return docs.concat([
+    /* Plan and money, only where there is any. Rows written before
+       docs/schema-partner.sql ran have none of these columns at all,
+       and an empty labelled row for every one of them would be noise
+       on every application that never involved a payment. */
+    const plan = findPlan(r.departure_code, r.plan);
+    const money: Field[] = [];
+
+    if (plan) money.push({ label: "Plan", value: `${plan.n} — ${plan.name}` });
+    if (r.partner_code) {
+      money.push({
+        label: "Partner",
+        value: `${r.partner_code}${r.discount_inr ? ` · ${inr(r.discount_inr)} off` : ""}`,
+      });
+    }
+    if (typeof r.amount_due === "number") {
+      money.push({ label: "Amount due", value: inr(r.amount_due) });
+    }
+    /* The reference they typed. Still to be checked against the bank —
+       nothing here proves a transfer happened. */
+    if (r.utr) money.push({ label: "UTR", value: r.utr });
+
+    return docs.concat(money).concat([
       { label: "Applied", value: fullWhen(r.created_at) },
       { label: "Reference", value: r.reference },
       { label: "Departure", value: `${departureName(r.departure_code)} (${r.departure_code})` },

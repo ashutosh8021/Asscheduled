@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { deliver, isIndianMobile, readStrings } from "@/lib/inbox";
-import { effectivePrice, resolvePartner, PARTNER_COOKIE } from "@/lib/partners";
-import { appendToSheet } from "@/lib/sheet";
+import { effectivePrice, partnerFor, PARTNER_COOKIE } from "@/lib/partners";
+import { mirrorApplication } from "@/lib/adminData";
 import { newReference } from "@/lib/reference";
 import { DEPARTURES } from "@/lib/departures";
 import { findApplicationId, saveApplication, storeConfigured } from "@/lib/store";
 import { issueUploadToken } from "@/lib/documents";
+import { amountDueInr, findPlan, plansFor } from "@/lib/packages";
 
 /* "I am coming." — the application overlay from comps (12) and (14).
 
@@ -95,14 +96,44 @@ export async function POST(request: Request) {
      all mean full price. None of them is an error: somebody on a stale
      link should get a working application, not a refusal. */
   const jar = await cookies();
-  const partner = resolvePartner(jar.get(PARTNER_COOKIE)?.value, departure!.id);
+  const partner = partnerFor(departure!.id, jar.get(PARTNER_COOKIE)?.value);
   const pricing = effectivePrice(departure!.price, departure!.priceMax, partner);
 
-  /* What they owe now. Departures that take a booking amount charge
-     that; the rest charge nothing at this stage. */
-  const amountDue = departure!.bookingInr
-    ? Math.max(0, departure!.bookingInr - pricing.discountInr)
-    : null;
+  /* Which package, for departures sold as more than one.
+​
+     Scoped to the departure: a plan id is only accepted if this
+     departure actually sells it, so a PULSE plan posted against Thomso
+     resolves to nothing rather than to a PULSE fare. Anything unknown
+     is dropped silently — it cannot become a price. */
+  const rawPlan = (raw as Record<string, unknown>).plan;
+  const plan = findPlan(
+    departure!.id,
+    typeof rawPlan === "string" ? rawPlan.trim() : null
+  );
+
+  /* A departure sold as plans needs one chosen. Without it there is no
+     fare, so nothing to quote and nothing to check a transfer against.
+     Refused here as well as in the form, because the form can be
+     bypassed. */
+  if (plansFor(departure!.id).length > 0 && !plan) {
+    return fail("Pick which plan you want.", 422, ["plan"]);
+  }
+
+  /* What they owe now, worked out here from the plan and the state
+     they submitted — never from an amount in the request. The same
+     function runs in the form, so what somebody was shown and what
+     gets recorded come from one table.
+
+     Null is a legitimate outcome, not a failure: the departure takes
+     no payment, or their state has no fare set yet. An application
+     still stands; we come back with the amount. */
+  const amountDue = amountDueInr({
+    departureId: departure!.id,
+    planId: plan?.id ?? null,
+    state: a.state,
+    bookingInr: departure!.bookingInr,
+    discountInr: pricing.discountInr,
+  });
 
   /* Read on its own rather than through readStrings, which requires
      every key it is given. Listing `utr` there would have made it
@@ -111,6 +142,18 @@ export async function POST(request: Request) {
   const rawUtr = (raw as Record<string, unknown>).utr;
   const utr =
     typeof rawUtr === "string" ? rawUtr.trim().toUpperCase().slice(0, 40) : "";
+
+  /* Where money is owed, the reference for it is required — a transfer
+     that cannot be matched to an application has to be chased by hand,
+     which is worse than not taking it. The shape check mirrors the
+     form's; neither is proof the transfer happened, which is why every
+     one is still checked against the bank.
+
+     Only when an amount is actually due. Departures that take no
+     payment, and applicants whose state has no fare, are not asked. */
+  if (amountDue !== null && !/^[A-Z0-9]{8,24}$/.test(utr)) {
+    return fail("Enter the UTR from your UPI app — 8 to 24 letters or digits.", 422, ["utr"]);
+  }
 
   /* Store first, then notify. The row is the record of the application;
      the email is a convenience. If the write fails we still try to mail
@@ -127,6 +170,7 @@ export async function POST(request: Request) {
     college: a.college,
     instagram: a.instagram.replace(/^@/, ""),
     why: a.why,
+    plan: plan?.id ?? null,
     partnerCode: partner?.code ?? null,
     discountInr: pricing.discountInr || null,
     amountDue,
@@ -147,36 +191,29 @@ export async function POST(request: Request) {
       college: a.college,
       instagram: a.instagram ? `@${a.instagram}` : null,
       why: a.why || null,
-      partner: partner ? `${partner.name} — ₹${pricing.discountInr} off` : null,
+      plan: plan ? `${plan.n} — ${plan.name}` : null,
+      partner: partner ? `${partner.coupon} · ${partner.name} — ₹${pricing.discountInr} off` : null,
       amountDue: amountDue === null ? null : `₹${amountDue}`,
       utr: utr || null,
     },
-    null
+    null,
+    /* Copied to the partner festival. PULSE is an automatic partner,
+       so this covers everybody applying to that departure however they
+       found us — the festival admits all of them, so it is told about
+       all of them. Departures with no partner go to us alone. */
+    partner?.notify ? [partner.notify] : undefined
   );
 
   /* The sheet is a mirror, never the record. It runs after the row is
      safe, its result is logged and then dropped, and nothing below
      reads it — a spreadsheet being unreachable must not tell somebody
-     their application failed. */
-  void appendToSheet({
-    reference,
-    departure: `${departure!.fest} — ${departure!.campus}`,
-    name: a.name,
-    phone: a.phone,
-    gender: a.gender,
-    age,
-    state: a.state,
-    occupation: a.occupation,
-    college: a.college,
-    instagram: a.instagram.replace(/^@/, ""),
-    why: a.why,
-    partner: partner?.name ?? "",
-    discountInr: pricing.discountInr,
-    amountDue: amountDue ?? 0,
-    utr,
-  }).then((ok) => {
-    if (!ok) console.error(`[apply] sheet mirror missed ${reference}`);
-  });
+     their application failed.
+
+     Built from the stored row rather than from the answers above, so
+     the sheet cannot show an application the database does not have.
+     Skipped entirely when nothing stored, for the same reason. Only
+     mirrored departures get this far; see lib/sheet.ts. */
+  if (stored) void mirrorApplication({ reference });
 
   /* `received` is the only thing the overlay should trust. The
      application is safe if it landed in either place — a Resend outage

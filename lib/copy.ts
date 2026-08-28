@@ -220,6 +220,24 @@ export const DETAIL = {
   applyCta: "REQUEST YOUR INVITE",
   /* Shown when a genuine remaining count is not confirmed. */
   spotsFallback: "Spots are limited. Vibes are unlimited.",
+  /* ---- plans ----
+     Shown only for departures sold as more than one package. The fare
+     is per state because the train is, so the section asks where
+     somebody is starting from before it quotes anything. */
+  plansLabel: "PICK YOUR PLAN",
+  plansSub: "Two ways to do it. The fare depends on where you're travelling from.",
+  plansStateLabel: "TRAVELLING FROM",
+  plansStatePh: "Select your state",
+  plansPrompt: "Pick your state and both fares fill in.",
+  plansFrom: "FROM",
+  plansPer: "per person",
+  plansCta: "PROCEED",
+  /* For the eleven states with no fare set. Says what will happen
+     rather than showing a number nobody has agreed, and hands over a
+     way to reach a person — a blank price and no route forward reads
+     as "we don't go there", which is not true. */
+  plansNoFare: "We haven't worked out the fare from here yet. Ask us and we'll come back with it:",
+
   includedLabel: "INCLUDED",
   includedSub: "The important shit is handled.",
   excludedLabel: "EXCLUDED",
@@ -404,22 +422,39 @@ export const APPLY = {
   back: "BACK",
   submit: "SUBMIT",
 
-  /* ---- the booking payment ----
-     Shown only for departures with a bookingInr set, which is none of
-     them today. There is no gateway on this flow: they transfer, then
-     tell us the reference. Said plainly rather than dressed up.
+  /* ---- choosing a plan, inside the form ----
+     Only for departures sold as plans. The state came from step 1, so
+     by the time this shows there is a real fare to put on each card. */
+  planHead: "WHICH ONE",
+  planNote: "Both fares are for travelling from",
+  planNoFare:
+    "We haven't worked out the fare from your state yet. Pick the plan you want and send this in — nothing is due now, and we'll come back with the amount. If you'd rather ask first:",
 
-     TODO(mannat): payUpiId and payPayee are placeholders. Nothing can
-     be paid until they are real — and they should be the LLP's account,
-     not a personal one. The QR supplied (asset/paymentQR.jpeg, kept out
-     of the repo) is a personal Google Pay code: booking revenue paid
-     into an individual's account is a tax and accounting problem, and
-     an applicant told they are dealing with a registered LLP should not
-     be asked to pay a private person. */
+  /* One line above the submit button, on every application.
+​
+     Replaced the "WHO SEES THIS" panel, removed on instruction. The
+     policy is where the detail lives now — including what a partner
+     festival is told — so the form has to point at it. */
+  consentLead: "By applying you accept our",
+  consentLink: "privacy policy",
+
+  /* ---- the booking payment ----
+     There is no gateway on this flow: they transfer, then tell us the
+     reference. Said plainly rather than dressed up.
+
+     TODO(mannat): this is a PERSONAL Google Pay account, not the LLP's.
+     Booking revenue paid to an individual is a tax and accounting
+     problem, and somebody told they are dealing with a registered LLP
+     should not be asked to transfer to a private person. Replace these
+     two lines and public/pay/upi-qr.jpg with the LLP's account — the
+     payee name here has to match what the payer's UPI app shows them,
+     or the transfer looks like a scam and gets abandoned. */
   payHead: "BOOKING AMOUNT",
   payNote: "Pay this by UPI, then tell us the reference below.",
-  payUpiId: "TODO@upi",
-  payPayee: "ROITCOVE VENTURES LLP",
+  payQrCaption: "Scan with any UPI app",
+  payQrAlt: "UPI QR code for the booking payment",
+  payUpiId: "singhmannat936@okicici",
+  payPayee: "Mannat Singh Chimni",
   payUtrLabel: "UTR / TRANSACTION REFERENCE",
   payUtrPh: "e.g. 412345678901",
   payUtrHint: "Your UPI app shows this on the receipt, usually as UTR or Transaction ID.",

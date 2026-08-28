@@ -13,7 +13,12 @@
 -- They are recorded rather than recomputed later because a partner
 -- deal can end. What somebody was charged on the day has to stay
 -- readable after the code expires and the config changes.
+-- `plan` is which package they chose, for departures sold as more than
+-- one — a plan id from lib/packages.ts, never a price. The fare it
+-- resolves to is recorded separately in amount_due, because a fare
+-- table can be edited and what somebody owed on the day cannot.
 alter table applications
+  add column if not exists plan          text,
   add column if not exists partner_code  text,
   add column if not exists discount_inr  int  check (discount_inr  >= 0),
   add column if not exists amount_due    int  check (amount_due    >= 0),

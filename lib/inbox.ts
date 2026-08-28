@@ -55,10 +55,28 @@ function body(fields: Record<string, string | string[] | null>): string {
 export async function deliver(
   subject: string,
   fields: Record<string, string | string[] | null>,
-  replyTo?: string | null
+  replyTo?: string | null,
+  /**
+   * Extra recipients beyond our own inbox.
+   *
+   * Used for partner festivals, who need to know who is coming to
+   * their event. This is a disclosure to a third party, so callers
+   * must pass it only for applicants who arrived on that partner's
+   * own referral link — never for everyone on a departure.
+   *
+   * Deliberately `to` rather than `bcc`: the applicant is told in the
+   * form and in the privacy policy that the festival is copied, so
+   * hiding it in the headers would be at odds with what we said. Our
+   * own inbox sees exactly who received it too.
+   */
+  alsoTo?: (string | undefined)[]
 ): Promise<boolean> {
   const cfg = resendConfig();
   if (!cfg) return false;
+
+  /* De-duplicated: a partner address that is also in SOMEWHERE_INBOX
+     would otherwise be sent the same mail twice. */
+  const to = [...new Set([...inbox(), ...(alsoTo ?? []).filter(Boolean)])] as string[];
 
   try {
     const res = await fetch(ENDPOINT, {
@@ -69,7 +87,7 @@ export async function deliver(
       },
       body: JSON.stringify({
         from: cfg.from,
-        to: inbox(),
+        to,
         subject,
         text: body(fields),
         ...(replyTo ? { reply_to: [replyTo] } : {}),

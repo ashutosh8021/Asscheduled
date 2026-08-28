@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { currentAdmin } from "@/lib/admin";
-import { setApplicationStatus, APPLICATION_STATUSES, type ApplicationStatus } from "@/lib/adminData";
+import {
+  setApplicationStatus,
+  mirrorApplication,
+  APPLICATION_STATUSES,
+  type ApplicationStatus,
+} from "@/lib/adminData";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -38,5 +43,11 @@ export async function POST(request: Request) {
   }
 
   console.info(`[admin] ${admin.email} set ${id} → ${status}`);
+
+  /* Keep the sheet current. Not awaited: an admin pressing ACCEPT
+     should not wait on Google, and a missed update is repaired by
+     RESYNC rather than by holding the request open. */
+  void mirrorApplication({ id });
+
   return NextResponse.json({ ok: true });
 }

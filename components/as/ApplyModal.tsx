@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import ModalShell from "./ModalShell";
 import { useModal } from "./ModalProvider";
@@ -9,6 +10,8 @@ import { EVENTS, track } from "@/lib/analytics";
 import DropZone, { rejectReason, type ZoneState } from "./DropZone";
 import { DOCUMENT_LABELS, SizeNote } from "./UploadFields";
 import { DOCUMENT_KINDS, PAYMENT_KIND, type DocumentKind } from "@/lib/documentRules";
+import { amountDueInr, fareFor, findPlan, plansFor } from "@/lib/packages";
+import NoFare from "./NoFare";
 
 /* "I am coming." — the two-step application overlay from comps (12) and (14).
 
@@ -70,7 +73,7 @@ function validateStep1(a: Answers): Partial<Record<keyof Answers, string>> {
 }
 
 export default function ApplyModal() {
-  const { close, preselect, source } = useModal();
+  const { close, preselect, source, preselectPlan } = useModal();
   const [step, setStep] = useState<1 | 2>(1);
   /* Ignore a preselect for a departure that has since closed — a stale
      tab or an old link should not land someone on a dead selection. */
@@ -97,15 +100,97 @@ export default function ApplyModal() {
      answers and does not have a UTR in it. */
   const [utrError, setUtrError] = useState<string | null>(null);
 
+  /* The package they picked. A plan id — never a price. What it costs
+     is looked up from the fare table, here for display and again on
+     the server for the record. */
+  const [plan, setPlan] = useState(preselectPlan ?? "");
+  const [planError, setPlanError] = useState<string | null>(null);
+
+  /* What a referral is worth, fetched from the server because the
+     cookie that carries it is httpOnly. Display only: the apply route
+     reads the same cookie and recomputes, so this can change the
+     number on the screen and nothing else. Zero until it answers,
+     which is also the right answer for almost everybody. */
+  const [discountInr, setDiscountInr] = useState(0);
+  const [partnerName, setPartnerName] = useState<string | null>(null);
+  const [coupon, setCoupon] = useState<string | null>(null);
+
   const chosen = DEPARTURES.find((d) => d.id === a.event);
 
   /* Whether the chosen departure collects ID as part of applying. */
   const needsDocuments = chosen?.documentsAtApply === true;
 
-  /* Whether it takes a booking amount by UPI. The figure shown is the
-     full one — the partner discount is applied by the server, and the
-     confirmation reports what was actually charged. */
-  const needsPayment = typeof chosen?.bookingInr === "number" && chosen.bookingInr > 0;
+  /* The plans this departure is sold as. Empty for a single-price one,
+     in which case the form never asks. */
+  const plans = plansFor(a.event);
+
+  /* A plan that does not belong to the chosen departure is no plan at
+     all — it would otherwise survive somebody switching departure in
+     step 1 after arriving on a plan card. */
+  const activePlan = findPlan(a.event, plan);
+
+  /* What they owe now, from the plan and the state they picked, less
+     any referral discount. Null means do not ask for money — the
+     departure takes none, no plan is chosen yet, or their state has no
+     fare set. The apply route computes this again from the submitted
+     answers; the browser never sends an amount. */
+  const amountDue = amountDueInr({
+    departureId: a.event,
+    planId: activePlan?.id ?? null,
+    state: a.state,
+    bookingInr: chosen?.bookingInr,
+    discountInr,
+  });
+
+  /* The fare before any discount, so the saving can be shown rather
+     than just asserted. */
+  const grossFare = activePlan ? fareFor(activePlan, a.state) : chosen?.bookingInr ?? null;
+
+  const needsPayment = amountDue !== null;
+
+  /* Chose a plan, but we have no fare from their state. They can still
+     apply — we come back with the amount. */
+  const fareUnknown = activePlan !== null && fareFor(activePlan, a.state) === null;
+
+  /* Ask the server what this departure's referral is worth. Runs on
+     open and whenever the departure changes, because a code for one
+     fest must not price another. */
+  useEffect(() => {
+    if (!a.event) {
+      setDiscountInr(0);
+      setPartnerName(null);
+      setCoupon(null);
+      return;
+    }
+
+    /* Ignore a reply that arrives after the departure changed again —
+       otherwise a slow first request can overwrite a fast second one
+       and show the wrong fest's discount. */
+    let live = true;
+    fetch(`/api/somewhere/pricing?event=${encodeURIComponent(a.event)}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then(
+        (
+          j: {
+            discountInr?: number;
+            partnerName?: string | null;
+            coupon?: string | null;
+          } | null
+        ) => {
+          if (!live || !j) return;
+          setDiscountInr(typeof j.discountInr === "number" ? j.discountInr : 0);
+          setPartnerName(j.partnerName ?? null);
+          setCoupon(j.coupon ?? null);
+        }
+      )
+      /* A failed lookup shows full price, which is the safe direction:
+         nobody is quoted less than they owe. */
+      .catch(() => {});
+
+    return () => {
+      live = false;
+    };
+  }, [a.event]);
 
   function pick(kind: DocumentKind, file: File) {
     const bad = rejectReason(file);
@@ -179,6 +264,16 @@ export default function ApplyModal() {
   }
 
   async function submit() {
+    /* A departure sold as plans cannot be applied to without one:
+       there would be no fare, so nothing to quote and nothing to
+       reconcile a transfer against. Checked first because the cards
+       sit at the top of the step. */
+    if (plans.length > 0 && !activePlan) {
+      setPlanError("Pick one.");
+      return;
+    }
+    setPlanError(null);
+
     /* Both documents are required where the departure asks for them —
        an application without them cannot be checked, which is the whole
        point of asking at this stage. */
@@ -219,9 +314,10 @@ export default function ApplyModal() {
       const res = await fetch("/api/somewhere/apply", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        /* The UTR travels; the amount does not. What is owed is the
-           server's to decide — see lib/partners.ts. */
-        body: JSON.stringify({ ...a, utr: utr.trim() }),
+        /* The plan id and the UTR travel; the amount does not. What is
+           owed is the server's to decide, from this plan and the state
+           above — see lib/packages.ts and lib/partners.ts. */
+        body: JSON.stringify({ ...a, plan: activePlan?.id ?? "", utr: utr.trim() }),
       });
       const json = (await res.json()) as {
         ok: boolean;
@@ -588,6 +684,68 @@ export default function ApplyModal() {
               </div>
             </div>
 
+            {/* Departures sold as more than one package ask which,
+                here rather than earlier: the fare is per state, and
+                the state was answered in step 1, so by now each card
+                can show a real number instead of a range.
+
+                The price on a card is looked up, never typed and never
+                posted. Choosing a plan chooses an id; what that costs
+                is decided by the server from the same table. */}
+            {plans.length > 0 ? (
+              <div className="s-field s-field-full s-plan-pick">
+                <hr className="s-rule" style={{ margin: "4px 0 2px" }} />
+                <p className="s-up-head">{APPLY.planHead}</p>
+                {fareUnknown || !a.state ? (
+                  <NoFare line={APPLY.planNoFare} />
+                ) : (
+                  <p className="s-hint">{`${APPLY.planNote} ${a.state}.`}</p>
+                )}
+
+                <div className="s-plan-grid s-plan-grid-tight">
+                  {plans.map((p) => {
+                    const fare = fareFor(p, a.state);
+                    const picked = plan === p.id;
+                    return (
+                      <button
+                        key={p.id}
+                        type="button"
+                        className="s-plan s-plan-opt"
+                        aria-pressed={picked}
+                        data-picked={picked}
+                        onClick={() => {
+                          setPlan(p.id);
+                          if (planError) setPlanError(null);
+                        }}
+                      >
+                        <p className="s-plan-n">{p.n}</p>
+                        <h3 className="s-plan-name">{p.name}</h3>
+
+                        <ul className="s-list s-list-yes s-plan-list">
+                          {p.includes.map((i) => (
+                            <li key={i}>
+                              <span aria-hidden="true">✓</span>
+                              <span>{i}</span>
+                            </li>
+                          ))}
+                        </ul>
+
+                        <p className="s-plan-figure s-plan-figure-sm">
+                          {fare === null ? "—" : inr(fare)}
+                        </p>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {planError ? (
+                  <p className="s-err" role="alert">
+                    {planError}
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
+
             {/* Departures that verify students ask for ID here, in the
                 form. The files are held until the application has been
                 created — there is nothing to attach them to before
@@ -625,18 +783,48 @@ export default function ApplyModal() {
                 payment gateway on this flow, and pretending otherwise
                 would be worse than saying so plainly.
 
-                The amount shown is the full one. Any partner discount
-                is applied by the server, and the confirmation reports
-                what was actually charged — the browser is never told a
-                price it could then send back. */}
+                The amount is looked up from the fare table, not typed
+                and not posted. The apply route works it out again from
+                the plan and state that were submitted, so the figure
+                below is the figure that gets recorded. */}
             {needsPayment && chosen ? (
               <div className="s-field s-field-full s-pay">
                 <hr className="s-rule" style={{ margin: "4px 0 2px" }} />
                 <p className="s-up-head">{APPLY.payHead}</p>
 
+                {/* The badge is text. The server decided this, and a
+                    field here would only invite someone to try
+                    changing it. */}
+                {coupon && discountInr > 0 ? (
+                  <p className="s-coupon">
+                    <span className="s-coupon-tag">{coupon}</span>
+                    <span className="s-coupon-said">
+                      {inr(discountInr)} off, applied — {partnerName}
+                    </span>
+                  </p>
+                ) : null}
+
                 <div className="s-pay-amount">
-                  <span className="s-pay-figure">{inr(chosen.bookingInr ?? 0)}</span>
+                  {grossFare !== null && grossFare !== amountDue ? (
+                    <span className="s-pay-figure s-was">{inr(grossFare)}</span>
+                  ) : null}
+                  <span className="s-pay-figure">{inr(amountDue)}</span>
                   <span className="s-pay-note">{APPLY.payNote}</span>
+                </div>
+
+                {/* Scanning is how almost everybody will pay this from
+                    a phone; the ID underneath is for the ones who
+                    would rather type it, and for anyone reading the
+                    page on a laptop with their phone in hand. */}
+                <div className="s-pay-qr">
+                  <Image
+                    src="/pay/upi-qr.jpg"
+                    alt={APPLY.payQrAlt}
+                    width={220}
+                    height={252}
+                    className="s-pay-qr-img"
+                  />
+                  <p className="s-hint">{APPLY.payQrCaption}</p>
                 </div>
 
                 <dl className="s-pay-to">
@@ -690,6 +878,24 @@ export default function ApplyModal() {
                 <p className="s-hint">{APPLY.payCheckNote}</p>
               </div>
             ) : null}
+
+            {/* The "WHO SEES THIS" panel that used to sit here was
+                removed on instruction: somebody arriving on PULSE's
+                own link already knows they came through PULSE.
+
+                The one line below replaces it. It is not the same
+                notice and is not as good, but it is the ordinary thing
+                a form does — the policy it links to spells out exactly
+                what a partner festival is told, and a form that
+                collects a phone number, a college and a payment
+                reference should point at it either way. */}
+            <p className="s-field s-field-full s-consent">
+              {APPLY.consentLead}{" "}
+              <a href="/paperwork/privacy" target="_blank" rel="noreferrer">
+                {APPLY.consentLink}
+              </a>
+              .
+            </p>
           </div>
         )}
 
