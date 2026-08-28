@@ -2412,6 +2412,66 @@ body.s-locked { overflow: hidden; }
 }
 .s-plan-opt[data-picked="true"] .s-plan-n { color: var(--s-forest); }
 
+/* The chooser's top row: the dot, the plan number, and a word saying
+   what pressing does. On a phone the two cards stack, so nobody sees
+   them side by side — without an explicit mark, "which one is chosen"
+   is a question the border alone was answering too quietly. */
+.s-plan-top {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 2px;
+}
+
+.s-plan-radio {
+  flex: none;
+  width: 17px;
+  height: 17px;
+  border: 1.5px solid var(--s-grey);
+  border-radius: 50%;
+  position: relative;
+  transition: border-color 0.18s var(--s-bez);
+}
+/* A filled centre rather than a tick: a tick reads as "done", and this
+   is a choice you can still change. */
+.s-plan-radio::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: var(--s-forest);
+  transform: scale(0);
+  transition: transform 0.18s var(--s-bez);
+}
+.s-plan-opt[data-picked="true"] .s-plan-radio { border-color: var(--s-forest); }
+.s-plan-opt[data-picked="true"] .s-plan-radio::after { transform: scale(1); }
+
+/* Pushed to the end of the row, and quiet — it is a hint before a
+   choice is made and a confirmation after, never a heading. */
+.s-plan-picked {
+  margin-left: auto;
+  font-family: var(--s-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  color: var(--s-grey);
+}
+.s-plan-opt[data-picked="true"] .s-plan-picked { color: var(--s-forest); }
+
+/* Keyboard users get the same outline the rest of the form uses —
+   role="radio" removes the default button affordance, not the need
+   to see where focus is. */
+.s-plan-opt:focus-visible {
+  outline: 2px solid var(--s-forest);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .s-plan-radio,
+  .s-plan-radio::after {
+    transition: none;
+  }
+}
+
 .s-plan-pick { display: flex; flex-direction: column; gap: 12px; }
 
 /* ------------------------------------------------------------

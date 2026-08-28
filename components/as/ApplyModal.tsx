@@ -726,7 +726,16 @@ export default function ApplyModal() {
                   <p className="s-hint">{`${APPLY.planNote} ${a.state}.`}</p>
                 )}
 
-                <div className="s-plan-grid s-plan-grid-tight">
+                {/* A radio group, not a row of toggles: exactly one of
+                    these is chosen. The dot is the point — the border
+                    alone said "selected" too quietly to notice on a
+                    phone, where the two cards are stacked and you
+                    cannot see them side by side to compare. */}
+                <div
+                  className="s-plan-grid s-plan-grid-tight"
+                  role="radiogroup"
+                  aria-label={APPLY.planHead}
+                >
                   {plans.map((p) => {
                     const fare = fareFor(p, a.state);
                     const picked = plan === p.id;
@@ -734,15 +743,20 @@ export default function ApplyModal() {
                       <button
                         key={p.id}
                         type="button"
+                        role="radio"
+                        aria-checked={picked}
                         className="s-plan s-plan-opt"
-                        aria-pressed={picked}
                         data-picked={picked}
                         onClick={() => {
                           setPlan(p.id);
                           if (planError) setPlanError(null);
                         }}
                       >
-                        <p className="s-plan-n">{p.n}</p>
+                        <span className="s-plan-top">
+                          <span className="s-plan-radio" aria-hidden="true" />
+                          <span className="s-plan-n">{p.n}</span>
+                          <span className="s-plan-picked">{picked ? "SELECTED" : "TAP TO PICK"}</span>
+                        </span>
                         <h3 className="s-plan-name">{p.name}</h3>
 
                         <ul className="s-list s-list-yes s-plan-list">
