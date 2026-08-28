@@ -91,28 +91,31 @@ screenshot, a browser history or a log is dead before anyone finds it.
 2. **Storage → New bucket**, name it `documents`, and leave **Public** OFF.
    This is the single most important switch on this page. A public bucket
    would put every traveller's ID on the open internet at a guessable URL.
-   Set the bucket's size limit to 2MB and restrict MIME types to
-   `image/jpeg, image/png, image/webp, application/pdf`. The upload route
-   enforces both as well, so the bucket is a backstop rather than the
-   control. (The 50MB on the Storage settings page is the free plan's
-   account-wide ceiling, is not adjustable, and is unrelated.)
+   Set the bucket's size limit to **4 MiB** and restrict MIME types to
+   `image/jpeg, image/png, image/webp`. (The 50MB on the Storage settings
+   page is the free plan's account-wide ceiling, is not adjustable, and is
+   unrelated.)
 
-   Uploads are capped at 2MB and nothing is resized for anyone — people
-   compress their own files. The form says so above the file picker, and
-   an oversized file is rejected with its actual size in the message.
-   Expect this to come up: a phone photo is usually 3-5MB.
-   Optionally set the bucket's own size limit to 2MB and restrict MIME
-   types to `image/jpeg, image/png, image/webp, application/pdf` — both are
-   already enforced by the upload route, so this is a backstop rather than
-   the control. (The 50MB figure on the Storage settings page is the free
-   plan's account-wide ceiling and is not adjustable; it is unrelated.)
+   **Three limits, and they are not the same number.**
 
-   The app caps uploads at 1.9MB, deliberately under the bucket, so the
-   rejection comes from the route with a readable message rather than from
-   storage with an error code. Photos over that are resized in the browser
-   before they are sent — a 4000x3000 phone frame comes out around 1800px
-   and well under a megabyte and a half — so in practice only an oversized
-   PDF ever hits the limit.
+   - `MAX_BYTES` (10MB) is what somebody may CHOOSE. Generous on purpose:
+     a phone photographs an ID card at 8-12MB.
+   - `SEND_BYTES` (4MB) is what may actually be POSTED. Not our choice —
+     Vercel refuses any request body over 4.5MB before the route runs.
+   - The bucket's 4 MiB is the backstop behind both.
+
+   A large photo passes all three because `lib/shrinkImage.ts` resizes it
+   in the browser first: 2000px on the long edge, JPEG, stepping the
+   quality down until it is under 1.6MB. A 9MB phone frame arrives as
+   about 1.5MB and is more legible than the original. Nobody is asked to
+   go and compress their own file.
+
+   **A PDF cannot be shrunk**, so one over 4MB is refused with a message
+   saying exactly that. Note the bucket does not allow `application/pdf`
+   at all today while `ACCEPTED_MIME` does — so PDFs pass every check we
+   make and are then rejected by storage. Either add the MIME type to the
+   bucket or drop PDF from `ACCEPTED_MIME` and the copy; leaving it is a
+   path that fails after telling somebody they were fine.
 
 Nothing works until both are done, and the failure is silent — the upload
 page will simply say the link is invalid.
@@ -143,29 +146,36 @@ listing anything older than 120 days so nothing gets quietly forgotten.
 TODO(mannat): automate this. A promise in a privacy policy that depends on
 somebody remembering is a promise that eventually gets broken.
 
-## Partner referral links
+## Partner discounts
 
-A festival links to us with `?p=<code>` — for PULSE, that is
-`https://asscheduled.com/somewhere/pulse-aiims-delhi?p=pulse`. Middleware
-turns the code into a cookie, and every price on the site drops by the
-partner's discount for as long as it is valid.
+PULSE'26 carries **PULSE2026 — ₹1,000 off, applied automatically to everyone
+who applies to it.** No link to arrive on, no code to type, nothing to miss:
+the arrangement is with the festival, so it covers everybody going to the
+festival however they found us. That is the `auto: true` flag in
+`lib/partners.ts`.
+
+A partner without `auto` is referral-only: the discount applies only to
+somebody carrying `?p=<code>`, which middleware turns into an httpOnly
+cookie. Both routes go through one function, `partnerFor()`.
 
 **The discount is decided by the server, never by the browser.** The page
-reads the cookie to show a price; `app/api/somewhere/apply/route.ts` reads
-the same cookie and works the price out again before storing anything. A
-request that posts its own partner code, discount or amount is ignored —
-those values are derived, so there is nothing for a client to influence.
+reads it to show a price; `app/api/somewhere/apply/route.ts` works it out
+again before storing anything. A request that posts its own partner code,
+discount or amount is ignored — those values are derived, so there is
+nothing for a client to influence. The coupon is rendered as a tag, never
+as an input: there is no field to type it into.
 
-Codes are configured in `lib/partners.ts`: which departures they cover, the
-flat rupee discount, and the date they stop working. An expired code, a code
-for the wrong departure, or an unknown one all mean full price rather than an
-error — somebody on a stale link should get a working page.
+Configured in `lib/partners.ts`: which departures a code covers, the flat
+rupee discount, the date it stops working, and the address applications are
+copied to. An expired code, a code for the wrong departure, or an unknown
+one all mean full price rather than an error.
 
-Setup: run `docs/schema-partner.sql`, then fill in the `PARTNERS` entry. Until
-that entry exists nothing changes anywhere on the site.
-
-**The link is public.** Anyone who sees it can share it, so treat the expiry
-date as the real control.
+⚠️ **The list price is currently a price nobody pays.** Both fare tables
+carry ₹1,000 to fund the coupon, which made sense while it was referral-only
+— people arriving on their own really did pay it. Now that it applies to
+everyone, the struck-through figure on the card claims a saving that is not
+real. Either drop the ₹1,000 from `lib/packages.ts` and retire the coupon,
+or keep the coupon and stop rendering the "was" price.
 
 ## Plans and per-state fares
 

@@ -2,7 +2,7 @@ import { NextResponse, after } from "next/server";
 import {
   ACCEPTED_MIME,
   DOCUMENT_KINDS,
-  MAX_BYTES,
+  SEND_BYTES,
   resolveUploadToken,
   storeDocument,
   type DocumentKind,
@@ -67,8 +67,11 @@ export async function POST(request: Request) {
   if (!(file instanceof File)) return fail("No file was attached.", 400);
 
   if (file.size <= 0) return fail("That file is empty.", 400);
-  if (file.size > MAX_BYTES) {
-    return fail(`That file is over ${Math.round(MAX_BYTES / 1024 / 1024)}MB. Send a smaller one.`, 413);
+  /* The send limit, not the choose limit. Large photos are shrunk in
+     the browser before they get here; anything still over this could
+     not have crossed Vercel's 4.5MB body cap anyway. */
+  if (file.size > SEND_BYTES) {
+    return fail(`That file is over ${Math.round(SEND_BYTES / 1024 / 1024)}MB. Send a smaller one.`, 413);
   }
 
   const bytes = await file.arrayBuffer();

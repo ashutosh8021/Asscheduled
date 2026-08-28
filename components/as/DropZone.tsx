@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ACCEPTED_MIME, MAX_BYTES } from "@/lib/documentRules";
+import { ACCEPTED_MIME, MAX_BYTES, SEND_BYTES } from "@/lib/documentRules";
+import { shrinkImage } from "@/lib/shrinkImage";
 
 /* One file control: click, tap or drag.
 
@@ -165,8 +166,41 @@ export default function DropZone({
  *  is for immediate feedback, not for security. */
 export function rejectReason(file: File): string | null {
   if (file.size > MAX_BYTES) {
-    return `That file is ${readableSize(file.size)}. Compress it under ${MAX_BYTES / 1_000_000}MB and try again.`;
+    return `That file is ${readableSize(file.size)}. The limit is ${MAX_BYTES / 1_000_000}MB.`;
   }
   if (file.size <= 0) return "That file is empty.";
   return null;
+}
+
+/**
+ * Everything that has to happen to a chosen file before it is sent.
+ *
+ * Checks what somebody picked, shrinks it if it is a large photo, and
+ * checks again against what can actually be posted. Two limits rather
+ * than one because they mean different things: MAX_BYTES is what we
+ * accept from a person, SEND_BYTES is what the platform will carry.
+ *
+ * A photo passes both because it is shrunk in between. A large PDF
+ * cannot be shrunk, so it is refused — and the message says why, not
+ * just that it failed.
+ */
+export type Prepared = { ok: true; file: File } | { ok: false; error: string };
+
+export async function prepareUpload(file: File): Promise<Prepared> {
+  const bad = rejectReason(file);
+  if (bad) return { ok: false, error: bad };
+
+  const out = await shrinkImage(file);
+
+  if (out.size > SEND_BYTES) {
+    return {
+      ok: false,
+      error:
+        out.type === "application/pdf"
+          ? `That PDF is ${readableSize(out.size)}. PDFs cannot be shrunk here — send a photo instead, or a smaller PDF.`
+          : `That file is still ${readableSize(out.size)} after shrinking. Try a photo rather than a scan.`,
+    };
+  }
+
+  return { ok: true, file: out };
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import DropZone, { rejectReason, type ZoneState } from "./DropZone";
+import DropZone, { prepareUpload, type ZoneState } from "./DropZone";
 import { DOCUMENT_KINDS, MAX_BYTES, type DocumentKind } from "@/lib/documentRules";
 
 /* The standalone upload surface, used by /documents/[token] after an
@@ -38,8 +38,8 @@ export const DOCUMENT_LABELS: Record<DocumentKind, { title: string; hint: string
 export function SizeNote() {
   return (
     <p className="s-hint">
-      JPG, PNG or PDF · under {MAX_BYTES / 1_000_000}MB each. Most phone photos are larger than
-      that, so compress or resize before you upload.
+      JPG, PNG or PDF · up to {MAX_BYTES / 1_000_000}MB each. Photos are shrunk automatically, so
+      send the picture straight off your phone.
     </p>
   );
 }
@@ -62,13 +62,16 @@ export default function UploadFields({
   const [files, setFiles] = useState<Partial<Record<DocumentKind, File>>>({});
   const [errors, setErrors] = useState<Partial<Record<DocumentKind, string>>>({});
 
-  async function send(kind: DocumentKind, file: File) {
-    const bad = rejectReason(file);
-    if (bad) {
-      setErrors((e) => ({ ...e, [kind]: bad }));
+  async function send(kind: DocumentKind, chosen: File) {
+    /* Shrinks a large photo before sending. Same helper the
+       application form uses, so both surfaces behave identically. */
+    const prepared = await prepareUpload(chosen);
+    if (!prepared.ok) {
+      setErrors((e) => ({ ...e, [kind]: prepared.error }));
       setState((s) => ({ ...s, [kind]: "error" }));
       return;
     }
+    const file = prepared.file;
 
     setFiles((f) => ({ ...f, [kind]: file }));
     setErrors((e) => ({ ...e, [kind]: undefined }));

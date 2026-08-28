@@ -21,7 +21,26 @@ export const PAYMENT_KIND: DocumentKind = "payment_proof";
 
 export const ACCEPTED_MIME = ["image/jpeg", "image/png", "image/webp", "application/pdf"] as const;
 
-/* Matches the bucket's own 2MB cap. Files are not resized for anyone —
-   people compress their own before uploading, and the form says so up
-   front rather than letting them pick a 4MB photo and then fail. */
-export const MAX_BYTES = 2_000_000;
+/**
+ * The biggest file somebody may CHOOSE.
+ *
+ * Generous on purpose: a phone photographs an ID card at 8-12MB, and
+ * telling people to go and compress it themselves is asking them to
+ * do a job the browser can do instantly. Images over the send limit
+ * below are shrunk before they leave (lib/shrinkImage.ts).
+ */
+export const MAX_BYTES = 10_000_000;
+
+/**
+ * The biggest file that may actually be POSTED.
+ *
+ * Vercel refuses any request body over 4.5MB before our route runs,
+ * so this is not a policy we chose — it is the ceiling we live under,
+ * kept under it with room for the multipart envelope and the token.
+ * Enforced on both sides: after shrinking in the browser, and again
+ * in the route, which is the check that actually holds.
+ *
+ * Images are shrunk well below this. A PDF cannot be, so a large one
+ * is refused with a message that says so.
+ */
+export const SEND_BYTES = 4_000_000;

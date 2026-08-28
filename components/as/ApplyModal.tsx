@@ -7,7 +7,7 @@ import { useModal } from "./ModalProvider";
 import { APPLY, STATES, CONTACT_EMAIL } from "@/lib/copy";
 import { DEPARTURES, inr } from "@/lib/departures";
 import { EVENTS, track } from "@/lib/analytics";
-import DropZone, { rejectReason, type ZoneState } from "./DropZone";
+import DropZone, { prepareUpload, type ZoneState } from "./DropZone";
 import { DOCUMENT_LABELS, SizeNote } from "./UploadFields";
 import { DOCUMENT_KINDS, PAYMENT_KIND, type DocumentKind } from "@/lib/documentRules";
 import { amountDueInr, fareFor, findPlan, plansFor } from "@/lib/packages";
@@ -192,16 +192,24 @@ export default function ApplyModal() {
     };
   }, [a.event]);
 
-  function pick(kind: DocumentKind, file: File) {
-    const bad = rejectReason(file);
-    if (bad) {
-      setFileErrors((e) => ({ ...e, [kind]: bad }));
+  /* Async because a large photo is shrunk here, before it is held for
+     sending. Doing it on pick rather than on submit means somebody
+     learns immediately that their file is fine, instead of at the end
+     of the form. */
+  /* Returns the file that will actually be sent — which is not the one
+     handed in, if it was a large photo. The retry path needs that back,
+     or it would re-upload the original and undo the shrinking. */
+  async function pick(kind: DocumentKind, file: File): Promise<File | null> {
+    const prepared = await prepareUpload(file);
+    if (!prepared.ok) {
+      setFileErrors((e) => ({ ...e, [kind]: prepared.error }));
       setDocState((s) => ({ ...s, [kind]: "error" }));
-      return;
+      return null;
     }
-    setFiles((f) => ({ ...f, [kind]: file }));
+    setFiles((f) => ({ ...f, [kind]: prepared.file }));
     setFileErrors((e) => ({ ...e, [kind]: undefined }));
     setDocState((s) => ({ ...s, [kind]: "idle" }));
+    return prepared.file;
   }
 
   /* The funnel starts here. The modal is only mounted while it is open,
@@ -433,8 +441,13 @@ export default function ApplyModal() {
                     error={fileErrors[kind]}
                     doneHint="Sent"
                     onPick={(f) => {
-                      pick(kind, f);
-                      void retry(kind, f, done.upload as string);
+                      void (async () => {
+                        /* Retry with what pick actually kept, not the
+                           file that was handed in — a shrunk photo is
+                           a different File object. */
+                        const ready = await pick(kind, f);
+                        if (ready) await retry(kind, ready, done.upload as string);
+                      })();
                     }}
                   />
                 ))}
@@ -768,7 +781,7 @@ export default function ApplyModal() {
                     file={files[kind] ?? null}
                     error={fileErrors[kind]}
                     doneHint="Tap to change"
-                    onPick={(f) => pick(kind, f)}
+                    onPick={(f) => void pick(kind, f)}
                   />
                 ))}
 
@@ -872,7 +885,7 @@ export default function ApplyModal() {
                   file={files[PAYMENT_KIND] ?? null}
                   error={fileErrors[PAYMENT_KIND]}
                   doneHint="Tap to change"
-                  onPick={(f) => pick(PAYMENT_KIND, f)}
+                  onPick={(f) => void pick(PAYMENT_KIND, f)}
                 />
 
                 <p className="s-hint">{APPLY.payCheckNote}</p>
