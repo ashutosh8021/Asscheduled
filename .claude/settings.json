@@ -202,7 +202,9 @@
       "Bash(git push *)",
       "Bash(node -e \"const s=require\\('next/server'\\);console.log\\('after exported:', typeof s.after\\);console.log\\('next version:', require\\('next/package.json'\\).version\\)\")",
       "PowerShell($c = Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue; if \\($c\\) { Stop-Process -Id $c.OwningProcess -Force -ErrorAction SilentlyContinue; Start-Sleep -Seconds 2 }; pnpm build 2>&1 | Select-String -Pattern \"error|Error|Failed|Compiled successfully\" | Select-Object -First 5)",
-      "Bash(node \"/c/Users/ashut/AppData/Local/Temp/claude/d--AS/3697f397-70d1-44b5-bf64-131e3dc35206/scratchpad/cleanup2.mjs\" AS-S2-MTDA2OPYGU)"
+      "Bash(node \"/c/Users/ashut/AppData/Local/Temp/claude/d--AS/3697f397-70d1-44b5-bf64-131e3dc35206/scratchpad/cleanup2.mjs\" AS-S2-MTDA2OPYGU)",
+      "Bash(node \"/c/Users/ashut/AppData/Local/Temp/claude/d--AS/3697f397-70d1-44b5-bf64-131e3dc35206/scratchpad/repro-resync.mjs\")",
+      "Bash(node \"/c/Users/ashut/AppData/Local/Temp/claude/d--AS/3697f397-70d1-44b5-bf64-131e3dc35206/scratchpad/check-detail.mjs\")"
     ],
     "additionalDirectories": [
       "C:\\Users\\ashut\\OneDrive\\Desktop\\pulse-sheet"
