@@ -1,7 +1,7 @@
 import { NextResponse, after } from "next/server";
 import {
   ACCEPTED_MIME,
-  DOCUMENT_KINDS,
+  ALL_DOCUMENT_KINDS,
   SEND_BYTES,
   resolveUploadToken,
   storeDocument,
@@ -60,8 +60,12 @@ export async function POST(request: Request) {
     return fail("This link has expired or is no longer valid. Ask us for a new one.", 403);
   }
 
+  /* All three kinds, including the payment screenshot. This used to
+     check DOCUMENT_KINDS, which is only the two identity documents, so
+     every payment proof was refused as "Unknown document type" while
+     the form went on believing it had sent one. */
   const kind = String(form.get("kind") ?? "") as DocumentKind;
-  if (!DOCUMENT_KINDS.includes(kind)) return fail("Unknown document type.", 400);
+  if (!ALL_DOCUMENT_KINDS.includes(kind)) return fail("Unknown document type.", 400);
 
   const file = form.get("file");
   if (!(file instanceof File)) return fail("No file was attached.", 400);

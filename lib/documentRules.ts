@@ -19,6 +19,17 @@ export const DOCUMENT_KINDS: DocumentKind[] = ["photo_id", "college_id"];
  *  and only where a departure takes a booking amount. */
 export const PAYMENT_KIND: DocumentKind = "payment_proof";
 
+/**
+ * Every kind the upload route will accept.
+ *
+ * Distinct from DOCUMENT_KINDS, which means "the identity documents we
+ * ask for together" and drives the two ID fields. Validating uploads
+ * against that shorter list rejected every payment screenshot with
+ * "Unknown document type" — the form sent them, the route refused
+ * them, and nothing anywhere said so.
+ */
+export const ALL_DOCUMENT_KINDS: DocumentKind[] = [...DOCUMENT_KINDS, PAYMENT_KIND];
+
 export const ACCEPTED_MIME = ["image/jpeg", "image/png", "image/webp", "application/pdf"] as const;
 
 /**

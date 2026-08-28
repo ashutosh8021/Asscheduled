@@ -359,7 +359,16 @@ export default function ApplyModal() {
   }
 
   /* Which documents did not land. Empty is the happy path. */
-  const docsFailed = DOCUMENT_KINDS.filter((k) => docState[k] === "error");
+  /* Everything this departure actually asked for, so a failure is
+     reported for all of it. This used to list only the two identity
+     documents, which meant a payment screenshot that did not go up
+     said nothing at all — the worst place to be quiet, since the
+     transfer then cannot be matched to anybody. */
+  const attemptedKinds: DocumentKind[] = needsPayment
+    ? [...DOCUMENT_KINDS, PAYMENT_KIND]
+    : [...DOCUMENT_KINDS];
+
+  const docsFailed = attemptedKinds.filter((k) => docState[k] === "error");
 
   /** Re-send one document against the token we already hold. */
   async function retry(kind: DocumentKind, file: File, token: string) {
@@ -423,7 +432,9 @@ export default function ApplyModal() {
           {done.upload ? (
             docsFailed.length === 0 ? (
               <p className="s-hint" style={{ marginTop: 12 }}>
-                ✓ Your ID and college ID came through.
+                ✓ {needsPayment
+                  ? "Your documents and payment screenshot came through."
+                  : "Your ID and college ID came through."}
               </p>
             ) : (
               <div style={{ marginTop: 20, textAlign: "left" }}>

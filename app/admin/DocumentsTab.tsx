@@ -19,6 +19,7 @@ import type { DocumentBundle } from "@/lib/adminData";
 const KIND_LABEL: Record<string, string> = {
   photo_id: "Government photo ID",
   college_id: "College ID",
+  payment_proof: "Payment screenshot",
 };
 
 /* Both kinds, so a half-finished upload is visible as a gap rather

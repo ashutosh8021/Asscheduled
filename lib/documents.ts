@@ -35,7 +35,13 @@ const SIGNED_URL_TTL = 300;
 /* The acceptance rules live in lib/documentRules.ts so the upload form
    can import them without dragging node:crypto into the browser
    bundle. Re-exported here so server code has one place to look. */
-export { ACCEPTED_MIME, DOCUMENT_KINDS, MAX_BYTES, SEND_BYTES } from "./documentRules";
+export {
+  ACCEPTED_MIME,
+  ALL_DOCUMENT_KINDS,
+  DOCUMENT_KINDS,
+  MAX_BYTES,
+  SEND_BYTES,
+} from "./documentRules";
 export type { DocumentKind } from "./documentRules";
 
 export interface DocumentRow {

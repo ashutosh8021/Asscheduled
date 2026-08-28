@@ -213,7 +213,9 @@
       "Bash(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 bigphoto.jpg)",
       "Bash(ffmpeg -v error -y -f lavfi -i \"color=c=gray:s=4032x3024\" -vf \"geq=random\\(1\\)*255:random\\(2\\)*255:random\\(3\\)*255\" -frames:v 1 -q:v 1 bigphoto.jpg)",
       "Bash(awk '{print \"size: \" $5 \" bytes \\(\" int\\($5/1048576\\) \" MB\\)\"}')",
-      "PowerShell($c = Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue; if \\($c\\) { Stop-Process -Id $c.OwningProcess -Force -ErrorAction SilentlyContinue; Start-Sleep -Seconds 2 }; pnpm build 2>&1 | Select-String -Pattern \"error|Error|Failed|Compiled successfully|First Load\" | Select-Object -First 5)"
+      "PowerShell($c = Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue; if \\($c\\) { Stop-Process -Id $c.OwningProcess -Force -ErrorAction SilentlyContinue; Start-Sleep -Seconds 2 }; pnpm build 2>&1 | Select-String -Pattern \"error|Error|Failed|Compiled successfully|First Load\" | Select-Object -First 5)",
+      "Bash(node \"/c/Users/ashut/AppData/Local/Temp/claude/d--AS/3697f397-70d1-44b5-bf64-131e3dc35206/scratchpad/probe-payment.mjs\")",
+      "Bash(node \"/c/Users/ashut/AppData/Local/Temp/claude/d--AS/3697f397-70d1-44b5-bf64-131e3dc35206/scratchpad/cleanup2.mjs\" AS-S2-MTDCME9R4G)"
     ],
     "additionalDirectories": [
       "C:\\Users\\ashut\\OneDrive\\Desktop\\pulse-sheet"
