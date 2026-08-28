@@ -303,7 +303,7 @@ interface RawDocument {
  * is only ever correct for a freshly loaded page — which is why the
  * admin route is force-dynamic.
  */
-export async function listDocumentBundles(): Promise<DocumentBundle[]> {
+export async function listDocumentBundles(departure?: string): Promise<DocumentBundle[]> {
   const rows = await select<RawDocument>(
     "documents?select=id,kind,mime_type,size_bytes,uploaded_at,storage_path,application_id," +
       "applications(reference,name,phone,college,departure_code,status)" +
@@ -315,6 +315,12 @@ export async function listDocumentBundles(): Promise<DocumentBundle[]> {
   for (const r of rows) {
     const app = r.applications;
     if (!app) continue;
+
+    /* Scoped before anything is signed, not after. A partner viewing
+       their own departure must never cause a signed URL to be minted
+       for somebody else's document — filtering the finished list would
+       still have created the URL first. */
+    if (departure && app.departure_code !== departure) continue;
 
     let bundle = byApplication.get(r.application_id);
     if (!bundle) {

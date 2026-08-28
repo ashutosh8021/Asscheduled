@@ -18,7 +18,7 @@
  * See docs/admin.md for the script itself and the deployment steps.
  */
 
-import { DEPARTURES } from "./departures";
+import { DEPARTURES, sharedDepartureIds } from "./departures";
 
 /* ------------------------------------------------------------------
    WHAT GETS MIRRORED
@@ -42,9 +42,7 @@ import { DEPARTURES } from "./departures";
    This is the only gate. Every path into the sheet goes through
    mirrorApplications below, so a new call site cannot widen it.
    ------------------------------------------------------------------ */
-export const MIRRORED_DEPARTURES: string[] = DEPARTURES.filter((d) => d.sharedWith).map(
-  (d) => d.id
-);
+export const MIRRORED_DEPARTURES: string[] = sharedDepartureIds();
 
 export function isMirrored(departureCode: string): boolean {
   return MIRRORED_DEPARTURES.includes(departureCode);

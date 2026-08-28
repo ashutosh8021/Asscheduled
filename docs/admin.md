@@ -176,6 +176,45 @@ everyone, the struck-through figure on the card claims a saving that is not
 real. Either drop the ₹1,000 from `lib/packages.ts` and retire the coupon,
 or keep the coupon and stop rendering the "was" price.
 
+## The partner panel
+
+`/partner` — the festival's own read-only view of its departure. PULSE signs in
+at `/admin/login` with an ordinary Supabase account and is sent there
+automatically; `destinationFor()` decides that from the allowlists, because a
+partner sent to `/admin` would be refused and bounced back to the login screen,
+which looks exactly like a wrong password.
+
+**Two allowlists, never merged.** `ADMIN_EMAILS` is full access.
+`PARTNER_EMAILS` sees the roster and documents for departures with `sharedWith`
+set — currently PULSE only — and nothing else: not Thomso, not messages, not
+collaborations, and nothing they can change. Both fail closed.
+
+Scope comes back attached to the viewer from `currentViewer()`, not from the
+request. There is no departure parameter to tamper with, and document bundles
+are filtered *before* any URL is signed, so a partner's page load never mints a
+signed URL for somebody else's ID.
+
+Admins can open `/partner` too, so you can see exactly what PULSE sees without
+keeping a second account.
+
+### Adding someone from the festival
+
+1. Supabase → **Authentication → Users → Add user**, tick **Auto Confirm User**.
+2. Add the address to `PARTNER_EMAILS` — locally and in Vercel.
+3. Redeploy. Removing the address and redeploying revokes access immediately,
+   even on a live session, because the list is checked on every request.
+
+### Why documents are visible there
+
+Both parties admit people to a campus, so both need to check the person at the
+gate is the person who applied. Documents are shown through signed URLs that
+expire in minutes rather than handed over as copies, the panel is read-only,
+and every read is logged with the email that made it.
+
+This is disclosed in the privacy policy, which was updated in the same change.
+**If you ever narrow or widen what the panel shows, the policy has to move with
+it** — applicants are told exactly this list.
+
 ## Plans and per-state fares
 
 PULSE is sold as two plans, and each one is priced per state, because the

@@ -644,6 +644,18 @@ export const DEPARTURES: Departure[] = [
   },
 ];
 
+/**
+ * Departures run with a partner festival.
+ *
+ * The single derivation of "who is this shared with", used by the
+ * sheet mirror and by the partner panel's scope. Both must mean the
+ * same thing as the privacy policy, and the way to guarantee that is
+ * for both to read the same field.
+ */
+export function sharedDepartureIds(): string[] {
+  return DEPARTURES.filter((d) => d.sharedWith).map((d) => d.id);
+}
+
 export function getDeparture(slug: string): Departure | undefined {
   return DEPARTURES.find((d) => d.slug === slug);
 }

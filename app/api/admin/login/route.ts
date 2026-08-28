@@ -5,6 +5,7 @@ import {
   SESSION_COOKIE,
   REFRESH_COOKIE,
   adminConfigured,
+  destinationFor,
 } from "@/lib/admin";
 
 export const runtime = "nodejs";
@@ -42,7 +43,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: "Those details did not work." }, { status: 401 });
   }
 
-  const res = NextResponse.json({ ok: true });
+  /* Where to send them. A partner has no access to /admin, so
+     without this they would sign in successfully and be bounced
+     straight back to the login screen — a loop that looks exactly
+     like a rejected password. */
+  const res = NextResponse.json({ ok: true, redirect: destinationFor(email) });
   res.cookies.set(SESSION_COOKIE, tokens.accessToken, cookieOptions(tokens.expiresIn));
   /* The refresh token outlives the access token so a long review
      session does not get bounced back to the login screen. */

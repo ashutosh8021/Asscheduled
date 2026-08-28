@@ -147,8 +147,14 @@ export function PrivacyPane({ level: H = "h3" }: { level?: PaneLevel } = {}) {
         We share, on an ongoing basis: your name, phone number, age, gender, state, occupation,
         college, Instagram handle if you gave one, what you wrote in your application, which plan
         you chose, the amount due, the payment reference you entered, whether we have accepted you,
-        and <em>whether</em> your ID documents have been received. The documents themselves are
-        never shared — the festival is told that a college ID arrived, never shown it.
+        and the documents you upload — your government photo ID, your college ID and your payment
+        screenshot.
+      </p>
+      <p>
+        The festival can view those documents because both of us have to be satisfied that the
+        person arriving at the gate is the person who applied. They are shown through links that
+        expire within minutes rather than as copies handed over, the festival cannot alter any
+        record, and every view is logged against the person who opened it.
       </p>
       <p>
         This is a disclosure to a separate organisation, not processing on our behalf: once the

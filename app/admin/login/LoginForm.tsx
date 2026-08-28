@@ -21,12 +21,14 @@ export default function LoginForm() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-      const json = (await res.json()) as { ok: boolean; error?: string };
+      const json = (await res.json()) as { ok: boolean; error?: string; redirect?: string };
 
       if (json.ok) {
         /* refresh() re-runs the server component, which now sees the
-           session cookie; push alone could serve a cached shell. */
-        router.replace("/admin");
+           session cookie; push alone could serve a cached shell.
+           The destination is decided server-side from the allowlists —
+           a partner belongs at /partner and cannot open /admin. */
+        router.replace(json.redirect === "/partner" ? "/partner" : "/admin");
         router.refresh();
       } else {
         setError(json.error ?? "That did not work.");
