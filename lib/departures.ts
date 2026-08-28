@@ -172,6 +172,15 @@ export interface Departure {
   documentsAtApply?: boolean;
 
   /**
+   * Short, loud facts worth stamping next to the intro.
+   *
+   * Stamps, not bullets — red is reserved for rubber stamps in this
+   * brand, and these are exactly that: the two things somebody should
+   * not have to read a price table to discover.
+   */
+  perks?: string[];
+
+  /**
    * The festival we run this departure with, when it is a partnership.
    *
    * Setting it has two consequences that must never come apart: the
@@ -224,6 +233,7 @@ export const DEPARTURES: Departure[] = [
     priceMax: departureSpan("PUL-26")!.max,
     /* AIIMS asks for ID up front — see the note on the field. */
     documentsAtApply: true,
+    perks: ["₹1,000 off at final payment", "Delegate passes included"],
     /* Run with PULSE, so PULSE is told who is coming. This is what
        turns the sheet mirror on and what makes the form say so. */
     sharedWith: "PULSE, AIIMS New Delhi",

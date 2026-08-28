@@ -225,7 +225,10 @@ export const DETAIL = {
      is per state because the train is, so the section asks where
      somebody is starting from before it quotes anything. */
   plansLabel: "PICK YOUR PLAN",
-  plansSub: "Two ways to do it. The fare depends on where you're travelling from.",
+  /* The count is rendered from the plan list rather than written
+     here — it said "Two ways" for a day after a third plan was
+     added. */
+  plansSubTail: "The fare depends on where you're travelling from.",
   plansStateLabel: "TRAVELLING FROM",
   plansStatePh: "Select your state",
   plansPrompt: "Pick your state and both fares fill in.",

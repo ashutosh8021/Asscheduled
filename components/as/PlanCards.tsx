@@ -24,6 +24,10 @@ import NoFare from "./NoFare";
  * is owed, and the apply route works it out again from the state and
  * plan that were actually submitted. */
 
+/* Spelled out to four, which is as many plans as a page can usefully
+   compare. Beyond that the digit is fine. */
+const WAYS: Record<number, string> = { 1: "One", 2: "Two", 3: "Three", 4: "Four" };
+
 export default function PlanCards({
   departureId,
   soldOut = false,
@@ -44,7 +48,7 @@ export default function PlanCards({
         <div>
           <p className="s-panel-h">{DETAIL.plansLabel}</p>
           <p className="s-panel-sub" style={{ marginBottom: 0 }}>
-            {DETAIL.plansSub}
+            {WAYS[plans.length] ?? plans.length} ways to do it. {DETAIL.plansSubTail}
           </p>
         </div>
 

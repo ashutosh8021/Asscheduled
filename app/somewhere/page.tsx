@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import Shell from "@/components/as/Shell";
 import Reveal from "@/components/as/Reveal";
 import DepartureCard from "@/components/as/DepartureCard";
-import { cookies } from "next/headers";
-import { effectivePrice, resolvePartner, PARTNER_COOKIE } from "@/lib/partners";
+import { effectivePrice } from "@/lib/partners";
 import { SOMEWHERE } from "@/lib/copy";
 import { DEPARTURES } from "@/lib/departures";
 import { abs } from "@/lib/site";
@@ -16,13 +15,11 @@ export const metadata: Metadata = {
 };
 
 export default async function SomewherePage() {
-  /* Resolved once for the page and handed to each card. The cards are
-     client components and must never work a discount out for
-     themselves — the price is the server's to decide. */
-  const jar = await cookies();
-  const partnerCode = jar.get(PARTNER_COOKIE)?.value;
+  /* List price while browsing. The coupon is applied at the payment
+     step instead, so nothing here is discounted and the cards show
+     what the trip costs. */
   const priceFor = (d: { id: string; price: number; priceMax?: number }) =>
-    effectivePrice(d.price, d.priceMax, resolvePartner(partnerCode, d.id));
+    effectivePrice(d.price, d.priceMax, null);
 
   return (
     <Shell>

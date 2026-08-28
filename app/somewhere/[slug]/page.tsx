@@ -10,9 +10,7 @@ import LastYear from "@/components/as/LastYear";
 import PlanCards from "@/components/as/PlanCards";
 import { hasPlans } from "@/lib/packages";
 import { DETAIL, SOMEWHERE } from "@/lib/copy";
-import { cookies } from "next/headers";
-import { DEPARTURES, batchLabel, getDeparture, inr, priceRange } from "@/lib/departures";
-import { effectivePrice, partnerFor, PARTNER_COOKIE } from "@/lib/partners";
+import { DEPARTURES, batchLabel, getDeparture, priceRange } from "@/lib/departures";
 import { abs } from "@/lib/site";
 
 /* Experience detail — comps (7) and (8). One template, both departures;
@@ -52,16 +50,6 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
   const { slug } = await params;
   const d = getDeparture(slug);
   if (!d) notFound();
-
-  /* Reading the referral cookie makes this page dynamic — it can no
-     longer be prerendered at build time. Three low-traffic pages that
-     already render fast on the server, in exchange for the price being
-     right on first paint rather than corrected by JavaScript after it.
-     The same resolvePartner runs in the apply route, so what is shown
-     here and what is charged there cannot drift apart. */
-  const jar = await cookies();
-  const partner = partnerFor(d.id, jar.get(PARTNER_COOKIE)?.value);
-  const pricing = effectivePrice(d.price, d.priceMax, partner);
 
   return (
     /* overHero: the header floats transparent over the full-screen
@@ -129,6 +117,21 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
               ))}
 
               <span className="s-tick" style={{ display: "block", marginTop: 26 }} />
+
+              {/* Stamped rather than listed. This column runs out well
+                  before the booking panel does, and these are the two
+                  things somebody should not have to open a price table
+                  to find out. Red is the brand's stamp ink and nothing
+                  else, so a rubber stamp is the honest device here. */}
+              {d.perks?.length ? (
+                <ul className="s-perks">
+                  {d.perks.map((perk, i) => (
+                    <li key={perk} className="s-perk" data-alt={i % 2 === 1}>
+                      {perk}
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
             </Reveal>
 
             <Reveal delay={1}>
@@ -145,35 +148,13 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
 
                 <hr className="s-rule" style={{ margin: "18px 0" }} />
 
-                {/* The badge is text. There is nothing to type and
-                    nothing to clear: the server decided this price, and
-                    a field here would only invite someone to try
-                    changing it. */}
-                {partner ? (
-                  <p className="s-coupon">
-                    <span className="s-coupon-tag">{partner.coupon}</span>
-                    <span className="s-coupon-said">
-                      {inr(pricing.discountInr)} off, applied
-                    </span>
-                  </p>
-                ) : null}
-
                 <p className="s-eyebrow s-eyebrow-grey">{DETAIL.fromLabel}</p>
-                <p
-                  style={{
-                    fontFamily: "var(--s-mono)",
-                    fontSize: "clamp(30px,3.6vw,46px)",
-                    fontWeight: 600,
-                    letterSpacing: "-0.01em",
-                    margin: "6px 0 20px",
-                  }}
-                >
-                  {pricing.wasPrice !== undefined ? (
-                    <span className="s-was">
-                      {priceRange({ price: pricing.wasPrice, priceMax: pricing.wasPriceMax })}
-                    </span>
-                  ) : null}
-                  {priceRange({ price: pricing.price, priceMax: pricing.priceMax })}
+
+                {/* List price. The coupon is applied at the payment
+                    step, so nothing is struck through here — the stamp
+                    beside this panel is what says ₹1,000 comes off. */}
+                <p className="s-price-now">
+                  {priceRange({ price: d.price, priceMax: d.priceMax })}
                   <span className="s-price-per">{SOMEWHERE.pricePer}</span>
                 </p>
 
