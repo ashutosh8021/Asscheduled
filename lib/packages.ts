@@ -81,6 +81,43 @@ export interface Plan {
    go live with no code change.
    ------------------------------------------------------------------ */
 
+/* PLAN 01 — the six-day Delhi variant. Supplied by Mannat,
+   2026-08-29, and stored EXACTLY as given: these are already list
+   prices, unlike the other two tables, which were supplied net and had
+   ₹1,000 added here to fund the coupon. Confirmed before they went in,
+   because the difference is ₹1,000 on every applicant who picks this.
+
+   The result is consistent: PLAN 01 sits ₹1,600 above PLAN 03 and
+   ₹2,200 below PLAN 02 in every single state, and those sum to the
+   ₹3,800 that separates the two older plans. */
+const PULSE_DELHI_SHORT: Fares = {
+  Haryana: 12279,
+  Punjab: 12279,
+  "Himachal Pradesh": 12379,
+  Uttarakhand: 12579,
+  "Uttar Pradesh": 12579,
+  Rajasthan: 12779,
+  "Madhya Pradesh": 13179,
+  Chhattisgarh: 13579,
+  Jharkhand: 13679,
+  Maharashtra: 13779,
+  Bihar: 13879,
+  "West Bengal": 13879,
+  Sikkim: 13979,
+  Gujarat: 14179,
+  Telangana: 14179,
+  "Andhra Pradesh": 14179,
+  Odisha: 14279,
+  Goa: 14579,
+  Nagaland: 14679,
+  Manipur: 14679,
+  "Arunachal Pradesh": 14779,
+  Mizoram: 14879,
+  Karnataka: 14979,
+  Assam: 15279,
+  Meghalaya: 15279,
+};
+
 const PULSE_FESTIVAL: Fares = {
   Haryana: 10679,
   Punjab: 10679,
@@ -139,14 +176,6 @@ const PULSE_FESTIVAL_PLUS_DELHI: Fares = {
 
 const PULSE_PLANS: Plan[] = [
   {
-    /* ⚠️ TODO(mannat): this plan has NO FARES. It is the short Delhi
-       variant, added on instruction, and nobody has priced it yet.
-
-       Until the table below is filled in, every state shows no price
-       and anybody choosing it is told we will confirm the amount — the
-       same honest path an unpriced state already takes. It is not
-       sellable in that state. Send the 25 figures and it goes live
-       with no code change. */
     id: "pulse-delhi-short",
     n: "PLAN 01",
     name: "THE FESTIVAL + DELHI",
@@ -159,7 +188,7 @@ const PULSE_PLANS: Plan[] = [
       "Meals through the trip",
       "2 days of Delhi, guided",
     ],
-    fares: {},
+    fares: PULSE_DELHI_SHORT,
   },
   {
     id: "pulse-festival-delhi",
