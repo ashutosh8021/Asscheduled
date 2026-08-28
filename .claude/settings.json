@@ -235,7 +235,9 @@
       "PowerShell($c = Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue; if \\($c\\) { Stop-Process -Id $c.OwningProcess -Force -ErrorAction SilentlyContinue; Start-Sleep -Seconds 2 }; pnpm lint; if \\($?\\) { pnpm build 2>&1 | Select-String -Pattern \"error|Error|Failed|Compiled successfully|/partner\" | Select-Object -First 6 })",
       "Bash(node \"/c/Users/ashut/AppData/Local/Temp/claude/d--AS/3697f397-70d1-44b5-bf64-131e3dc35206/scratchpad/probe-lockout.mjs\")",
       "Bash(SP=\"/c/Users/ashut/AppData/Local/Temp/claude/d--AS/3697f397-70d1-44b5-bf64-131e3dc35206/scratchpad\" *)",
-      "Bash(ls -la \"/c/Users/ashut/AppData/Local/Temp/claude/d--AS/3697f397-70d1-44b5-bf64-131e3dc35206/scratchpad/toggle-m.png\" 2>/dev/null && echo \"exists\" || echo \"missing\")"
+      "Bash(ls -la \"/c/Users/ashut/AppData/Local/Temp/claude/d--AS/3697f397-70d1-44b5-bf64-131e3dc35206/scratchpad/toggle-m.png\" 2>/dev/null && echo \"exists\" || echo \"missing\")",
+      "Bash(timeout 200 node shot-partner.js 1400 1000)",
+      "Bash(grep -n \"PARTNER_EMAILS\" .env.local; grep -c \"rejected zz-partner-probe\" \"/c/Users/ashut/AppData/Local/Temp/claude/d--AS/3697f397-70d1-44b5-bf64-131e3dc35206/tasks/brgkb1eb5.output\" 2>/dev/null || echo \"0 rejections logged\")"
     ],
     "additionalDirectories": [
       "C:\\Users\\ashut\\OneDrive\\Desktop\\pulse-sheet"

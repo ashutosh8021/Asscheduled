@@ -382,3 +382,17 @@
   letter-spacing: 0.1em;
   color: #5c6473;
 }
+
+/* The partner panel's payment figures, sat on the right of a card
+   header. Mono because they are numbers to be compared against a
+   bank statement, not prose. */
+.a-dt-right span {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: #8b93a1;
+}
+.a-dt-right b { color: #e6e9ee; font-weight: 600; }
+
+/* Tabs are real buttons in the partner panel, not links. */
+button.a-tab { font: inherit; cursor: pointer; }
