@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import Shell from "@/components/as/Shell";
 import Reveal from "@/components/as/Reveal";
@@ -118,20 +119,6 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
 
               <span className="s-tick" style={{ display: "block", marginTop: 26 }} />
 
-              {/* Stamped rather than listed. This column runs out well
-                  before the booking panel does, and these are the two
-                  things somebody should not have to open a price table
-                  to find out. Red is the brand's stamp ink and nothing
-                  else, so a rubber stamp is the honest device here. */}
-              {d.perks?.length ? (
-                <ul className="s-perks">
-                  {d.perks.map((perk, i) => (
-                    <li key={perk} className="s-perk" data-alt={i % 2 === 1}>
-                      {perk}
-                    </li>
-                  ))}
-                </ul>
-              ) : null}
             </Reveal>
 
             <Reveal delay={1}>
@@ -157,6 +144,27 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
                   {priceRange({ price: d.price, priceMax: d.priceMax })}
                   <span className="s-price-per">{SOMEWHERE.pricePer}</span>
                 </p>
+
+                {/* Beside the price, because that is what they are
+                    about: the figure above is the list price, and
+                    these two say what comes off it and what is
+                    already in it. Above the CTA so both are read
+                    before the decision, not after. */}
+                {d.stickers?.length ? (
+                  <ul className="s-stickers s-stickers-panel">
+                    {d.stickers.map((st, i) => (
+                      <li key={st.src} className="s-sticker" data-alt={i % 2 === 1}>
+                        <Image
+                          src={st.small}
+                          alt={st.alt}
+                          width={st.width}
+                          height={st.height}
+                          sizes="240px"
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
 
                 {/* A span, not a disabled button: there is nothing to
                     press, so it should not look pressable or take focus. */}

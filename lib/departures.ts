@@ -172,13 +172,18 @@ export interface Departure {
   documentsAtApply?: boolean;
 
   /**
-   * Short, loud facts worth stamping next to the intro.
+   * Sticker artwork for the two facts worth shouting about.
    *
-   * Stamps, not bullets — red is reserved for rubber stamps in this
-   * brand, and these are exactly that: the two things somebody should
-   * not have to read a price table to discover.
+   * Supplied as artwork rather than drawn in CSS, so the wording and
+   * the look are the designer's rather than mine. Each carries a
+   * second, smaller cut for the cards: the same image scaled down in
+   * the browser would ship a 1000px file to render at 220.
+   *
+   * `alt` is the sticker's words, because that IS the content — a
+   * screen reader that says "sticker" tells somebody nothing about
+   * ₹1,000 coming off.
    */
-  perks?: string[];
+  stickers?: { src: string; small: string; alt: string; width: number; height: number }[];
 
   /**
    * The festival we run this departure with, when it is a partnership.
@@ -233,7 +238,22 @@ export const DEPARTURES: Departure[] = [
     priceMax: departureSpan("PUL-26")!.max,
     /* AIIMS asks for ID up front — see the note on the field. */
     documentsAtApply: true,
-    perks: ["₹1,000 off at final payment", "Delegate passes included"],
+    stickers: [
+      {
+        src: "/stickers/thousand-off.png",
+        small: "/stickers/thousand-off-sm.png",
+        alt: "Get ₹1,000 off at final payment",
+        width: 1000,
+        height: 315,
+      },
+      {
+        src: "/stickers/delegate-pass.png",
+        small: "/stickers/delegate-pass-sm.png",
+        alt: "PULSE delegate pass included",
+        width: 1000,
+        height: 523,
+      },
+    ],
     /* Run with PULSE, so PULSE is told who is coming. This is what
        turns the sheet mirror on and what makes the form say so. */
     sharedWith: "PULSE, AIIMS New Delhi",
