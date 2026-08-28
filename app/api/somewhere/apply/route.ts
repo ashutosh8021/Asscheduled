@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { cookies } from "next/headers";
 import { deliver, isIndianMobile, readStrings } from "@/lib/inbox";
 import { effectivePrice, partnerFor, PARTNER_COOKIE } from "@/lib/partners";
@@ -212,8 +212,16 @@ export async function POST(request: Request) {
      Built from the stored row rather than from the answers above, so
      the sheet cannot show an application the database does not have.
      Skipped entirely when nothing stored, for the same reason. Only
-     mirrored departures get this far; see lib/sheet.ts. */
-  if (stored) void mirrorApplication({ reference });
+     mirrored departures get this far; see lib/sheet.ts.
+
+     `after` rather than a bare `void`: this runs on Vercel, which may
+     freeze the invocation as soon as the response is sent and kill an
+     unawaited fetch with it. That is exactly what happened — the row
+     saved, the email sent, and the sheet stayed empty in production
+     while working perfectly on a local server that never freezes.
+     `after` keeps the invocation alive until this settles, without
+     the applicant waiting on Google to get their confirmation. */
+  if (stored) after(() => mirrorApplication({ reference }));
 
   /* `received` is the only thing the overlay should trust. The
      application is safe if it landed in either place — a Resend outage

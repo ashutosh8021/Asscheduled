@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import {
   ACCEPTED_MIME,
   DOCUMENT_KINDS,
@@ -95,7 +95,7 @@ export async function POST(request: Request) {
      be told when something does. Names only, never a link — a signed
      URL sitting in a shared spreadsheet would hand a partner
      somebody's Aadhaar. */
-  void mirrorApplication({ id: target.id });
+  after(() => mirrorApplication({ id: target.id }));
 
   return NextResponse.json({ ok: true, kind });
 }

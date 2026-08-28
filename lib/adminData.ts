@@ -193,7 +193,7 @@ export async function mirrorApplication(
      switch, and it is the same field the privacy policy describes. */
   if (!isMirrored(row.departure_code)) return;
 
-  mirrorOne(sheetRowFrom(row, await documentKindsFor(row.id)));
+  await mirrorOne(sheetRowFrom(row, await documentKindsFor(row.id)));
 }
 
 /**

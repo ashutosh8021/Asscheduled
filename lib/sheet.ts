@@ -221,15 +221,23 @@ export async function mirrorApplications(rows: SheetRow[]): Promise<boolean> {
 }
 
 /**
- * Mirror one application, in the background.
+ * Mirror one application.
  *
- * Fire-and-forget on purpose: every caller is on a path where somebody
- * is waiting — an applicant submitting, an admin pressing ACCEPT — and
- * none of them should wait on Google. Failures are logged and the
- * RESYNC button repairs whatever was missed.
+ * Returns a promise, and callers must keep hold of it.
+ *
+ * It used to be fire-and-forget — `void` the promise and let it finish
+ * on its own, so nobody waited on Google. That works on a long-running
+ * server and silently does nothing on a serverless one: Vercel is free
+ * to freeze the invocation the moment the response is sent, and an
+ * in-flight fetch dies with it. The symptom is exact and baffling —
+ * every awaited thing works (the row saves, the email sends) and only
+ * the sheet stays empty, in production, while local is perfect.
+ *
+ * So the promise comes back here, and each route hands it to `after()`
+ * from next/server, which keeps the invocation alive until it settles
+ * without making the applicant wait for it.
  */
-export function mirrorOne(row: SheetRow): void {
-  void mirrorApplications([row]).then((ok) => {
-    if (!ok && sheetConfigured()) console.error(`[sheet] missed ${row.reference}`);
-  });
+export async function mirrorOne(row: SheetRow): Promise<void> {
+  const ok = await mirrorApplications([row]);
+  if (!ok && sheetConfigured()) console.error(`[sheet] missed ${row.reference}`);
 }

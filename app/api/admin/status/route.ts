@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { currentAdmin } from "@/lib/admin";
 import {
   setApplicationStatus,
@@ -44,10 +44,11 @@ export async function POST(request: Request) {
 
   console.info(`[admin] ${admin.email} set ${id} → ${status}`);
 
-  /* Keep the sheet current. Not awaited: an admin pressing ACCEPT
-     should not wait on Google, and a missed update is repaired by
-     RESYNC rather than by holding the request open. */
-  void mirrorApplication({ id });
+  /* Keep the sheet current, after the response rather than before it:
+     an admin pressing ACCEPT should not wait on Google. `after` is
+     what makes that safe on Vercel, where an unawaited promise dies
+     with the invocation the moment the response is sent. */
+  after(() => mirrorApplication({ id }));
 
   return NextResponse.json({ ok: true });
 }
