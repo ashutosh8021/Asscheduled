@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useModal } from "./ModalProvider";
 import { DETAIL, STATES } from "@/lib/copy";
 import { inr } from "@/lib/departures";
-import { fareFor, planSpan, plansFor, type Plan } from "@/lib/packages";
+import { fareFor, planSpan, plansFor, statesByFare, type Plan } from "@/lib/packages";
 import NoFare from "./NoFare";
 
 /* The plan cards on a departure page.
@@ -35,6 +35,7 @@ export default function PlanCards({
   const [state, setState] = useState("");
 
   const plans = plansFor(departureId);
+  const { priced, unpriced } = statesByFare(departureId, STATES);
   if (plans.length === 0) return null;
 
   return (
@@ -50,6 +51,12 @@ export default function PlanCards({
         <div className="s-field s-plans-state">
           <label htmlFor="plan-state">{DETAIL.plansStateLabel}</label>
           <div className="s-selwrap">
+            {/* Ordered by fare, not alphabetically, and the fare is on
+                the option. The list exists to answer "what does this
+                cost from where I live" — sorting it A–Z buries the
+                answer and makes somebody open all 25 to compare.
+                Unpriced states sit at the end, still alphabetical,
+                because there is no price to rank them by. */}
             <select
               id="plan-state"
               className="s-select"
@@ -57,11 +64,24 @@ export default function PlanCards({
               onChange={(e) => setState(e.target.value)}
             >
               <option value="">{DETAIL.plansStatePh}</option>
-              {STATES.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
+
+              <optgroup label={DETAIL.plansStateGroup}>
+                {priced.map(({ state: s, from }) => (
+                  <option key={s} value={s}>
+                    {s} — {inr(from)}
+                  </option>
+                ))}
+              </optgroup>
+
+              {unpriced.length ? (
+                <optgroup label={DETAIL.plansStateGroupNone}>
+                  {unpriced.map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
+                  ))}
+                </optgroup>
+              ) : null}
             </select>
           </div>
         </div>

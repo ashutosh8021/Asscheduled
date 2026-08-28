@@ -228,6 +228,9 @@ export const DETAIL = {
   plansSub: "Two ways to do it. The fare depends on where you're travelling from.",
   plansStateLabel: "TRAVELLING FROM",
   plansStatePh: "Select your state",
+  /* The group labels explain the ordering without a separate note. */
+  plansStateGroup: "Cheapest first",
+  plansStateGroupNone: "Fare not set yet — ask us",
   plansPrompt: "Pick your state and both fares fill in.",
   plansFrom: "FROM",
   plansPer: "per person",

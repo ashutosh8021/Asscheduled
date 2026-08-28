@@ -227,6 +227,55 @@ export function departureSpan(departureId: string): { min: number; max: number }
 }
 
 /**
+ * Every state, ordered by what the trip costs from it.
+ *
+ * Cheapest first, dearest last, and the ones with no fare set after
+ * both — a selector whose whole purpose is showing a price should be
+ * ordered by price. Alphabetical hides the thing somebody is looking
+ * for: that Haryana is ₹5,500 cheaper than Assam.
+ *
+ * Ordered on the lowest fare across the departure's plans. For PULSE
+ * the two tables differ by a flat ₹3,800 everywhere, so the order is
+ * the same whichever plan you look at — but taking the minimum keeps
+ * that true if the plans ever diverge.
+ *
+ * Ties keep alphabetical order, so states priced the same do not
+ * shuffle about between renders.
+ */
+export function statesByFare(
+  departureId: string,
+  /* Passed in rather than imported, so this file keeps its type-only
+     reference to the form's state list and never pulls copy into a
+     server bundle that does not need it. */
+  allStates: readonly string[]
+): {
+  priced: { state: string; from: number }[];
+  unpriced: string[];
+} {
+  const plans = plansFor(departureId);
+  if (plans.length === 0) return { priced: [], unpriced: [...allStates] };
+
+  const lowest = new Map<string, number>();
+  for (const plan of plans) {
+    for (const [state, fare] of Object.entries(plan.fares)) {
+      if (fare === undefined) continue;
+      const seen = lowest.get(state);
+      if (seen === undefined || fare < seen) lowest.set(state, fare);
+    }
+  }
+
+  const priced = [...lowest.entries()]
+    .map(([state, from]) => ({ state, from }))
+    .sort((a, b) => a.from - b.from || a.state.localeCompare(b.state));
+
+  /* Everything else, still alphabetical — there is no price to order
+     them by, and alphabetical is what makes one findable. */
+  const unpriced = allStates.filter((s) => !lowest.has(s));
+
+  return { priced, unpriced };
+}
+
+/**
  * What is owed at application time, in rupees.
  *
  * The one function both the form and the apply route call, so the
