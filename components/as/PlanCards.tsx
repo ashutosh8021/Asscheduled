@@ -51,11 +51,14 @@ export default function PlanCards({
         <div className="s-field s-plans-state">
           <label htmlFor="plan-state">{DETAIL.plansStateLabel}</label>
           <div className="s-selwrap">
-            {/* Ordered by fare, not alphabetically, and the fare is on
-                the option. The list exists to answer "what does this
-                cost from where I live" — sorting it A–Z buries the
-                answer and makes somebody open all 25 to compare.
-                Unpriced states sit at the end, still alphabetical,
+            {/* Just the names, exactly as before — but ordered by fare
+                rather than A–Z, cheapest at the top. The price stays
+                off the option on purpose: it already appears on the
+                card the moment a state is picked, and repeating it in
+                a 36-item list made the list the loudest thing on the
+                page. The order carries the meaning quietly.
+
+                Unpriced states fall to the end, still alphabetical,
                 because there is no price to rank them by. */}
             <select
               id="plan-state"
@@ -64,24 +67,11 @@ export default function PlanCards({
               onChange={(e) => setState(e.target.value)}
             >
               <option value="">{DETAIL.plansStatePh}</option>
-
-              <optgroup label={DETAIL.plansStateGroup}>
-                {priced.map(({ state: s, from }) => (
-                  <option key={s} value={s}>
-                    {s} — {inr(from)}
-                  </option>
-                ))}
-              </optgroup>
-
-              {unpriced.length ? (
-                <optgroup label={DETAIL.plansStateGroupNone}>
-                  {unpriced.map((s) => (
-                    <option key={s} value={s}>
-                      {s}
-                    </option>
-                  ))}
-                </optgroup>
-              ) : null}
+              {[...priced.map((p) => p.state), ...unpriced].map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
             </select>
           </div>
         </div>
