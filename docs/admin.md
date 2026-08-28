@@ -110,12 +110,11 @@ screenshot, a browser history or a log is dead before anyone finds it.
    about 1.5MB and is more legible than the original. Nobody is asked to
    go and compress their own file.
 
-   **A PDF cannot be shrunk**, so one over 4MB is refused with a message
-   saying exactly that. Note the bucket does not allow `application/pdf`
-   at all today while `ACCEPTED_MIME` does — so PDFs pass every check we
-   make and are then rejected by storage. Either add the MIME type to the
-   bucket or drop PDF from `ACCEPTED_MIME` and the copy; leaving it is a
-   path that fails after telling somebody they were fine.
+   **Images only.** PDFs were accepted in code but the bucket never
+   allowed the MIME type, so a PDF passed every check we made and was
+   then refused by storage. Dropped on instruction rather than adding it:
+   an ID card is a photograph, and every accepted type can be shrunk in
+   the browser, which a PDF cannot.
 
 Nothing works until both are done, and the failure is silent — the upload
 page will simply say the link is invalid.

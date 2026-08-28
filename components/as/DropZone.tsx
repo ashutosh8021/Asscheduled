@@ -180,9 +180,9 @@ export function rejectReason(file: File): string | null {
  * than one because they mean different things: MAX_BYTES is what we
  * accept from a person, SEND_BYTES is what the platform will carry.
  *
- * A photo passes both because it is shrunk in between. A large PDF
- * cannot be shrunk, so it is refused — and the message says why, not
- * just that it failed.
+ * A photo passes both because it is shrunk in between. Only images
+ * are accepted, so in practice nothing reaches the send limit — the
+ * check below is the backstop for a file the canvas could not decode.
  */
 export type Prepared = { ok: true; file: File } | { ok: false; error: string };
 
@@ -195,10 +195,7 @@ export async function prepareUpload(file: File): Promise<Prepared> {
   if (out.size > SEND_BYTES) {
     return {
       ok: false,
-      error:
-        out.type === "application/pdf"
-          ? `That PDF is ${readableSize(out.size)}. PDFs cannot be shrunk here — send a photo instead, or a smaller PDF.`
-          : `That file is still ${readableSize(out.size)} after shrinking. Try a photo rather than a scan.`,
+      error: `That file is still ${readableSize(out.size)} after shrinking. Try a photo taken on your phone.`,
     };
   }
 

@@ -34,7 +34,6 @@ function sniff(bytes: Uint8Array): string | null {
   const b = bytes;
   if (b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff) return "image/jpeg";
   if (b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47) return "image/png";
-  if (b[0] === 0x25 && b[1] === 0x50 && b[2] === 0x44 && b[3] === 0x46) return "application/pdf";
   if (
     b[0] === 0x52 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x46 &&
     b[8] === 0x57 && b[9] === 0x45 && b[10] === 0x42 && b[11] === 0x50
@@ -82,7 +81,7 @@ export async function POST(request: Request) {
   const sniffed = sniff(new Uint8Array(bytes.slice(0, 16)));
 
   if (!sniffed || !ACCEPTED_MIME.includes(sniffed as (typeof ACCEPTED_MIME)[number])) {
-    return fail("Send a JPG, PNG, WebP or PDF.", 415);
+    return fail("Send a JPG, PNG or WebP.", 415);
   }
 
   const stored = await storeDocument({

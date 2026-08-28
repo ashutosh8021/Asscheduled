@@ -215,7 +215,13 @@
       "Bash(awk '{print \"size: \" $5 \" bytes \\(\" int\\($5/1048576\\) \" MB\\)\"}')",
       "PowerShell($c = Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue; if \\($c\\) { Stop-Process -Id $c.OwningProcess -Force -ErrorAction SilentlyContinue; Start-Sleep -Seconds 2 }; pnpm build 2>&1 | Select-String -Pattern \"error|Error|Failed|Compiled successfully|First Load\" | Select-Object -First 5)",
       "Bash(node \"/c/Users/ashut/AppData/Local/Temp/claude/d--AS/3697f397-70d1-44b5-bf64-131e3dc35206/scratchpad/probe-payment.mjs\")",
-      "Bash(node \"/c/Users/ashut/AppData/Local/Temp/claude/d--AS/3697f397-70d1-44b5-bf64-131e3dc35206/scratchpad/cleanup2.mjs\" AS-S2-MTDCME9R4G)"
+      "Bash(node \"/c/Users/ashut/AppData/Local/Temp/claude/d--AS/3697f397-70d1-44b5-bf64-131e3dc35206/scratchpad/cleanup2.mjs\" AS-S2-MTDCME9R4G)",
+      "PowerShell($c = Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue; if \\($c\\) { Stop-Process -Id $c.OwningProcess -Force -ErrorAction SilentlyContinue; Start-Sleep -Seconds 2 }; $env:SHEET_WEBHOOK_URL='http://127.0.0.1:4545'; $env:SHEET_WEBHOOK_SECRET='probe-secret'; pnpm dev)",
+      "Bash(node \"/c/Users/ashut/AppData/Local/Temp/claude/d--AS/3697f397-70d1-44b5-bf64-131e3dc35206/scratchpad/probe-mime.mjs\")",
+      "Bash(node \"/c/Users/ashut/AppData/Local/Temp/claude/d--AS/3697f397-70d1-44b5-bf64-131e3dc35206/scratchpad/cleanup2.mjs\" AS-S2-MTDCWKAVW2)",
+      "Bash(grep -iE \"sheet|SHEET_WEBHOOK|missed|Environments\" \"/c/Users/ashut/AppData/Local/Temp/claude/d--AS/3697f397-70d1-44b5-bf64-131e3dc35206/tasks/btbmlpcxf.output\" | tail -10; echo \"--- last lines ---\"; tail -6 \"/c/Users/ashut/AppData/Local/Temp/claude/d--AS/3697f397-70d1-44b5-bf64-131e3dc35206/tasks/btbmlpcxf.output\")",
+      "PowerShell($c = Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue; if \\($c\\) { Stop-Process -Id $c.OwningProcess -Force -ErrorAction SilentlyContinue; Start-Sleep -Seconds 2 }; $env:SHEET_WEBHOOK_URL='http://127.0.0.1:4545/exec'; $env:SHEET_WEBHOOK_SECRET='probe-secret'; pnpm dev)",
+      "Bash(node \"/c/Users/ashut/AppData/Local/Temp/claude/d--AS/3697f397-70d1-44b5-bf64-131e3dc35206/scratchpad/cleanup2.mjs\" AS-S2-MTDD08BRFP)"
     ],
     "additionalDirectories": [
       "C:\\Users\\ashut\\OneDrive\\Desktop\\pulse-sheet"

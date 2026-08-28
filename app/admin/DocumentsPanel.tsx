@@ -136,8 +136,8 @@ export default function DocumentsPanel({ id }: { id: string }) {
                 </div>
 
                 {/* The point of looking at an ID is reading it, so show
-                    it rather than linking to it. PDFs cannot be drawn
-                    inline here — those keep the link only. */}
+                    it rather than linking to it. Only images are
+                    accepted; anything else falls back to a link. */}
                 {d.url && d.mime.startsWith("image/") ? (
                   <a href={d.url} target="_blank" rel="noreferrer" className="a-docs-shot">
                     {/* eslint-disable-next-line @next/next/no-img-element */}

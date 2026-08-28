@@ -30,7 +30,13 @@ export const PAYMENT_KIND: DocumentKind = "payment_proof";
  */
 export const ALL_DOCUMENT_KINDS: DocumentKind[] = [...DOCUMENT_KINDS, PAYMENT_KIND];
 
-export const ACCEPTED_MIME = ["image/jpeg", "image/png", "image/webp", "application/pdf"] as const;
+/* Images only. PDFs were listed here but the storage bucket never
+   accepted them, so a PDF passed every check we made and was then
+   refused by storage — a path that failed after telling somebody they
+   were fine. Removed on instruction rather than adding the MIME type:
+   an ID card is a photograph, and every accepted type can be shrunk
+   in the browser, which a PDF cannot. */
+export const ACCEPTED_MIME = ["image/jpeg", "image/png", "image/webp"] as const;
 
 /**
  * The biggest file somebody may CHOOSE.
@@ -51,7 +57,7 @@ export const MAX_BYTES = 10_000_000;
  * Enforced on both sides: after shrinking in the browser, and again
  * in the route, which is the check that actually holds.
  *
- * Images are shrunk well below this. A PDF cannot be, so a large one
- * is refused with a message that says so.
+ * Everything accepted is an image, so everything can be shrunk below
+ * this before it is sent. Nothing should reach the limit in practice.
  */
 export const SEND_BYTES = 4_000_000;

@@ -38,7 +38,7 @@ export const DOCUMENT_LABELS: Record<DocumentKind, { title: string; hint: string
 export function SizeNote() {
   return (
     <p className="s-hint">
-      JPG, PNG or PDF · up to {MAX_BYTES / 1_000_000}MB each. Photos are shrunk automatically, so
+      JPG, PNG or WebP · up to {MAX_BYTES / 1_000_000}MB each. Photos are shrunk automatically, so
       send the picture straight off your phone.
     </p>
   );

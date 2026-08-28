@@ -178,15 +178,36 @@ export function departureLabel(code: string): string {
 }
 
 /**
- * Push rows into the sheet, creating or updating each by reference.
+ * Why a webhook URL cannot be used, or null if it is fine.
  *
- * Takes an array so a resync is one request rather than one per
- * applicant — Apps Script is slow and rate-limited, and rewriting two
- * hundred rows one POST at a time would take minutes and trip quotas.
- *
- * Returns whether it landed, for logging only. Callers must not treat
- * false as a failed application.
+ * The mistake this exists for is real and was made: Apps Script shows
+ * its URL abbreviated with an ellipsis, and that abbreviated string
+ * got pasted into the environment. It parses as a URL and fails only
+ * when Google 404s it, so without this the error is a bare 404 with no
+ * hint that the setting is wrong.
  */
+function urlProblem(url: string): string | null {
+  if (url.includes("...") || url.includes("…")) {
+    return "looks truncated — it contains an ellipsis, so it is probably the shortened URL Apps Script displays rather than the one behind the Copy button";
+  }
+  if (/\s/.test(url)) return "contains a space or line break";
+
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return "is not a valid URL";
+  }
+  if (parsed.protocol !== "https:" && parsed.protocol !== "http:") {
+    return "is not an http(s) URL";
+  }
+  /* Only asserted for Google's own host, where we know the shape. */
+  if (parsed.hostname.endsWith("script.google.com") && !parsed.pathname.endsWith("/exec")) {
+    return "is an Apps Script URL that does not end in /exec";
+  }
+  return null;
+}
+
 export interface MirrorResult {
   ok: boolean;
   /** What actually happened, for the admin and the logs. Never guesses:
@@ -195,19 +216,31 @@ export interface MirrorResult {
   detail: string;
 }
 
+/**
+ * Push rows into the sheet, creating or updating each by reference.
+ *
+ * Takes an array so a resync is one request rather than one per
+ * applicant — Apps Script is slow and rate-limited, and rewriting two
+ * hundred rows one POST at a time would take minutes and trip quotas.
+ *
+ * Returns what happened, for the admin and the logs. Callers must not
+ * treat a failure as a failed application.
+ */
 export async function mirrorApplications(rows: SheetRow[]): Promise<MirrorResult> {
   const cfg = sheetConfig();
   if (!cfg) return { ok: false, detail: "No sheet is configured." };
 
   /* Caught here rather than by fetch, so the message names the setting
-     instead of surfacing a bare "Invalid URL". */
-  if (!/^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(cfg.url)) {
-    return {
-      ok: false,
-      detail:
-        `SHEET_WEBHOOK_URL does not look like an Apps Script web app URL ` +
-        `(got ${JSON.stringify(cfg.url.slice(0, 60))}). It should end in /exec.`,
-    };
+     instead of surfacing a bare "Invalid URL".
+
+     Checks the shape of a URL, not the shape of Google's URL. An
+     earlier version required script.google.com/macros/s/…/exec, which
+     did catch the real mistake but also refused every other endpoint —
+     including a local one, which made this untestable, and any future
+     URL Google decides to issue. */
+  const bad = urlProblem(cfg.url);
+  if (bad) {
+    return { ok: false, detail: `SHEET_WEBHOOK_URL ${bad} (got ${JSON.stringify(cfg.url.slice(0, 70))}).` };
   }
   /* An empty push is still worth sending: it rewrites the header, so
      RESYNC repairs a sheet's headings even before anybody applies. */

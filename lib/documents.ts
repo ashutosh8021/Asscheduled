@@ -182,7 +182,7 @@ export async function storeDocument(opts: {
   if (!cfg) return false;
 
   const ext =
-    opts.mime === "application/pdf" ? "pdf" : opts.mime === "image/png" ? "png" : opts.mime === "image/webp" ? "webp" : "jpg";
+    opts.mime === "image/png" ? "png" : opts.mime === "image/webp" ? "webp" : "jpg";
   const path = `${opts.applicationId}/${opts.kind}.${ext}`;
 
   try {

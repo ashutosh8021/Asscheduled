@@ -119,8 +119,10 @@ export default function DocumentsTab({ bundles }: { bundles: DocumentBundle[] })
                       <img src={f.url} alt={`${KIND_LABEL[f.kind] ?? f.kind} for ${b.name}`} />
                     </a>
                   ) : f.url ? (
+                    /* Only images are accepted, so this is a
+                       fallback for anything older or unreadable. */
                     <a href={f.url} target="_blank" rel="noreferrer" className="a-dt-pdf">
-                      OPEN PDF
+                      OPEN FILE
                     </a>
                   ) : (
                     <p className="a-docs-meta">unavailable</p>
