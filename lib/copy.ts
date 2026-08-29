@@ -236,6 +236,20 @@ export const DETAIL = {
   plansPer: "per person",
   plansCta: "PROCEED",
   plansBrochure: "BROCHURE",
+
+  /* Custom bookings. Replaces the two photographs that used to fill
+     the bottom of the brochure panel — a way to ask for something the
+     three plans do not cover is worth more there than another image. */
+  customTitle: "NEED A DIFFERENT PLAN?",
+  customAsks: [
+    "Booking for a group?",
+    "Don't need meals?",
+    "Skipping the delegate pass?",
+    "Need something that isn't on the schedule?",
+  ],
+  customMark: "WE'LL SORT IT.",
+  customBody: "Tell us what you need and we'll work out the right trip for you.",
+  customCta: "CONTACT US FOR CUSTOM BOOKINGS",
   /* For the eleven states with no fare set. Says what will happen
      rather than showing a number nobody has agreed, and hands over a
      way to reach a person — a blank price and no route forward reads

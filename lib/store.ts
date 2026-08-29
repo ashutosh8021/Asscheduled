@@ -174,15 +174,34 @@ export interface MessageRecord {
   email: string;
   phone: string;
   message: string;
+  /** The departure the enquiry came from, when it came from one. */
+  departureCode: string | null;
 }
 
-export function saveMessage(m: MessageRecord): Promise<boolean> {
-  return insert("messages", {
+export async function saveMessage(m: MessageRecord): Promise<boolean> {
+  const core = {
     name: m.name,
     email: m.email,
     phone: m.phone,
     message: m.message,
-  });
+  };
+
+  if (!m.departureCode) return insert("messages", core);
+
+  if (await insert("messages", { ...core, departure_code: m.departureCode })) return true;
+
+  /* Same trap as applications, closed the same way. `departure_code`
+     arrives with docs/schema-enquiries.sql, and PostgREST rejects the
+     whole insert when handed a column that does not exist — so before
+     that SQL is run, every enquiry sent from a departure page would be
+     lost while general ones kept working. Store it untagged rather
+     than not at all; the email still names the departure. */
+  console.error(
+    "[store] messages insert failed with departure_code — retrying without it. " +
+      "Run docs/schema-enquiries.sql: until then enquiries are stored untagged " +
+      "and will not appear on the partner page."
+  );
+  return insert("messages", core);
 }
 
 export interface SubscriberRecord {

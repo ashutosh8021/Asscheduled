@@ -396,3 +396,15 @@
 
 /* Tabs are real buttons in the partner panel, not links. */
 button.a-tab { font: inherit; cursor: pointer; }
+
+/* An enquiry's message body. Pre-wrap because people write in
+   paragraphs and a wall of run-together text is unreadable. */
+.a-enquiry {
+  margin: 0;
+  padding: 14px 16px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: #c9cfda;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

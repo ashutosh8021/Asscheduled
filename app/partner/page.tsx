@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { currentViewer } from "@/lib/admin";
-import { listApplications, listDocumentBundles } from "@/lib/adminData";
+import { listApplications, listDocumentBundles, listMessagesFor } from "@/lib/adminData";
 import { DEPARTURES } from "@/lib/departures";
 import PartnerRoster from "./PartnerRoster";
 import SignOut from "../admin/SignOut";
@@ -39,16 +39,20 @@ export default async function PartnerPage() {
     ? viewer.departures
     : DEPARTURES.filter((d) => d.sharedWith).map((d) => d.id);
 
-  const [apps, bundles] = await Promise.all([
+  const [apps, bundles, enquiries] = await Promise.all([
     Promise.all(scope.map((id) => listApplications({ departure: id }))).then((r) => r.flat()),
     Promise.all(scope.map((id) => listDocumentBundles(id))).then((r) => r.flat()),
+    /* Custom-booking questions asked from this departure's page. Same
+       scope as everything else here. */
+    listMessagesFor(scope),
   ]);
 
   /* Logged with the email that read it. Somebody's government ID being
      opened is a thing that should leave a trace. */
   console.info(
     `[partner] ${viewer.email} (${viewer.role}) read ${apps.length} application(s) ` +
-      `and ${bundles.length} document set(s) for ${scope.join(", ")}`
+      `${bundles.length} document set(s) and ${enquiries.length} enquiry(ies) ` +
+      `for ${scope.join(", ")}`
   );
 
   const fests = scope
@@ -63,7 +67,7 @@ export default async function PartnerPage() {
           <SignOut email={viewer.email} />
         </div>
 
-        <PartnerRoster apps={apps} bundles={bundles} />
+        <PartnerRoster apps={apps} bundles={bundles} enquiries={enquiries} />
       </div>
     </div>
   );

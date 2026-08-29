@@ -1,7 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import type { ApplicationRow, DocumentBundle, DocumentBundleFile } from "@/lib/adminData";
+import type {
+  ApplicationRow,
+  DocumentBundle,
+  DocumentBundleFile,
+  MessageRow,
+} from "@/lib/adminData";
 import { inr } from "@/lib/departures";
 import { findPlan } from "@/lib/packages";
 
@@ -15,7 +20,7 @@ import { findPlan } from "@/lib/packages";
  *
  * Read-only throughout. Nothing here changes a record. */
 
-type Tab = "roster" | "documents" | "payments";
+type Tab = "roster" | "documents" | "payments" | "enquiries";
 
 const KIND_LABEL: Record<string, string> = {
   photo_id: "Government photo ID",
@@ -67,9 +72,12 @@ function FileCard({ file, who }: { file: DocumentBundleFile; who: string }) {
 export default function PartnerRoster({
   apps,
   bundles,
+  enquiries = [],
 }: {
   apps: ApplicationRow[];
   bundles: DocumentBundle[];
+  /** Custom-booking questions asked from this departure's page. */
+  enquiries?: MessageRow[];
 }) {
   const [tab, setTab] = useState<Tab>("roster");
   const [onlyAccepted, setOnlyAccepted] = useState(false);
@@ -111,6 +119,14 @@ export default function PartnerRoster({
           onClick={() => setTab("payments")}
         >
           PAYMENTS<span className="a-tab-count">{withPayment.length}</span>
+        </button>
+        <button
+          type="button"
+          className="a-tab"
+          data-on={tab === "enquiries"}
+          onClick={() => setTab("enquiries")}
+        >
+          ENQUIRIES<span className="a-tab-count">{enquiries.length}</span>
         </button>
       </div>
 
@@ -219,7 +235,37 @@ export default function PartnerRoster({
         />
       ) : null}
 
-      {tab !== "roster" ? (
+      {tab === "enquiries" ? (
+        enquiries.length === 0 ? (
+          <p className="a-empty">No custom-booking enquiries yet.</p>
+        ) : (
+          <div className="a-dt">
+            {enquiries.map((m) => (
+              <section key={m.id} className="a-dt-card">
+                <header className="a-dt-head">
+                  <div>
+                    <p className="a-dt-name">{m.name}</p>
+                    <p className="a-dt-meta">
+                      <a href={`mailto:${m.email}`}>{m.email}</a>
+                      {m.phone ? (
+                        <>
+                          {" · "}
+                          <a href={`tel:+91${m.phone}`}>+91 {m.phone}</a>
+                        </>
+                      ) : null}
+                      {" · "}
+                      {when(m.created_at)}
+                    </p>
+                  </div>
+                </header>
+                <p className="a-enquiry">{m.message}</p>
+              </section>
+            ))}
+          </div>
+        )
+      ) : null}
+
+      {tab === "documents" || tab === "payments" ? (
         <p className="a-docs-meta" style={{ padding: "4px 2px 20px" }}>
           These images load for the rest of the day. If one stops showing, reload the page.
           Please do not download or forward them.

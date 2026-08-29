@@ -1,5 +1,7 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
+
 import { useState } from "react";
 import { CONTACT, CONTACT_EMAIL } from "@/lib/copy";
 
@@ -28,6 +30,12 @@ function validate(a: Answers): Partial<Record<keyof Answers, string>> {
 }
 
 export default function ContactForm() {
+  /* Which departure this enquiry came from, if any. The custom-booking
+     block on a departure page links here with ?about=<id>, so a "can I
+     skip the meals" question arrives attached to the trip it is about
+     rather than as an unattributed message. */
+  const about = useSearchParams().get("about") ?? "";
+
   const [a, setA] = useState<Answers>(EMPTY);
   const [errors, setErrors] = useState<Partial<Record<keyof Answers, string>>>({});
   const [sending, setSending] = useState(false);
@@ -48,7 +56,7 @@ export default function ContactForm() {
       const res = await fetch("/api/somewhere/contact", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify(a),
+        body: JSON.stringify({ ...a, about }),
       });
       const json = (await res.json()) as { ok: boolean; received?: boolean };
       setDone({ delivered: Boolean(json.ok && json.received) });

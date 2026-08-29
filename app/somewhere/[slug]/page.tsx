@@ -2,14 +2,13 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Shell from "@/components/as/Shell";
 import Reveal from "@/components/as/Reveal";
-import Slot from "@/components/as/Slot";
 import Accordion from "@/components/as/Accordion";
 import ApplyButton from "@/components/as/ApplyButton";
 import DepartureHero from "@/components/as/DepartureHero";
-import LastYear from "@/components/as/LastYear";
 import PlanCards from "@/components/as/PlanCards";
 import { hasPlans } from "@/lib/packages";
-import { DETAIL, SOMEWHERE } from "@/lib/copy";
+import Link from "next/link";
+import { CONTACT, CONTACT_EMAIL, DETAIL, SOMEWHERE } from "@/lib/copy";
 import { DEPARTURES, batchLabel, getDeparture, priceRange } from "@/lib/departures";
 import { abs } from "@/lib/site";
 
@@ -283,44 +282,49 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
                   )}
                 </div>
 
-                <div
-                  style={{
-                    marginTop: "auto",
-                    paddingTop: 30,
-                    display: "grid",
-                    gridTemplateColumns: "1fr 1fr",
-                    gap: 12,
-                  }}
-                >
-                  {/* The frames the mosaic above did not use. */}
-                  {d.mosaic.slice(-2).map((m) => (
-                    <div key={`b-${m.label}`} style={{ position: "relative", aspectRatio: "4/5" }}>
-                      <Slot slot={m} dark sizes="20vw" />
+                {/* Custom bookings, where two photographs used to sit.
+                    Somebody who does not fit any of the three plans
+                    has nowhere else on this page to say so, and a way
+                    to ask is worth more than another image. */}
+                <div className="s-custom">
+                  <p className="s-custom-h">{DETAIL.customTitle}</p>
+
+                  <ul className="s-custom-asks">
+                    {DETAIL.customAsks.map((q) => (
+                      <li key={q}>{q}</li>
+                    ))}
+                  </ul>
+
+                  <p className="s-custom-mark">{DETAIL.customMark}</p>
+                  <p className="s-custom-body">{DETAIL.customBody}</p>
+
+                  <dl className="s-custom-reach">
+                    <div>
+                      <dt>{CONTACT.emailLabel}</dt>
+                      <dd>
+                        <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+                      </dd>
                     </div>
-                  ))}
+                    <div>
+                      <dt>{CONTACT.phoneLabel}</dt>
+                      <dd>
+                        {CONTACT.phones.map((n) => (
+                          <a key={n} href={`tel:+91${n}`}>
+                            +91 {n}
+                          </a>
+                        ))}
+                      </dd>
+                    </div>
+                  </dl>
+
+                  <Link href={`/contact?about=${d.id}`} className="s-btn s-custom-cta">
+                    {DETAIL.customCta} <span className="s-arrow">→</span>
+                  </Link>
                 </div>
               </div>
             </Reveal>
           </div>
         </section>
-
-        {/* ---------- LAST YEAR ----------
-            Only for departures that have footage from a previous
-            edition. It sits after the schedule on purpose: by then
-            somebody knows what the week is, and this answers what it
-            actually feels like. */}
-        {d.lastYear ? (
-          <section className="s-wrap s-sec-tight">
-            <Reveal>
-              <LastYear
-                eyebrow={d.lastYear.eyebrow}
-                title={d.lastYear.title}
-                note={d.lastYear.note}
-                reels={d.lastYear.reels}
-              />
-            </Reveal>
-          </section>
-        ) : null}
 
         {/* ---------- CLOSING ---------- */}
         <section

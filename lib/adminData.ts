@@ -59,6 +59,10 @@ export interface MessageRow {
   phone: string;
   message: string;
   status: string;
+  /** Optional on the type, not nullable: docs/schema-enquiries.sql
+   *  adds this column, and rows written before it ran do not have it.
+   *  Reading an older row must not crash the admin. */
+  departure_code?: string | null;
 }
 
 export interface CollaborationRow {
@@ -243,6 +247,21 @@ export function listApplications(f: ApplicationFilter = {}): Promise<Application
 
 export function listMessages(): Promise<MessageRow[]> {
   return select<MessageRow>("messages?select=*&order=created_at.desc");
+}
+
+/**
+ * Enquiries about one departure.
+ *
+ * For the partner panel: a festival sees questions about its own trip
+ * and nothing else. Scoped by the caller's viewer, never by the
+ * request — same rule as the roster.
+ */
+export function listMessagesFor(departures: string[]): Promise<MessageRow[]> {
+  if (departures.length === 0) return Promise.resolve([]);
+  const list = departures.map((d) => encodeURIComponent(d)).join(",");
+  return select<MessageRow>(
+    `messages?departure_code=in.(${list})&select=*&order=created_at.desc`
+  );
 }
 
 export function listCollaborations(): Promise<CollaborationRow[]> {
