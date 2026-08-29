@@ -79,9 +79,13 @@ single largest unlogged risk on the site.
 and the sticker artwork in
 `asset/1000offsticker.jpeg` and `asset/delegatesticker.jpeg`.
 
-The stickers are **not published** — the site draws those two facts as CSS
-stamps instead, which sit on the paper better than a photographed sticker.
-The artwork is kept because it is the source for anything printed.
+The ₹1,000 sticker is published as `public/stickers/thousand-off.png` — the
+same artwork, cropped to its content with the white keyed to transparency at a
+tight threshold, so the cream paper stays opaque against the navy panel it sits
+on. Nothing in the artwork itself was altered.
+
+The delegate-pass sticker is not published: the site draws that fact as a CSS
+stamp. Its artwork is kept as the source for anything printed.
 
 Supplied by Mannat and produced for this collaboration. The delegate-pass
 sticker and the brochure carry PULSE's own branding; **Mannat confirmed on

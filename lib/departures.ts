@@ -196,6 +196,15 @@ export interface Departure {
   documentsAtApply?: boolean;
 
   /**
+   * Offer artwork for the dark panel, where there is room for it.
+   *
+   * The same fact the stamps carry, but this is the supplied sticker
+   * rather than the drawn device — on a navy panel the torn cream
+   * paper reads well, which is what the flat stamp does not.
+   */
+  offerSticker?: { src: string; alt: string; width: number; height: number };
+
+  /**
    * Stamped into the band the intro column leaves empty above the
    * plans. Text, not artwork: the drawn stamp is the brand's own
    * device and sits on the paper better than a photographed sticker.
@@ -262,6 +271,12 @@ export const DEPARTURES: Departure[] = [
     priceMax: departureSpan("PUL-26")!.max,
     /* AIIMS asks for ID up front — see the note on the field. */
     documentsAtApply: true,
+    offerSticker: {
+      src: "/stickers/thousand-off.png",
+      alt: "Get ₹1,000 off at final payment",
+      width: 900,
+      height: 284,
+    },
     introStamps: ["Delegate pass included"],
     priceNote: "₹1,000 off at final payment",
     /* Run with PULSE, so PULSE is told who is coming. This is what

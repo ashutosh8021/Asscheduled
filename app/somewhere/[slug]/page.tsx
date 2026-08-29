@@ -6,6 +6,7 @@ import ApplyButton from "@/components/as/ApplyButton";
 import DepartureHero from "@/components/as/DepartureHero";
 import PlanCards from "@/components/as/PlanCards";
 import { hasPlans } from "@/lib/packages";
+import Image from "next/image";
 import Link from "next/link";
 import { CONTACT, CONTACT_EMAIL, DETAIL, SOMEWHERE } from "@/lib/copy";
 import { DEPARTURES, batchLabel, getDeparture, priceRange } from "@/lib/departures";
@@ -259,19 +260,20 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
                   <span style={{ color: "var(--s-rust-soft)" }}>{DETAIL.brochureTitleMark}</span>
                 </h2>
 
-                <div style={{ marginTop: 26 }}>
-                  {d.brochure ? (
-                    <a href={d.brochure} className="s-btn" download>
-                      ⬇ {DETAIL.brochureCta}
-                    </a>
-                  ) : (
-                    /* No PDF exists yet. A dead download button is worse
-                       than an honest line — TODO(mannat): supply it. */
-                    <p className="s-hint" style={{ color: "rgba(247,241,232,.6)" }}>
-                      {DETAIL.brochureCta} — not published yet.
-                    </p>
-                  )}
-                </div>
+                {/* The offer, filling the panel's middle. The supplied
+                    artwork rather than the drawn stamp: on navy the
+                    torn cream paper reads, and there is room here that
+                    a small stamp would leave empty. */}
+                {d.offerSticker ? (
+                  <Image
+                    className="s-offer-sticker"
+                    src={d.offerSticker.src}
+                    alt={d.offerSticker.alt}
+                    width={d.offerSticker.width}
+                    height={d.offerSticker.height}
+                    sizes="(max-width: 900px) 80vw, 420px"
+                  />
+                ) : null}
 
                 {/* Just how to reach us. The ask itself sits in the
                     panel beside this one. */}
@@ -293,6 +295,21 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
                     </dd>
                   </div>
                 </dl>
+
+                <div className="s-panel-brochure">
+                  {d.brochure ? (
+                    <a href={d.brochure} className="s-btn" download>
+                      ⬇ {DETAIL.brochureCta}
+                    </a>
+                  ) : (
+                    /* No PDF exists yet. A dead download button is worse
+                       than an honest line — TODO(mannat): supply it. */
+                    <p className="s-hint" style={{ color: "rgba(247,241,232,.6)" }}>
+                      {DETAIL.brochureCta} — not published yet.
+                    </p>
+                  )}
+                </div>
+
               </div>
             </Reveal>
           </div>

@@ -2804,12 +2804,35 @@ body.s-locked { overflow: hidden; }
 }
 
 /* Email and both numbers, as two labelled facts. */
+/* The offer sticker sits between the headline and the contact
+   details, taking the space the brochure button used to leave empty
+   in the middle of the panel. */
+.s-offer-sticker {
+  display: block;
+  width: clamp(230px, 62%, 420px);
+  height: auto;
+  margin: clamp(18px, 2.6vw, 30px) 0 0;
+  transform: rotate(-2deg);
+  transform-origin: left center;
+}
+
 .s-custom-reach {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
   gap: 12px 20px;
   margin-top: auto;
   padding-top: clamp(26px, 3vw, 40px);
+}
+
+/* The brochure now closes the panel rather than opening it. */
+.s-panel-brochure {
+  margin-top: clamp(22px, 2.6vw, 30px);
+  padding-top: clamp(20px, 2.4vw, 26px);
+  border-top: 1px solid rgba(247, 241, 232, 0.16);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .s-offer-sticker { transform: none; }
 }
 .s-custom-reach div { min-width: 0; }
 .s-custom-reach dt {
