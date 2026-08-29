@@ -120,7 +120,12 @@ export default function ContactPage() {
           </Reveal>
 
           <Reveal delay={1}>
-            <ContactForm />
+            {/* Suspense: ContactForm reads useSearchParams to pick up
+                ?about=<departure>, and without a boundary that fails
+                the static prerender of this page outright. */}
+            <Suspense fallback={null}>
+              <ContactForm />
+            </Suspense>
           </Reveal>
         </div>
       </section>
