@@ -157,13 +157,26 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
                 {/* List price. The coupon is applied at the payment
                     step, so nothing is struck through here — the stamp
                     beside this panel is what says ₹1,000 comes off. */}
-                <div className="s-price-row">
-                  <p className="s-price-now">
-                    {priceRange({ price: d.price, priceMax: d.priceMax })}
-                    <span className="s-price-per">{SOMEWHERE.pricePer}</span>
-                  </p>
-                  {d.priceNote ? <p className="s-price-stamp">{d.priceNote}</p> : null}
-                </div>
+                {/* Above the figure, right-aligned, rather than beside
+                    it. Beside it they collided: the price is nowrap
+                    and wide, so the stamp had nowhere to go and sat on
+                    top of "/ person". */}
+                {d.introStamps?.length || d.priceNote ? (
+                  <ul className="s-panel-stamps">
+                    {[...(d.introStamps ?? []), ...(d.priceNote ? [d.priceNote] : [])].map(
+                      (note, i) => (
+                        <li key={note} className="s-price-stamp" data-alt={i % 2 === 1}>
+                          {note}
+                        </li>
+                      )
+                    )}
+                  </ul>
+                ) : null}
+
+                <p className="s-price-now s-price-now-block">
+                  {priceRange({ price: d.price, priceMax: d.priceMax })}
+                  <span className="s-price-per">{SOMEWHERE.pricePer}</span>
+                </p>
 
                 {/* A span, not a disabled button: there is nothing to
                     press, so it should not look pressable or take focus. */}

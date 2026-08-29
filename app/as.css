@@ -2716,3 +2716,22 @@ body.s-locked { overflow: hidden; }
   .s-intro-stamp,
   .s-price-stamp { transform: none; }
 }
+
+/* Both stamps above the price, right-aligned and stacked. They used
+   to sit beside the figure, which collided: the price is nowrap and
+   wide, so the stamp had nowhere to go and printed over "/ person". */
+.s-panel-stamps {
+  list-style: none;
+  margin: 8px 0 12px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+.s-panel-stamps .s-price-stamp { margin: 0; max-width: 100%; }
+.s-panel-stamps .s-price-stamp[data-alt="true"] { transform: rotate(-1.4deg); }
+
+/* On its own line the price no longer needs to share, so it may use
+   the full width of the panel again. */
+.s-price-now-block { margin: 0 0 18px; }
