@@ -235,6 +235,7 @@ export const DETAIL = {
   plansFrom: "FROM",
   plansPer: "per person",
   plansCta: "PROCEED",
+  plansBrochure: "BROCHURE",
   /* For the eleven states with no fare set. Says what will happen
      rather than showing a number nobody has agreed, and hands over a
      way to reach a person — a blank price and no route forward reads

@@ -2657,3 +2657,62 @@ body.s-locked { overflow: hidden; }
 @media (max-width: 560px) {
   .s-price-stamp { font-size: 9px; padding: 6px 8px; }
 }
+
+/* Plan number on the left, its brochure on the right. */
+.s-plan-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+.s-plan-pdf {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  border: 1px solid var(--s-line);
+  font-family: var(--s-mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--s-rust);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.s-plan-pdf:hover { border-color: var(--s-rust); background: var(--s-paper-2); }
+
+/* The stamp on a plan card. Same rubber-stamp device as the rest of
+   the brand — outer rule, hairline inset, a slight rotation so it
+   reads as pressed on rather than laid out. Red, which is the only
+   thing red is used for here. */
+.s-plan-stamp {
+  position: relative;
+  display: inline-block;
+  margin-top: 12px;
+  padding: 8px 12px;
+  font-family: var(--s-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  line-height: 1.2;
+  color: var(--s-rust);
+  border: 2px solid var(--s-rust);
+  transform: rotate(-1.8deg);
+  opacity: 0.92;
+}
+.s-plan-stamp::after {
+  content: "";
+  position: absolute;
+  inset: 2.5px;
+  border: 1px solid currentColor;
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .s-plan-stamp,
+  .s-intro-stamp,
+  .s-price-stamp { transform: none; }
+}

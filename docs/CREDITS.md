@@ -75,7 +75,8 @@ single largest unlogged risk on the site.
 
 ## PULSE'26 sticker artwork and brochure
 
-`public/brochure/pulse-2026.pdf`, and the sticker artwork in
+`public/brochure/pulse-2026.pdf` and `public/brochure/pulse-plan-01.pdf`,
+and the sticker artwork in
 `asset/1000offsticker.jpeg` and `asset/delegatesticker.jpeg`.
 
 The stickers are **not published** — the site draws those two facts as CSS

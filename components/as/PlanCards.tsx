@@ -124,9 +124,18 @@ function PlanCard({
 
   return (
     <article className="s-plan">
-      <p className="s-plan-n">
-        {plan.n} <span className="s-plan-dur">{plan.duration}</span>
-      </p>
+      <div className="s-plan-head">
+        <p className="s-plan-n">
+          {plan.n} <span className="s-plan-dur">{plan.duration}</span>
+        </p>
+        {/* `download` rather than a plain link: opening a PDF in a new
+            tab on a phone buries the page you were comparing on. */}
+        {plan.brochure ? (
+          <a className="s-plan-pdf" href={plan.brochure} download>
+            <span aria-hidden="true">⬇</span> {DETAIL.plansBrochure}
+          </a>
+        ) : null}
+      </div>
       <h3 className="s-plan-name">{plan.name}</h3>
       <p className="s-plan-blurb">{plan.blurb}</p>
 

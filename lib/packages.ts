@@ -46,6 +46,14 @@ export interface Plan {
   blurb: string;
   /** What the fare covers, as the card lists it. */
   includes: string[];
+  /**
+   * The plan's own brochure, offered on its card.
+   *
+   * Per plan rather than per departure: the plans are different trips
+   * of different lengths, so one PDF cannot describe all three. A plan
+   * without one simply shows no link.
+   */
+  brochure?: string;
   fares: Fares;
 }
 
@@ -181,6 +189,7 @@ const PULSE_PLANS: Plan[] = [
     name: "THE FESTIVAL + DELHI",
     duration: "6D/5N",
     blurb: "Two days on the city first, then the three main days of PULSE.",
+    brochure: "/brochure/pulse-plan-01.pdf",
     includes: [
       "Entry pass to PULSE",
       "Train 3AC — round trip, from your city",
@@ -196,6 +205,9 @@ const PULSE_PLANS: Plan[] = [
     name: "THE FESTIVAL + DELHI",
     duration: "8D/7N",
     blurb: "The same five days, with two more spent on the city itself.",
+    /* The same file the departure offers; not copied, so 1.2MB does
+       not ship twice. */
+    brochure: "/brochure/pulse-2026.pdf",
     includes: [
       "Entry pass to PULSE",
       "Train 3AC — round trip, from your city",
