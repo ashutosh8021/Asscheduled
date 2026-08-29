@@ -110,6 +110,19 @@ export interface Departure {
   spotsLeft: number | null;
   /** Detail-page intro, three paragraphs, verbatim from the comp. */
   intro: string[];
+  /**
+   * Not rendered anywhere today.
+   *
+   * The departure page used to show these as INCLUDED / EXCLUDED
+   * panels; that section was removed once the plans arrived, because
+   * what is included now differs by plan and a single departure-wide
+   * list contradicted the cards above it. `includes` on each plan in
+   * lib/packages.ts is the live answer.
+   *
+   * Kept because the copy is worth having, and because the excluded
+   * lines exist nowhere else. Editing these changes nothing on the
+   * site — change the plan if you want the page to move.
+   */
   included: string[];
   excluded: string[];
   itinerary: ItineraryDay[];

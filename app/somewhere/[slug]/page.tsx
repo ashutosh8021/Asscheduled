@@ -207,41 +207,6 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
           </section>
         ) : null}
 
-        {/* ---------- INCLUDED / EXCLUDED ---------- */}
-        <section className="s-wrap s-sec-tight">
-          <div className="s-split s-split-even">
-            <Reveal>
-              <div className="s-panel" style={{ height: "100%" }}>
-                <p className="s-panel-h">{DETAIL.includedLabel}</p>
-                <p className="s-panel-sub">{DETAIL.includedSub}</p>
-                <ul className="s-list s-list-yes">
-                  {d.included.map((i) => (
-                    <li key={i}>
-                      <span aria-hidden="true">✓</span>
-                      <span>{i}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </Reveal>
-
-            <Reveal delay={1}>
-              <div className="s-panel" style={{ height: "100%" }}>
-                <p className="s-panel-h">{DETAIL.excludedLabel}</p>
-                <p className="s-panel-sub">{DETAIL.excludedSub}</p>
-                <ul className="s-list">
-                  {d.excluded.map((i) => (
-                    <li key={i}>
-                      <span aria-hidden="true">✕</span>
-                      <span>{i}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </Reveal>
-          </div>
-        </section>
-
         {/* ---------- ITINERARY + BROCHURE ---------- */}
         <section className="s-wrap s-sec-tight">
           <div className="s-split s-split-even">
