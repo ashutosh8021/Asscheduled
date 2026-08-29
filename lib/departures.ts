@@ -196,13 +196,20 @@ export interface Departure {
   documentsAtApply?: boolean;
 
   /**
-   * Offer artwork for the dark panel, where there is room for it.
+   * Supplied sticker artwork, by name.
    *
-   * The same fact the stamps carry, but this is the supplied sticker
-   * rather than the drawn device — on a navy panel the torn cream
-   * paper reads well, which is what the flat stamp does not.
+   * "offer" is the ₹1,000; "delegate" is the pass. Named rather than
+   * positional, so a surface asks for the one it wants and reordering
+   * the list cannot silently swap them. Rendered large on the dark
+   * panel and small in the booking panel, from the same files.
    */
-  offerSticker?: { src: string; alt: string; width: number; height: number };
+  stickers?: {
+    id: "offer" | "delegate";
+    src: string;
+    alt: string;
+    width: number;
+    height: number;
+  }[];
 
   /**
    * Stamped into the band the intro column leaves empty above the
@@ -271,12 +278,22 @@ export const DEPARTURES: Departure[] = [
     priceMax: departureSpan("PUL-26")!.max,
     /* AIIMS asks for ID up front — see the note on the field. */
     documentsAtApply: true,
-    offerSticker: {
-      src: "/stickers/thousand-off.png",
-      alt: "Get ₹1,000 off at final payment",
-      width: 900,
-      height: 284,
-    },
+    stickers: [
+      {
+        id: "offer",
+        src: "/stickers/thousand-off.png",
+        alt: "Get ₹1,000 off at final payment",
+        width: 900,
+        height: 284,
+      },
+      {
+        id: "delegate",
+        src: "/stickers/delegate-pass.png",
+        alt: "PULSE delegate pass included",
+        width: 900,
+        height: 470,
+      },
+    ],
     introStamps: ["Delegate pass included"],
     priceNote: "₹1,000 off at final payment",
     /* Run with PULSE, so PULSE is told who is coming. This is what

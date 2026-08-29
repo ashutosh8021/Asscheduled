@@ -156,19 +156,22 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
                 {/* List price. The coupon is applied at the payment
                     step, so nothing is struck through here — the stamp
                     beside this panel is what says ₹1,000 comes off. */}
-                {/* Above the figure, right-aligned, rather than beside
-                    it. Beside it they collided: the price is nowrap
-                    and wide, so the stamp had nowhere to go and sat on
-                    top of "/ person". */}
-                {d.introStamps?.length || d.priceNote ? (
-                  <ul className="s-panel-stamps">
-                    {[...(d.introStamps ?? []), ...(d.priceNote ? [d.priceNote] : [])].map(
-                      (note, i) => (
-                        <li key={note} className="s-price-stamp" data-alt={i % 2 === 1}>
-                          {note}
-                        </li>
-                      )
-                    )}
+                {/* The supplied artwork, small, sat above the figure.
+                    Right-aligned and stacked: beside the price they
+                    collided, because the price is nowrap and wide. */}
+                {d.stickers?.length ? (
+                  <ul className="s-panel-stickers">
+                    {d.stickers.map((st) => (
+                      <li key={st.id}>
+                        <Image
+                          src={st.src}
+                          alt={st.alt}
+                          width={st.width}
+                          height={st.height}
+                          sizes="200px"
+                        />
+                      </li>
+                    ))}
                   </ul>
                 ) : null}
 
@@ -264,16 +267,19 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
                     artwork rather than the drawn stamp: on navy the
                     torn cream paper reads, and there is room here that
                     a small stamp would leave empty. */}
-                {d.offerSticker ? (
-                  <Image
-                    className="s-offer-sticker"
-                    src={d.offerSticker.src}
-                    alt={d.offerSticker.alt}
-                    width={d.offerSticker.width}
-                    height={d.offerSticker.height}
-                    sizes="(max-width: 900px) 80vw, 420px"
-                  />
-                ) : null}
+                {d.stickers
+                  ?.filter((st) => st.id === "offer")
+                  .map((st) => (
+                    <Image
+                      key={st.id}
+                      className="s-offer-sticker"
+                      src={st.src}
+                      alt={st.alt}
+                      width={st.width}
+                      height={st.height}
+                      sizes="(max-width: 900px) 80vw, 420px"
+                    />
+                  ))}
 
                 {/* Just how to reach us. The ask itself sits in the
                     panel beside this one. */}

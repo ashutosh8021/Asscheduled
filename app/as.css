@@ -2717,20 +2717,34 @@ body.s-locked { overflow: hidden; }
   .s-price-stamp { transform: none; }
 }
 
-/* Both stamps above the price, right-aligned and stacked. They used
-   to sit beside the figure, which collided: the price is nowrap and
-   wide, so the stamp had nowhere to go and printed over "/ person". */
-.s-panel-stamps {
+/* Both stickers above the price, right-aligned and stacked. Beside
+   the figure they collided — the price is nowrap and wide, so there
+   was nowhere for them to go and they printed over "/ person".
+
+   Small enough to sit inside the pricing area rather than compete
+   with it: these annotate the number, they are not a second one. */
+.s-panel-stickers {
   list-style: none;
-  margin: 8px 0 12px;
+  margin: 6px 0 10px;
   padding: 0;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 8px;
+  gap: 6px;
 }
-.s-panel-stamps .s-price-stamp { margin: 0; max-width: 100%; }
-.s-panel-stamps .s-price-stamp[data-alt="true"] { transform: rotate(-1.4deg); }
+.s-panel-stickers li { margin: 0; line-height: 0; }
+.s-panel-stickers img {
+  display: block;
+  width: clamp(128px, 38%, 200px);
+  height: auto;
+}
+/* Opposing tilts, so two stacked read as stuck on by hand. */
+.s-panel-stickers li:nth-child(odd) img { transform: rotate(1.4deg); }
+.s-panel-stickers li:nth-child(even) img { transform: rotate(-1.6deg); }
+
+@media (prefers-reduced-motion: reduce) {
+  .s-panel-stickers img { transform: none; }
+}
 
 /* On its own line the price no longer needs to share, so it may use
    the full width of the panel again. */
