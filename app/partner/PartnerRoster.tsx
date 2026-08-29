@@ -81,6 +81,18 @@ export default function PartnerRoster({
 }) {
   const [tab, setTab] = useState<Tab>("roster");
   const [onlyAccepted, setOnlyAccepted] = useState(false);
+  const [q, setQ] = useState("");
+
+  /* One search across every tab. Whichever list you are looking at,
+     typing a name narrows it — a gate check is somebody standing in
+     front of you, not a tab you happen to have open. */
+  const needle = q.trim().toLowerCase();
+  const matches = (r: ApplicationRow) =>
+    !needle ||
+    [r.name, r.phone, r.college, r.reference, r.state, r.utr ?? ""]
+      .join(" ")
+      .toLowerCase()
+      .includes(needle);
 
   const filesFor = (id: string) => bundles.find((b) => b.applicationId === id)?.files ?? [];
 
@@ -94,9 +106,15 @@ export default function PartnerRoster({
       typeof a.amount_due === "number"
   );
 
+  const shownEnquiries = enquiries.filter(
+    (m) =>
+      !needle ||
+      [m.name, m.email, m.phone, m.message].join(" ").toLowerCase().includes(needle)
+  );
+
   if (apps.length === 0) return <p className="a-empty">Nobody has applied yet.</p>;
 
-  const shown = onlyAccepted ? apps.filter((a) => a.status === "accepted") : apps;
+  const shown = (onlyAccepted ? apps.filter((a) => a.status === "accepted") : apps).filter(matches);
 
   return (
     <>
@@ -128,6 +146,17 @@ export default function PartnerRoster({
         >
           ENQUIRIES<span className="a-tab-count">{enquiries.length}</span>
         </button>
+      </div>
+
+      <div className="a-search">
+        <input
+          type="search"
+          className="a-input a-search-input"
+          placeholder="Search name, phone, college, reference…"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          aria-label="Search"
+        />
       </div>
 
       {tab === "roster" ? (
@@ -210,7 +239,7 @@ export default function PartnerRoster({
 
       {tab === "documents" ? (
         <Section
-          people={withIds}
+          people={withIds.filter(matches)}
           empty="Nobody has sent identity documents yet."
           filesFor={(id) => filesFor(id).filter((f) => ID_KINDS.includes(f.kind))}
         />
@@ -218,7 +247,7 @@ export default function PartnerRoster({
 
       {tab === "payments" ? (
         <Section
-          people={withPayment}
+          people={withPayment.filter(matches)}
           empty="No transfers to check yet."
           filesFor={(id) => filesFor(id).filter((f) => f.kind === PAY_KIND)}
           meta={(r) => (
@@ -236,11 +265,11 @@ export default function PartnerRoster({
       ) : null}
 
       {tab === "enquiries" ? (
-        enquiries.length === 0 ? (
+        shownEnquiries.length === 0 ? (
           <p className="a-empty">No custom-booking enquiries yet.</p>
         ) : (
           <div className="a-dt">
-            {enquiries.map((m) => (
+            {shownEnquiries.map((m) => (
               <section key={m.id} className="a-dt-card">
                 <header className="a-dt-head">
                   <div>

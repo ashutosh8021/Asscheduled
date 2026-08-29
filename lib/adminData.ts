@@ -384,6 +384,33 @@ export async function applicationCounts(): Promise<Record<string, number>> {
 }
 
 /**
+ * Delete one application row.
+ *
+ * Documents are removed by the caller first — this only takes the row,
+ * and a row deleted before its files leaves objects in the bucket with
+ * nothing left to find them by.
+ */
+export async function deleteApplication(id: string): Promise<boolean> {
+  const cfg = supabaseConfig();
+  if (!cfg) return false;
+
+  try {
+    const res = await fetch(
+      `${cfg.url}/rest/v1/applications?id=eq.${encodeURIComponent(id)}`,
+      { method: "DELETE", headers: headers(cfg.serviceRoleKey), cache: "no-store" }
+    );
+    if (!res.ok) {
+      console.error(`[adminData] delete failed (${res.status}): ${await res.text()}`);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error("[adminData] delete threw", err);
+    return false;
+  }
+}
+
+/**
  * Move an application to a new status.
  *
  * The status is checked against the allowed list here as well as by a

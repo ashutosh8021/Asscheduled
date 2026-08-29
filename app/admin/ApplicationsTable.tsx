@@ -39,6 +39,29 @@ export default function ApplicationsTable({ rows }: { rows: ApplicationRow[] }) 
   const router = useRouter();
   const [busy, setBusy] = useState<string | null>(null);
   const [open, setOpen] = useState<string | null>(null);
+  const [q, setQ] = useState("");
+  /* Two presses to delete. A confirm() is easy to dismiss by reflex,
+     and this is irreversible — the row, its documents and the files in
+     storage all go. */
+  const [armed, setArmed] = useState<string | null>(null);
+
+  async function remove(id: string) {
+    setBusy(id);
+    try {
+      const res = await fetch("/api/admin/delete", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      if (res.ok) {
+        setArmed(null);
+        setOpen(null);
+        router.refresh();
+      }
+    } finally {
+      setBusy(null);
+    }
+  }
 
   async function move(id: string, status: ApplicationStatus) {
     setBusy(id);
@@ -122,7 +145,37 @@ export default function ApplicationsTable({ rows }: { rows: ApplicationRow[] }) 
 
   if (rows.length === 0) return <p className="a-empty">Nothing here yet.</p>;
 
+  /* Matched across the fields you would actually search by. Client
+     side: this list is one departure's worth of applications, and a
+     round trip per keystroke would be slower than filtering it here. */
+  const needle = q.trim().toLowerCase();
+  const shown = needle
+    ? rows.filter((r) =>
+        [r.name, r.phone, r.college, r.reference, r.state, r.utr ?? "", r.instagram ?? ""]
+          .join(" ")
+          .toLowerCase()
+          .includes(needle)
+      )
+    : rows;
+
   return (
+    <>
+      <div className="a-search">
+        <input
+          type="search"
+          className="a-input a-search-input"
+          placeholder="Search name, phone, college, reference, UTR…"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          aria-label="Search applications"
+        />
+        <span className="a-search-count">
+          {shown.length} of {rows.length}
+        </span>
+      </div>
+
+      {shown.length === 0 ? <p className="a-empty">Nothing matches that.</p> : null}
+
     <div className="a-scroll">
       <table className="a-table">
         <thead>
@@ -141,7 +194,7 @@ export default function ApplicationsTable({ rows }: { rows: ApplicationRow[] }) 
           </tr>
         </thead>
         <tbody>
-          {rows.map((r) => {
+          {shown.map((r) => {
             const isOpen = open === r.id;
             return (
               <Fragment key={r.id}>
@@ -190,6 +243,19 @@ export default function ApplicationsTable({ rows }: { rows: ApplicationRow[] }) 
                           {n.label}
                         </button>
                       ))}
+                      <button
+                        type="button"
+                        className="a-btn a-btn-danger"
+                        disabled={busy === r.id}
+                        onClick={() => (armed === r.id ? remove(r.id) : setArmed(r.id))}
+                        onBlur={() => armed === r.id && setArmed(null)}
+                      >
+                        {busy === r.id
+                          ? "…"
+                          : armed === r.id
+                            ? "CONFIRM"
+                            : "DELETE"}
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -200,5 +266,6 @@ export default function ApplicationsTable({ rows }: { rows: ApplicationRow[] }) 
         </tbody>
       </table>
     </div>
+    </>
   );
 }

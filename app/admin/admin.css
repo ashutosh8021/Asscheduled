@@ -408,3 +408,31 @@ button.a-tab { font: inherit; cursor: pointer; }
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+
+/* ------------------------------------------------------------
+   SEARCH
+   ------------------------------------------------------------ */
+.a-search {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 4px 0 14px;
+  flex-wrap: wrap;
+}
+.a-search-input {
+  flex: 1 1 320px;
+  min-width: 0;
+  max-width: 520px;
+}
+.a-search-count {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+/* Delete. Outlined rather than filled: it should be findable without
+   being the loudest thing in a row of ordinary actions, and it only
+   turns solid once it is armed and the next press is destructive. */
+.a-btn-danger { border-color: #7a2f2a; color: #ff9f92; }
+.a-btn-danger:hover { border-color: #b04a41; background: #2a1a19; }
