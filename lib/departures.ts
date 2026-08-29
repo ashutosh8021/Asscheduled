@@ -125,6 +125,17 @@ export interface Departure {
    */
   included: string[];
   excluded: string[];
+  /**
+   * Not rendered anywhere today.
+   *
+   * The departure page used to show a day-by-day accordion; that panel
+   * was replaced by the custom-booking ask. The schedule also only
+   * ever described the shortest plan, so with three plans of different
+   * lengths it had stopped being true for two of them.
+   *
+   * Kept because the copy is worth having. Editing it changes nothing
+   * on the site.
+   */
   itinerary: ItineraryDay[];
   /** Brochure is referenced by both detail comps at "PDF · 1.2 MB".
    *  TODO(mannat): supply the real brochure PDFs, then set these. */

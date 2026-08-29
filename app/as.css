@@ -2742,52 +2742,74 @@ body.s-locked { overflow: hidden; }
    Sits at the foot of the dark brochure panel, where two photographs
    used to be. Somebody who does not fit any of the three plans has
    nowhere else on the page to say so. */
-.s-custom {
-  margin-top: auto;
-  padding-top: clamp(24px, 3vw, 34px);
+/* The ask, on its own light panel. Each question is set as a line
+   with a hanging mark, so four short questions read as a list of
+   things you might be worrying about rather than as a paragraph. */
+.s-custom-panel {
+  height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .s-custom-h {
   font-family: var(--s-mono);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.16em;
-  color: var(--s-rust-soft, #e08b74);
+  color: var(--s-rust);
 }
 
 .s-custom-asks {
   list-style: none;
-  margin: 0;
+  margin: 4px 0 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  font-size: 14px;
-  line-height: 1.45;
-  color: rgba(247, 241, 232, 0.78);
+  gap: 9px;
+  font-size: clamp(14px, 1.35vw, 16px);
+  line-height: 1.4;
+  color: var(--s-ink);
+}
+.s-custom-asks li {
+  position: relative;
+  padding-left: 20px;
+}
+/* A question mark of our own, in stamp red, hanging in the margin. */
+.s-custom-asks li::before {
+  content: "?";
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-family: var(--s-mono);
+  font-weight: 700;
+  color: var(--s-rust);
+  opacity: 0.55;
 }
 
 .s-custom-mark {
   font-family: var(--s-heavy);
-  font-size: clamp(20px, 2.3vw, 30px);
+  font-size: clamp(26px, 3.4vw, 44px);
+  line-height: 1.02;
   letter-spacing: 0.01em;
   text-transform: uppercase;
-  color: var(--s-paper);
-  margin-top: 4px;
+  color: var(--s-ink);
+  margin-top: 8px;
 }
-.s-custom-body { font-size: 14px; line-height: 1.5; color: rgba(247, 241, 232, 0.78); }
+.s-custom-body {
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--s-grey);
+  max-width: 46ch;
+}
 
 /* Email and both numbers, as two labelled facts. */
 .s-custom-reach {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
   gap: 12px 20px;
-  margin: 6px 0 2px;
-  padding-top: 14px;
-  border-top: 1px solid rgba(247, 241, 232, 0.16);
+  margin-top: auto;
+  padding-top: clamp(26px, 3vw, 40px);
 }
 .s-custom-reach div { min-width: 0; }
 .s-custom-reach dt {
@@ -2813,4 +2835,4 @@ body.s-locked { overflow: hidden; }
 }
 .s-custom-reach a:hover { color: var(--s-rust-soft, #e08b74); }
 
-.s-custom-cta { margin-top: 8px; align-self: flex-start; }
+.s-custom-cta { margin-top: auto; align-self: flex-start; }

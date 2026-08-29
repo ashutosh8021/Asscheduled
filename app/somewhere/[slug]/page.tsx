@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Shell from "@/components/as/Shell";
 import Reveal from "@/components/as/Reveal";
-import Accordion from "@/components/as/Accordion";
 import ApplyButton from "@/components/as/ApplyButton";
 import DepartureHero from "@/components/as/DepartureHero";
 import PlanCards from "@/components/as/PlanCards";
@@ -223,29 +222,21 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
         <section className="s-wrap s-sec-tight">
           <div className="s-split s-split-even">
             <Reveal>
-              <div className="s-panel" style={{ height: "100%" }}>
-                <div style={{ display: "flex", alignItems: "baseline", gap: 14, flexWrap: "wrap" }}>
-                  <p className="s-panel-h">{DETAIL.itineraryLabel}</p>
-                  <p className="s-hint">{DETAIL.itinerarySub}</p>
-                </div>
+              <div className="s-panel s-custom-panel">
+                <p className="s-custom-h">{DETAIL.customTitle}</p>
 
-                <div style={{ marginTop: 12 }}>
-                  <Accordion
-                    idPrefix={`itin-${d.slug}`}
-                    items={d.itinerary.map((day) => ({
-                      n: day.n,
-                      meta: day.date,
-                      title: day.title,
-                      body: day.detail ?? (
-                        /* The comps show day titles only. Rather than
-                           invent a schedule, say so. */
-                        <span className="s-hint">
-                          Detail for this day is not published yet.
-                        </span>
-                      ),
-                    }))}
-                  />
-                </div>
+                <ul className="s-custom-asks">
+                  {DETAIL.customAsks.map((q) => (
+                    <li key={q}>{q}</li>
+                  ))}
+                </ul>
+
+                <p className="s-custom-mark">{DETAIL.customMark}</p>
+                <p className="s-custom-body">{DETAIL.customBody}</p>
+
+                <Link href={`/contact?about=${d.id}`} className="s-btn s-custom-cta">
+                  {DETAIL.customCta} <span className="s-arrow">→</span>
+                </Link>
               </div>
             </Reveal>
 
@@ -282,45 +273,26 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
                   )}
                 </div>
 
-                {/* Custom bookings, where two photographs used to sit.
-                    Somebody who does not fit any of the three plans
-                    has nowhere else on this page to say so, and a way
-                    to ask is worth more than another image. */}
-                <div className="s-custom">
-                  <p className="s-custom-h">{DETAIL.customTitle}</p>
-
-                  <ul className="s-custom-asks">
-                    {DETAIL.customAsks.map((q) => (
-                      <li key={q}>{q}</li>
-                    ))}
-                  </ul>
-
-                  <p className="s-custom-mark">{DETAIL.customMark}</p>
-                  <p className="s-custom-body">{DETAIL.customBody}</p>
-
-                  <dl className="s-custom-reach">
-                    <div>
-                      <dt>{CONTACT.emailLabel}</dt>
-                      <dd>
-                        <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
-                      </dd>
-                    </div>
-                    <div>
-                      <dt>{CONTACT.phoneLabel}</dt>
-                      <dd>
-                        {CONTACT.phones.map((n) => (
-                          <a key={n} href={`tel:+91${n}`}>
-                            +91 {n}
-                          </a>
-                        ))}
-                      </dd>
-                    </div>
-                  </dl>
-
-                  <Link href={`/contact?about=${d.id}`} className="s-btn s-custom-cta">
-                    {DETAIL.customCta} <span className="s-arrow">→</span>
-                  </Link>
-                </div>
+                {/* Just how to reach us. The ask itself sits in the
+                    panel beside this one. */}
+                <dl className="s-custom-reach">
+                  <div>
+                    <dt>{CONTACT.emailLabel}</dt>
+                    <dd>
+                      <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>{CONTACT.phoneLabel}</dt>
+                    <dd>
+                      {CONTACT.phones.map((n) => (
+                        <a key={n} href={`tel:+91${n}`}>
+                          +91 {n}
+                        </a>
+                      ))}
+                    </dd>
+                  </div>
+                </dl>
               </div>
             </Reveal>
           </div>
