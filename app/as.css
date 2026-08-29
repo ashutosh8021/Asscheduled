@@ -2717,33 +2717,28 @@ body.s-locked { overflow: hidden; }
   .s-price-stamp { transform: none; }
 }
 
-/* Both stickers above the price, right-aligned and stacked. Beside
-   the figure they collided — the price is nowrap and wide, so there
-   was nowhere for them to go and they printed over "/ person".
+/* Both stamps above the price, right-aligned and stacked. Beside the
+   figure they collided — the price is nowrap and wide, so there was
+   nowhere for them to go and they printed over "/ person".
 
-   Small enough to sit inside the pricing area rather than compete
-   with it: these annotate the number, they are not a second one. */
-.s-panel-stickers {
+   The stamp itself is .s-price-stamp, the same device the cards use;
+   this decides only where the pair sits and how each one is tilted. */
+.s-panel-stamps {
   list-style: none;
-  margin: 6px 0 10px;
+  margin: 10px 0 12px;
   padding: 0;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 6px;
+  gap: 8px;
 }
-.s-panel-stickers li { margin: 0; line-height: 0; }
-.s-panel-stickers img {
-  display: block;
-  width: clamp(128px, 38%, 200px);
-  height: auto;
-}
-/* Opposing tilts, so two stacked read as stuck on by hand. */
-.s-panel-stickers li:nth-child(odd) img { transform: rotate(1.4deg); }
-.s-panel-stickers li:nth-child(even) img { transform: rotate(-1.6deg); }
+.s-panel-stamps .s-price-stamp { margin: 0; max-width: 100%; }
+/* Opposing tilts, so two stacked read as pressed on by hand rather
+   than typeset. The base tilt comes from .s-price-stamp. */
+.s-panel-stamps .s-price-stamp[data-alt="true"] { transform: rotate(-1.9deg); }
 
 @media (prefers-reduced-motion: reduce) {
-  .s-panel-stickers img { transform: none; }
+  .s-panel-stamps .s-price-stamp[data-alt="true"] { transform: none; }
 }
 
 /* On its own line the price no longer needs to share, so it may use
@@ -2817,19 +2812,39 @@ body.s-locked { overflow: hidden; }
   max-width: 46ch;
 }
 
-/* Email and both numbers, as two labelled facts. */
-/* The offer sticker sits between the headline and the contact
-   details, taking the space the brochure button used to leave empty
-   in the middle of the panel. */
-.s-offer-sticker {
-  display: block;
-  width: clamp(230px, 62%, 420px);
-  height: auto;
-  margin: clamp(18px, 2.6vw, 30px) 0 0;
+/* The offer, stamped into the band between the headline and the
+   contact details. Bigger than the pricing-panel stamps: here it is
+   filling space rather than annotating a figure beside it. */
+.s-offer-stamp {
+  position: relative;
+  display: inline-block;
+  align-self: flex-start;
+  margin: clamp(20px, 3vw, 34px) 0 0;
+  padding: 14px 20px;
+  font-family: var(--s-mono);
+  font-size: clamp(11px, 1.15vw, 13.5px);
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  line-height: 1.2;
+  color: var(--s-rust-soft);
+  border: 2px solid var(--s-rust-soft);
   transform: rotate(-2deg);
-  transform-origin: left center;
+}
+.s-offer-stamp::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border: 1px solid currentColor;
+  opacity: 0.45;
+  pointer-events: none;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .s-offer-stamp { transform: none; }
+}
+
+/* Email and both numbers, as two labelled facts. */
 .s-custom-reach {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
@@ -2843,10 +2858,6 @@ body.s-locked { overflow: hidden; }
   margin-top: clamp(22px, 2.6vw, 30px);
   padding-top: clamp(20px, 2.4vw, 26px);
   border-top: 1px solid rgba(247, 241, 232, 0.16);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .s-offer-sticker { transform: none; }
 }
 .s-custom-reach div { min-width: 0; }
 .s-custom-reach dt {

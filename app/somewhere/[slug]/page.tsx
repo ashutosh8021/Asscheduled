@@ -6,7 +6,6 @@ import ApplyButton from "@/components/as/ApplyButton";
 import DepartureHero from "@/components/as/DepartureHero";
 import PlanCards from "@/components/as/PlanCards";
 import { hasPlans } from "@/lib/packages";
-import Image from "next/image";
 import Link from "next/link";
 import { CONTACT, CONTACT_EMAIL, DETAIL, SOMEWHERE } from "@/lib/copy";
 import { DEPARTURES, batchLabel, getDeparture, priceRange } from "@/lib/departures";
@@ -135,10 +134,6 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
 
             <Reveal delay={1}>
               <div className="s-panel">
-                {/* Each sticker sits beside the thing it is about: the
-                    delegate pass with the dates, the discount with the
-                    price. Picked by name, so reordering the array
-                    cannot quietly swap them. */}
                 <p className="s-panel-h">🗓 {DETAIL.datesLabel}</p>
 
                 <div style={{ marginTop: 14 }}>
@@ -153,23 +148,20 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
 
                 <p className="s-eyebrow s-eyebrow-grey">{DETAIL.fromLabel}</p>
 
-                {/* List price. The coupon is applied at the payment
-                    step, so nothing is struck through here — the stamp
-                    beside this panel is what says ₹1,000 comes off. */}
-                {/* The supplied artwork, small, sat above the figure.
-                    Right-aligned and stacked: beside the price they
-                    collided, because the price is nowrap and wide. */}
-                {d.stickers?.length ? (
-                  <ul className="s-panel-stickers">
-                    {d.stickers.map((st) => (
-                      <li key={st.id}>
-                        <Image
-                          src={st.src}
-                          alt={st.alt}
-                          width={st.width}
-                          height={st.height}
-                          sizes="200px"
-                        />
+                {/* What qualifies the list price below: the coupon is
+                    applied at the payment step, so nothing is struck
+                    through — these stamps are what say ₹1,000 comes off
+                    and the pass is in.
+
+                    Stamped rather than the supplied artwork, to match
+                    the rest of the page. Right-aligned and stacked:
+                    beside the price they collided, because the price is
+                    nowrap and wide. */}
+                {d.panelStamps?.length ? (
+                  <ul className="s-panel-stamps">
+                    {d.panelStamps.map((note, i) => (
+                      <li key={note} className="s-price-stamp" data-alt={i % 2 === 1}>
+                        {note}
                       </li>
                     ))}
                   </ul>
@@ -263,23 +255,11 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
                   <span style={{ color: "var(--s-rust-soft)" }}>{DETAIL.brochureTitleMark}</span>
                 </h2>
 
-                {/* The offer, filling the panel's middle. The supplied
-                    artwork rather than the drawn stamp: on navy the
-                    torn cream paper reads, and there is room here that
-                    a small stamp would leave empty. */}
-                {d.stickers
-                  ?.filter((st) => st.id === "offer")
-                  .map((st) => (
-                    <Image
-                      key={st.id}
-                      className="s-offer-sticker"
-                      src={st.src}
-                      alt={st.alt}
-                      width={st.width}
-                      height={st.height}
-                      sizes="(max-width: 900px) 80vw, 420px"
-                    />
-                  ))}
+                {/* The offer, filling the panel's middle — the band the
+                    headline leaves above the contact details. Same
+                    stamp, in the soft rust this panel already uses for
+                    its mark, because red on navy is not legible. */}
+                {d.priceNote ? <p className="s-offer-stamp">{d.priceNote}</p> : null}
 
                 {/* Just how to reach us. The ask itself sits in the
                     panel beside this one. */}

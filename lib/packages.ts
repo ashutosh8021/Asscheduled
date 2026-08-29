@@ -191,7 +191,6 @@ const PULSE_PLANS: Plan[] = [
     blurb: "Two days on the city first, then the three main days of PULSE.",
     brochure: "/brochure/pulse-plan-01.pdf",
     includes: [
-      "Entry pass to PULSE",
       "Train 3AC — round trip, from your city",
       "Hotel, sharing basis",
       "Meals through the trip",
@@ -209,7 +208,6 @@ const PULSE_PLANS: Plan[] = [
        not ship twice. */
     brochure: "/brochure/pulse-2026.pdf",
     includes: [
-      "Entry pass to PULSE",
       "Train 3AC — round trip, from your city",
       "Hotel, sharing basis",
       "Meals through the trip",
@@ -224,7 +222,6 @@ const PULSE_PLANS: Plan[] = [
     duration: "5D/4N",
     blurb: "Five days inside PULSE, and nothing else competing for them.",
     includes: [
-      "Entry pass to PULSE",
       "Train 3AC — round trip, from your city",
       "Hotel, sharing basis",
       "Meals through the trip",
