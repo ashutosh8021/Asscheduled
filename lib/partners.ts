@@ -1,15 +1,17 @@
-/* Partner referral links and the discount they carry.
+/* Coupons, and the three ways one reaches an applicant.
  *
- * A festival links to us from their own site with `?p=<code>`. Anyone
- * arriving that way gets a flat discount on the departures the partner
- * covers, applied without them doing anything and without them being
- * able to change it.
+ * A festival links to us with `?p=<code>` and the middleware remembers
+ * it; an arrangement can cover a whole departure automatically; or
+ * somebody types a code into the form, which is how an influencer's
+ * own code reaches the people they send.
  *
- * The thing that makes that true is not in this file's data but in how
- * it is used: `resolvePartner` is called by the page (to show a price)
- * AND by the apply route (to charge one), and the browser never sends
- * an amount. A discount decided in the browser is not a discount —
- * anyone could claim it by editing the URL or the DOM.
+ * All three are the same thing here, and the safety property is not
+ * "there is no field to type into" — it is that the browser sends a
+ * CODE and never an AMOUNT. `partnerFor` is called by the page (to
+ * show a price) AND by the apply route (to record one), and the route
+ * resolves the code again from scratch. A discount the browser could
+ * price is a discount it could invent: post `discountInr: 99999` and
+ * nothing happens, because nothing reads it.
  *
  * Config lives here rather than in the database on purpose: it is
  * version-controlled, it needs no round trip to resolve, and a partner
@@ -22,9 +24,17 @@ export interface Partner {
    *  Lower case — findPartner folds the incoming value, so the link
    *  can be written in caps without breaking. */
   code: string;
-  /** The coupon as the applicant sees it: "PULSE2026". Shown applied
-   *  and not editable — there is no field to type it into, because a
-   *  code the browser can supply is a discount the browser can invent. */
+  /** The coupon as the applicant sees it: "PULSE2026".
+   *
+   *  This is what somebody types into the coupon field, and it is the
+   *  only thing they may type: the browser sends a code, never an
+   *  amount, and the server looks the amount up here. A code the
+   *  browser could price itself would be a discount it could invent.
+   *
+   *  Treat a code as public the moment it is given to anybody. There
+   *  is no per-person check — whoever knows it can use it, which is
+   *  what a coupon is. Retire one by moving `validUntil` into the
+   *  past rather than by hoping it stays secret. */
   coupon: string;
   /** Shown to the applicant, so they know why the price dropped. */
   name: string;
@@ -59,13 +69,27 @@ export interface Partner {
    * found us independently pays the list price.
    */
   auto?: boolean;
+
+  /**
+   * Safe to print on the page as a one-tap offer.
+   *
+   * Only for codes that everybody is entitled to anyway. A listed code
+   * is a code you are giving to every visitor, so listing a private
+   * one — an influencer's, say — hands their discount to people who
+   * never went near them and turns it into a price cut we did not
+   * decide to make.
+   *
+   * The default is therefore off. A code is private unless somebody
+   * says otherwise here.
+   */
+  listed?: boolean;
 }
 
 /* ------------------------------------------------------------------
    PULSE'26 — AIIMS New Delhi.
 
    Everyone applying to PULSE gets PULSE2026: ₹1,000 off, applied
-   automatically, no field to type it into and no link to arrive on.
+   automatically, with nothing to type and no link to arrive on.
    The arrangement is with the festival, so it covers everybody going
    to the festival however they found us — which is what `auto` says.
 
@@ -91,18 +115,65 @@ export const PARTNERS: Partner[] = [
     validUntil: "2026-09-16",
     notify: "studentsunion@aiims.edu",
     auto: true,
+    /* Everybody applying to PULSE gets this, so there is nothing to
+       protect: showing it is only telling people what they already
+       have. It is listed so the form can offer it as a tap, which is
+       what an offer looks like everywhere else people shop. */
+    listed: true,
+  },
+
+  /* ----------------------------------------------------------------
+     MANSA11 — an influencer's own code, typed in by the people they
+     send. Not automatic and not on a link: somebody has to know it.
+
+     ₹1,100, which is more than PULSE2026's ₹1,000. That is the point
+     of it, and it is why partnerFor takes the best code rather than
+     the first — entering this has to be worth doing, and forgetting
+     it must never cost somebody the ₹1,000 they were entitled to
+     anyway.
+
+     No `notify`: PULSE is told who is coming because PULSE runs the
+     festival and needs the list. An influencer is not owed anybody's
+     phone number, so this shares nothing.
+     ---------------------------------------------------------------- */
+  {
+    code: "mansa11",
+    coupon: "MANSA11",
+    /* TODO(mannat): shown to the applicant as "— <name>", so it should
+       say whose code it is. Left generic rather than guessing at a
+       real person's name. */
+    name: "Referral coupon",
+    departures: ["PUL-26"],
+    discountInr: 1100,
+    /* Same last day as PULSE2026 — there is nothing to apply for after
+       it, so a code that outlived it could only confuse. */
+    validUntil: "2026-09-16",
+    /* Not listed, and this is the whole point of the code. It is worth
+       more than the automatic one, so printing it on the page would
+       give ₹1,100 to everybody and leave the influencer sending people
+       to a discount they could have had anyway. It has to be told to
+       somebody to be worth anything. */
+    listed: false,
   },
 ];
 
 /**
  * The partner in force for a departure, for a given visitor.
  *
- * Two ways one applies, and this is the single place that decides:
+ * Three ways one applies, and this is the single place that decides:
  *
  *   • automatic — the arrangement covers the whole departure, so
- *     everybody gets it and no link is involved;
- *   • referral — only somebody carrying the partner's code, from the
- *     cookie the middleware set.
+ *     everybody gets it and no code is involved;
+ *   • referral — somebody carrying a partner's code in the cookie the
+ *     middleware set from `?p=`;
+ *   • typed — somebody who entered a coupon in the form.
+ *
+ * The best of them wins, never the first. Two consequences, both
+ * wanted: entering a code can only ever help, so nobody is punished
+ * for typing one; and nobody loses the discount they already had by
+ * typing a worse one. They do not stack — one coupon, like everywhere
+ * else — and clamping to the best is what makes "does this stack?"
+ * a question nobody has to ask.
  *
  * Everything calls this: the page that shows a price, the endpoint the
  * form asks, and the route that records what is owed. One function, so
@@ -111,17 +182,86 @@ export const PARTNERS: Partner[] = [
 export function partnerFor(
   departureCode: string,
   code?: string | null,
+  typed?: string | null,
   now: Date = new Date()
 ): Partner | null {
-  /* Automatic first. It needs nothing from the visitor, so it cannot
-     be missed by somebody who cleared their cookies or arrived on a
-     plain link. */
-  const automatic = PARTNERS.find(
-    (p) => p.auto && p.departures.includes(departureCode) && !expired(p, now)
-  );
-  if (automatic) return automatic;
+  /* Automatic needs nothing from the visitor, so it cannot be missed
+     by somebody who cleared their cookies or arrived on a plain link. */
+  const automatic =
+    PARTNERS.find((p) => p.auto && p.departures.includes(departureCode) && !expired(p, now)) ??
+    null;
 
-  return resolvePartner(code, departureCode, now);
+  const candidates = [
+    automatic,
+    resolvePartner(code, departureCode, now),
+    resolvePartner(typed, departureCode, now),
+  ].filter((p): p is Partner => p !== null);
+
+  if (candidates.length === 0) return null;
+
+  return candidates.reduce((best, p) => (p.discountInr > best.discountInr ? p : best));
+}
+
+/** One offer as the form prints it. A code and what it is worth —
+ *  never enough to price anything, which is still the server's job. */
+export interface Offer {
+  coupon: string;
+  name: string;
+  discountInr: number;
+}
+
+/**
+ * The coupons a departure may show on the page, for tapping.
+ *
+ * Only `listed` ones, and only while they are in date. Everything
+ * else — an influencer's code, a partner's referral link — is private
+ * by default and never appears here, which is what stops the form from
+ * quietly handing out the best discount on the board.
+ *
+ * Display only. Tapping one just fills the field: the code still goes
+ * to the server to be priced, exactly as if it had been typed.
+ */
+export function listedOffers(departureCode: string, now: Date = new Date()): Offer[] {
+  return PARTNERS.filter(
+    (p) => p.listed && p.departures.includes(departureCode) && !expired(p, now)
+  ).map((p) => ({ coupon: p.coupon, name: p.name, discountInr: p.discountInr }));
+}
+
+/**
+ * Who else to send an application to, for a departure.
+ *
+ * Deliberately NOT "whoever priced it". A festival is told who is
+ * coming because it runs the festival and has to admit them — that is
+ * a fact about the departure, not about which coupon happened to win.
+ *
+ * Getting this wrong is easy and quiet: when coupons became typeable,
+ * reading `notify` off the winning partner alone meant anyone using an
+ * influencer code vanished from the festival's list, because that
+ * coupon has no `notify` of its own. Nothing would have failed. The
+ * festival would simply have been short a few names on the door.
+ *
+ * So: the automatic arrangement always notifies, plus the referral in
+ * force if it carries one of its own. Deduplicated, because a partner
+ * that is both should still only be mailed once.
+ */
+export function notifyFor(
+  departureCode: string,
+  inForce: Partner | null,
+  now: Date = new Date()
+): string[] {
+  const out = new Set<string>();
+
+  for (const p of PARTNERS) {
+    if (p.auto && p.notify && p.departures.includes(departureCode) && !expired(p, now)) {
+      out.add(p.notify);
+    }
+  }
+
+  if (inForce?.notify && inForce.departures.includes(departureCode) && !expired(inForce, now)) {
+    out.add(inForce.notify);
+  }
+
+  return [...out];
 }
 
 /** End of the day in IST, so a code valid "until the 16th" works all of

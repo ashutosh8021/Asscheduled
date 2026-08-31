@@ -1,7 +1,7 @@
 import { NextResponse, after } from "next/server";
 import { cookies } from "next/headers";
 import { deliver, isIndianMobile, readStrings } from "@/lib/inbox";
-import { effectivePrice, partnerFor, PARTNER_COOKIE } from "@/lib/partners";
+import { effectivePrice, notifyFor, partnerFor, PARTNER_COOKIE } from "@/lib/partners";
 import { mirrorApplication } from "@/lib/adminData";
 import { newReference } from "@/lib/reference";
 import { DEPARTURES } from "@/lib/departures";
@@ -85,19 +85,34 @@ export async function POST(request: Request) {
   const reference = newReference();
 
   /* Pricing is decided here and nowhere else.
-​
-     The partner code comes from the cookie the middleware set, never
-     from the request body, and the discount is recomputed from the
-     config rather than trusted. A client that posts its own
-     partner_code, discount or amount is simply ignored — everything
-     below is derived, so there is nothing for it to influence.
 
-     An expired code, a code for another departure, or no code at all
-     all mean full price. None of them is an error: somebody on a stale
-     link should get a working application, not a refusal. */
+     Two inputs, and both are only ever a CODE: the cookie the
+     middleware set, and the coupon typed into the form. Neither
+     carries a price. The discount is looked up from the config here,
+     from scratch, so a client that posts its own partner_code,
+     discount or amount is simply ignored — everything below is
+     derived, and there is nothing for a forged body to influence.
+
+     The typed coupon is read straight off the body on purpose. It has
+     to be: it is the applicant telling us which code they were given,
+     which is exactly what a coupon field is. What makes that safe is
+     that partnerFor decides what the code is worth, and takes the best
+     of what applies rather than what was asked for.
+
+     An expired code, a code for another departure, an unknown one, or
+     no code at all all mean the price without it. None is an error:
+     somebody who mistypes a coupon should get an application, not a
+     refusal — the form already told them it did not take. */
+  const rawCoupon = (raw as Record<string, unknown>).coupon;
+  const coupon = typeof rawCoupon === "string" ? rawCoupon.trim().slice(0, 40) : "";
+
   const jar = await cookies();
-  const partner = partnerFor(departure!.id, jar.get(PARTNER_COOKIE)?.value);
+  const partner = partnerFor(departure!.id, jar.get(PARTNER_COOKIE)?.value, coupon);
   const pricing = effectivePrice(departure!.price, departure!.priceMax, partner);
+
+  /* Who else hears about this. From the departure's own arrangement,
+     plus the referral in force if it carries one — see notifyFor. */
+  const notifyList = notifyFor(departure!.id, partner);
 
   /* Which package, for departures sold as more than one.
 ​
@@ -197,11 +212,14 @@ export async function POST(request: Request) {
       utr: utr || null,
     },
     null,
-    /* Copied to the partner festival. PULSE is an automatic partner,
-       so this covers everybody applying to that departure however they
-       found us — the festival admits all of them, so it is told about
-       all of them. Departures with no partner go to us alone. */
-    partner?.notify ? [partner.notify] : undefined
+    /* Copied to the partner festival. Worked out from the DEPARTURE,
+       not from whichever coupon priced this application — PULSE admits
+       everybody going to PULSE, so PULSE is told about everybody going
+       to PULSE, whatever code they used. Reading it off the winning
+       partner instead would drop anyone on an influencer code from the
+       festival's list without anything appearing to fail.
+       Departures with no partner go to us alone. */
+    notifyList.length ? notifyList : undefined
   );
 
   /* The sheet is a mirror, never the record. It runs after the row is

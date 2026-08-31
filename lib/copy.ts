@@ -172,7 +172,10 @@ export const SOMEWHERE = {
   placesTitle: ["PLACES WE'RE", "ABOUT TO"],
   placesTitleMark: "FUCK SHIT UP.",
   nextLabel: "NEXT:",
-  next: ["Rendezvous. Thomso.", "And whatever", "happens after."],
+  /* Names the departures that are actually on the site. Rendezvous was
+     here until it came off on 2026-08-30 — this line is hand-written,
+     not derived, so it has to be edited whenever DEPARTURES changes. */
+  next: ["Pulse. Thomso.", "And whatever", "happens after."],
 
   moreTitle: "MORE SOMEWHERE, SOON.",
   moreSub: ["KEEP A LITTLE ROOM", "IN THE CALENDAR."],
@@ -478,6 +481,20 @@ export const APPLY = {
   payQrAlt: "UPI QR code for the booking payment",
   payUpiId: "singhmannat936@okicici",
   payPayee: "Mannat Singh Chimni",
+  /* ---- the coupon field ----
+     Deadpan for the form itself, because that is the register every
+     other label on this screen uses. The celebration below is the one
+     place it lifts, and only because there is something to celebrate. */
+  couponLabel: "HAVE A COUPON CODE?",
+  couponPh: "Enter code",
+  couponCta: "APPLY",
+  couponOk: "applied.",
+  offerOff: "off",
+  offerOn: "APPLIED",
+  couponWonHead: "CONGRATULATIONS.",
+  couponWonSaid: "off your booking amount. Already taken off the total below.",
+  couponWonCta: "GOT IT",
+
   payUtrLabel: "UTR / TRANSACTION REFERENCE",
   payUtrPh: "e.g. 412345678901",
   payUtrHint: "Your UPI app shows this on the receipt, usually as UTR or Transaction ID.",

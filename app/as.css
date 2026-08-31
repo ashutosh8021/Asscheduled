@@ -2214,12 +2214,12 @@ body.s-locked { overflow: hidden; }
   text-transform: uppercase;
 }
 
-/* The coupon, shown already applied.
+/* The coupon in force, shown already applied.
 ​
-   A tag rather than a field, and that is the whole design: there is
-   nothing to type, nothing to submit and nothing to get wrong. The
-   server decided this from the link somebody arrived on, so an input
-   here would only invite people to try their luck. */
+   A tag rather than an input, even though there is now a field below
+   it: this says what the server decided, and the field says what you
+   would like it to consider. Keeping them visually different is the
+   point — one is a receipt, the other is a request. */
 .s-coupon {
   display: flex;
   align-items: center;
@@ -2244,6 +2244,205 @@ body.s-locked { overflow: hidden; }
   font-size: 11.5px;
   letter-spacing: 0.04em;
   color: var(--s-grey);
+}
+
+/* ------------------------------------------------------------
+   THE COUPON FIELD
+   ------------------------------------------------------------
+   Somewhere to enter a code you were given — an influencer's, say,
+   which reaches people no link and no automatic arrangement does.
+
+   The field sends a code and reads back what the server says it is
+   worth. It never carries an amount, which is what keeps a typed
+   coupon as safe as one that arrived in a cookie. */
+.s-cpn {
+  margin: 2px 0 14px;
+}
+.s-cpn-label {
+  display: block;
+  font-family: var(--s-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--s-grey);
+  margin-bottom: 7px;
+}
+.s-cpn-row {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+.s-cpn-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-family: var(--s-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.s-cpn-btn {
+  flex: none;
+  padding: 0 18px;
+  font-family: var(--s-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: var(--s-bone);
+  background: var(--s-ink);
+  border: 1px solid var(--s-ink);
+  cursor: pointer;
+  transition: background 0.2s var(--s-ease), color 0.2s var(--s-ease);
+}
+.s-cpn-btn:hover:not(:disabled) { background: var(--s-rust); border-color: var(--s-rust); }
+.s-cpn-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+/* Confirmation in the same mono register as the labels, so an
+   accepted code reads as a recorded fact rather than praise. */
+.s-cpn-ok {
+  margin-top: 7px;
+  font-family: var(--s-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--s-rust);
+}
+
+/* The offers we are willing to advertise, one tap each.
+   Only codes marked `listed` reach the browser — an influencer's is
+   never printed here, or everyone would have it. */
+.s-offers {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.s-offers li { margin: 0; }
+.s-offer {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 12px;
+  background: var(--s-paper-2);
+  /* Dashed, like the applied tag, so an offer and a receipt read as
+     the same family of thing. */
+  border: 1px dashed var(--s-rust);
+  cursor: pointer;
+  font-family: var(--s-mono);
+  text-align: left;
+  transition: background 0.2s var(--s-ease);
+}
+.s-offer:hover:not(:disabled) { background: var(--s-paper); }
+.s-offer-code {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: var(--s-ink);
+}
+.s-offer-worth {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--s-grey);
+}
+.s-offer-do {
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: var(--s-rust);
+}
+/* Already in force: still shown, because it says what you have, but
+   there is nothing left to press. */
+.s-offer[data-live="true"] {
+  cursor: default;
+  opacity: 0.75;
+  border-style: solid;
+}
+
+/* ------------------------------------------------------------
+   THE CELEBRATION
+   ------------------------------------------------------------
+   Shown only when a code actually improved on what somebody already
+   had. Over the whole viewport rather than inside the form: on a
+   phone the coupon row has usually scrolled out of sight by the time
+   the answer arrives, and a change to the total deserves to be seen.
+
+   Above the application overlay, which sits at 1000. */
+.s-won {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: color-mix(in srgb, var(--s-ink) 62%, transparent);
+  /* Older Safari has no color-mix; this is the same thing, first. */
+  background: rgba(18, 35, 79, 0.62);
+  background: color-mix(in srgb, var(--s-ink) 62%, transparent);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  animation: s-won-in 0.22s var(--s-ease) both;
+}
+.s-won-card {
+  width: min(360px, 100%);
+  padding: clamp(26px, 4vw, 38px) clamp(22px, 3.4vw, 32px);
+  text-align: center;
+  background: var(--s-paper);
+  border: 2px solid var(--s-rust);
+  /* The stamp device again, one size up: this is the same assertion
+     the page makes everywhere else, just louder. */
+  box-shadow: 0 0 0 1px var(--s-paper), 0 0 0 3px rgba(217, 53, 31, 0.45);
+  animation: s-won-pop 0.34s var(--s-ease) both;
+}
+.s-won-h {
+  font-family: var(--s-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--s-rust);
+}
+.s-won-figure {
+  font-family: var(--s-heavy);
+  font-size: clamp(40px, 9vw, 62px);
+  line-height: 1;
+  letter-spacing: 0.01em;
+  color: var(--s-ink);
+  margin: 10px 0 8px;
+}
+.s-won-said {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--s-grey);
+  max-width: 26ch;
+  margin: 0 auto;
+}
+.s-won-btn {
+  margin-top: 22px;
+  padding: 12px 26px;
+  font-family: var(--s-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: var(--s-bone);
+  background: var(--s-rust);
+  border: 0;
+  cursor: pointer;
+}
+
+@keyframes s-won-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes s-won-pop {
+  from { opacity: 0; transform: translateY(10px) scale(0.94) rotate(-1.5deg); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Still appears, still readable — it just arrives instead of
+   animating in. Motion must never be what carries the message. */
+@media (prefers-reduced-motion: reduce) {
+  .s-won,
+  .s-won-card { animation: none; }
 }
 
 /* The old figure, kept beside the new one so the saving is legible

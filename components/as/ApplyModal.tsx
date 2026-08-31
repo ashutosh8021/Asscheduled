@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import ModalShell from "./ModalShell";
 import { useModal } from "./ModalProvider";
 import { APPLY, STATES, CONTACT_EMAIL } from "@/lib/copy";
@@ -115,6 +116,31 @@ export default function ApplyModal() {
   const [partnerName, setPartnerName] = useState<string | null>(null);
   const [coupon, setCoupon] = useState<string | null>(null);
 
+  /* The coupon field. `couponInput` is what they are typing;
+     `couponApplied` is what the server accepted and is the only one
+     that travels with the application. Keeping them apart means a
+     half-typed code cannot be submitted, and an accepted one survives
+     them carrying on typing.
+
+     The value is still only ever a code. What it is worth is decided
+     by the server, twice — once here for display, once again when the
+     application is recorded. */
+  const [couponInput, setCouponInput] = useState("");
+  const [couponApplied, setCouponApplied] = useState("");
+  const [couponError, setCouponError] = useState<string | null>(null);
+  const [couponNote, setCouponNote] = useState<string | null>(null);
+  const [couponBusy, setCouponBusy] = useState(false);
+  /* The celebration. Holds the amount to shout about, cleared when it
+     is dismissed — never shown for a code that changed nothing. */
+  const [couponWon, setCouponWon] = useState<number | null>(null);
+  /* The coupons this departure is willing to advertise, from the
+     server. Only the ones marked listed in lib/partners.ts ever arrive
+     here — a private code is never sent to a browser that did not
+     already know it. */
+  const [offers, setOffers] = useState<{ coupon: string; name: string; discountInr: number }[]>(
+    []
+  );
+
   const chosen = DEPARTURES.find((d) => d.id === a.event);
 
   /* Whether the chosen departure collects ID as part of applying. */
@@ -156,10 +182,19 @@ export default function ApplyModal() {
      open and whenever the departure changes, because a code for one
      fest must not price another. */
   useEffect(() => {
+    /* A code accepted for one fest is not a code for another, so
+       switching departure drops it rather than carrying it across and
+       quoting a discount the server will not honour. */
+    setCouponApplied("");
+    setCouponError(null);
+    setCouponNote(null);
+    setCouponWon(null);
+
     if (!a.event) {
       setDiscountInr(0);
       setPartnerName(null);
       setCoupon(null);
+      setOffers([]);
       return;
     }
 
@@ -175,12 +210,14 @@ export default function ApplyModal() {
             discountInr?: number;
             partnerName?: string | null;
             coupon?: string | null;
+            offers?: { coupon: string; name: string; discountInr: number }[];
           } | null
         ) => {
           if (!live || !j) return;
           setDiscountInr(typeof j.discountInr === "number" ? j.discountInr : 0);
           setPartnerName(j.partnerName ?? null);
           setCoupon(j.coupon ?? null);
+          setOffers(Array.isArray(j.offers) ? j.offers : []);
         }
       )
       /* A failed lookup shows full price, which is the safe direction:
@@ -191,6 +228,83 @@ export default function ApplyModal() {
       live = false;
     };
   }, [a.event]);
+
+  /* Try a typed coupon.
+​
+     The server answers three different ways and they are not the same
+     thing: unusable (a typo, another fest's code, an expired one),
+     usable and better than what they had, or usable but worth less
+     than a discount they already get. Only the middle one is worth
+     celebrating, and the last one must not look like a failure — the
+     code was fine, it just lost. */
+  async function applyCoupon(from?: string) {
+    /* Takes the code rather than always reading state, because tapping
+       an offer has to apply it now — setCouponInput would not have
+       landed yet when this runs. The field is filled too, so what was
+       used stays visible. */
+    const code = (from ?? couponInput).trim();
+    if (!code || couponBusy) return;
+    if (from) setCouponInput(from);
+
+    setCouponBusy(true);
+    setCouponError(null);
+    setCouponNote(null);
+
+    /* What they were getting before this attempt, so the celebration
+       can name the change rather than the total. */
+    const before = discountInr;
+
+    try {
+      const res = await fetch(
+        `/api/somewhere/pricing?event=${encodeURIComponent(a.event)}&code=${encodeURIComponent(code)}`
+      );
+      if (!res.ok) throw new Error("lookup failed");
+
+      const j = (await res.json()) as {
+        discountInr?: number;
+        partnerName?: string | null;
+        coupon?: string | null;
+        codeOk?: boolean | null;
+        codeError?: string | null;
+        codeBeaten?: boolean;
+      };
+
+      if (!j.codeOk) {
+        setCouponError(j.codeError ?? "That code did not work.");
+        setCouponApplied("");
+        return;
+      }
+
+      const now = typeof j.discountInr === "number" ? j.discountInr : 0;
+      setDiscountInr(now);
+      setPartnerName(j.partnerName ?? null);
+      setCoupon(j.coupon ?? null);
+      setCouponApplied(code);
+
+      if (j.codeBeaten) {
+        /* Valid, but they already had more. Kept applied anyway —
+           it costs nothing and it is the code they were given. */
+        setCouponNote(`Your ${j.coupon} discount is bigger, so we kept that one.`);
+        return;
+      }
+
+      /* Celebrated only when the code actually improved on what they
+         had — applying one worth less than an automatic discount is
+         not a win and must not be dressed as one.
+
+         The figure shown is the discount now in force, not the
+         increase. Somebody entering a ₹1,100 code who already had
+         ₹1,000 has ₹1,100 off; telling them "₹100" would be arithmetic
+         about our pricing rather than an answer about their total. */
+      if (now > before) setCouponWon(now);
+    } catch {
+      /* A failed lookup leaves the price exactly as it was, which is
+         the safe direction: nobody is quoted less than they owe. */
+      setCouponError("Could not check that code. Try again.");
+    } finally {
+      setCouponBusy(false);
+    }
+  }
 
   /* Async because a large photo is shrunk here, before it is held for
      sending. Doing it on pick rather than on submit means somebody
@@ -322,10 +436,16 @@ export default function ApplyModal() {
       const res = await fetch("/api/somewhere/apply", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        /* The plan id and the UTR travel; the amount does not. What is
-           owed is the server's to decide, from this plan and the state
-           above — see lib/packages.ts and lib/partners.ts. */
-        body: JSON.stringify({ ...a, plan: activePlan?.id ?? "", utr: utr.trim() }),
+        /* The plan id, the UTR and the coupon CODE travel; no amount
+           does. What is owed is the server's to decide, from this plan,
+           the state above and whatever that code turns out to be worth
+           — see lib/packages.ts and lib/partners.ts. */
+        body: JSON.stringify({
+          ...a,
+          plan: activePlan?.id ?? "",
+          utr: utr.trim(),
+          coupon: couponApplied,
+        }),
       });
       const json = (await res.json()) as {
         ok: boolean;
@@ -846,9 +966,9 @@ export default function ApplyModal() {
                 <hr className="s-rule" style={{ margin: "4px 0 2px" }} />
                 <p className="s-up-head">{APPLY.payHead}</p>
 
-                {/* The badge is text. The server decided this, and a
-                    field here would only invite someone to try
-                    changing it. */}
+                {/* The badge is text, not an input. What is in force
+                    was decided by the server; the field below is for
+                    offering a code, not for editing this one. */}
                 {coupon && discountInr > 0 ? (
                   <p className="s-coupon">
                     <span className="s-coupon-tag">{coupon}</span>
@@ -857,6 +977,126 @@ export default function ApplyModal() {
                     </span>
                   </p>
                 ) : null}
+
+                {/* Somewhere to put a code you were given. Everything
+                    it can do is decided server-side: this sends the
+                    string and reads back what it is worth. */}
+                <div className="s-cpn">
+                  <label className="s-cpn-label" htmlFor="ap-coupon">
+                    {APPLY.couponLabel}
+                  </label>
+
+                  <div className="s-cpn-row">
+                    <input
+                      id="ap-coupon"
+                      className="s-input s-cpn-input"
+                      value={couponInput}
+                      autoComplete="off"
+                      spellCheck={false}
+                      placeholder={APPLY.couponPh}
+                      onChange={(e) => {
+                        setCouponInput(e.target.value.toUpperCase());
+                        setCouponError(null);
+                      }}
+                      /* Enter applies the coupon instead of submitting
+                         the application — pressing it in a coupon box
+                         means "try this", never "I am finished". */
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          void applyCoupon();
+                        }
+                      }}
+                      aria-invalid={couponError !== null}
+                      aria-describedby={couponError ? "ap-coupon-err" : undefined}
+                    />
+                    <button
+                      type="button"
+                      className="s-cpn-btn"
+                      disabled={couponBusy || couponInput.trim().length === 0}
+                      onClick={() => void applyCoupon()}
+                    >
+                      {couponBusy ? "…" : APPLY.couponCta}
+                    </button>
+                  </div>
+
+                  {/* The offers we are happy to advertise, as buttons.
+                      One tap fills the field and applies it — the code
+                      still goes to the server to be priced, so this is
+                      a shortcut past typing and nothing more.
+
+                      An offer already in force says so instead of
+                      inviting a tap that would change nothing. */}
+                  {offers.length ? (
+                    <ul className="s-offers">
+                      {offers.map((o) => {
+                        const live = coupon === o.coupon && discountInr > 0;
+                        return (
+                          <li key={o.coupon}>
+                            <button
+                              type="button"
+                              className="s-offer"
+                              data-live={live}
+                              disabled={live || couponBusy}
+                              onClick={() => void applyCoupon(o.coupon)}
+                            >
+                              <span className="s-offer-code">{o.coupon}</span>
+                              <span className="s-offer-worth">
+                                {inr(o.discountInr)} {APPLY.offerOff}
+                              </span>
+                              <span className="s-offer-do">
+                                {live ? APPLY.offerOn : APPLY.couponCta}
+                              </span>
+                            </button>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  ) : null}
+
+                  {couponError ? (
+                    <p id="ap-coupon-err" className="s-err">
+                      {couponError}
+                    </p>
+                  ) : null}
+                  {couponNote ? <p className="s-hint">{couponNote}</p> : null}
+                  {!couponError && !couponNote && couponApplied ? (
+                    <p className="s-cpn-ok">
+                      {couponApplied} {APPLY.couponOk}
+                    </p>
+                  ) : null}
+                </div>
+
+                {/* The celebration. Over the form rather than in it:
+                    it is an interruption by design, and it has to be
+                    seen on a phone where the coupon row may already
+                    have scrolled away.
+
+                    Portalled to <body>, and it has to be. The modal
+                    scrim carries a backdrop-filter, which makes it the
+                    containing block for `position: fixed` descendants
+                    — left in place, this rendered 1,277px above the
+                    viewport, present in the DOM and invisible to
+                    everybody. */}
+                {couponWon !== null && typeof document !== "undefined"
+                  ? createPortal(
+                      <div className="s-won" role="status" onClick={() => setCouponWon(null)}>
+                        <div className="s-won-card">
+                          <p className="s-won-h">{APPLY.couponWonHead}</p>
+                          <p className="s-won-figure">{inr(couponWon)}</p>
+                          <p className="s-won-said">{APPLY.couponWonSaid}</p>
+                          <button
+                            type="button"
+                            className="s-won-btn"
+                            onClick={() => setCouponWon(null)}
+                          >
+                            {APPLY.couponWonCta}
+                          </button>
+                        </div>
+                      </div>,
+                      document.body
+                    )
+                  : null}
 
                 <div className="s-pay-amount">
                   {grossFare !== null && grossFare !== amountDue ? (
