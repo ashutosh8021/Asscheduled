@@ -171,7 +171,6 @@ const PULSE_FESTIVAL_PLUS_DELHI: Fares = {
   Gujarat: 16379,
   Telangana: 16379,
   "Andhra Pradesh": 16379,
-  Odisha: 16479,
   Goa: 16779,
   Nagaland: 16879,
   Manipur: 16879,
@@ -180,6 +179,11 @@ const PULSE_FESTIVAL_PLUS_DELHI: Fares = {
   Karnataka: 17179,
   Assam: 17479,
   Meghalaya: 17479,
+  /* Set by hand on 2026-08-30, out of step with the rest of this
+     table: every other fare is derived from the same base and ends in
+     79, and Odisha was 16,479 before this. Kept where the ordering
+     puts it — dearest — rather than in its old place. */
+  Odisha: 19000,
 };
 
 const PULSE_PLANS: Plan[] = [
