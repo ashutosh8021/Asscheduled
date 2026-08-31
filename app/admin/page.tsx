@@ -7,17 +7,19 @@ import {
   listMessages,
   listCollaborations,
   applicationCounts,
+  arrivalCounts,
   listDocumentBundles,
   documentBundleCount,
   APPLICATION_STATUSES,
 } from "@/lib/adminData";
-import { DEPARTURES } from "@/lib/departures";
+import { ALL_DEPARTURES } from "@/lib/departures";
 import ApplicationsTable from "./ApplicationsTable";
 import MessagesTable from "./MessagesTable";
 import CollabsTable from "./CollabsTable";
 import DocumentsTab from "./DocumentsTab";
 import SignOut from "./SignOut";
 import ResyncSheet from "./ResyncSheet";
+import Arrivals from "./Arrivals";
 import { sheetConfigured } from "@/lib/sheet";
 import "./admin.css";
 
@@ -45,9 +47,12 @@ export default async function AdminPage({
       ? sp.tab
       : "applications";
 
-  const [counts, docCount, apps, messages, collabs, bundles] = await Promise.all([
+  const [counts, docCount, arrivals, apps, messages, collabs, bundles] = await Promise.all([
     applicationCounts(),
     documentBundleCount(),
+    /* Totals for the badge and for the "something came in" pop. Cheap
+       enough to run on every tab: two counts, no rows. */
+    arrivalCounts(null),
     tab === "applications"
       ? listApplications({ status: sp.status, departure: sp.departure })
       : Promise.resolve([]),
@@ -76,8 +81,12 @@ export default async function AdminPage({
             <Link className="a-tab" href="/admin" data-on={tab === "applications"}>
               APPLICATIONS<span className="a-tab-count">{counts.all ?? 0}</span>
             </Link>
+            {/* ENQUIRIES, not MESSAGES: the partner panel calls them
+                that, the PULSE page calls them that, and this was the
+                only tab with no count — so it looked empty from the
+                outside and a real enquiry sat unread. */}
             <Link className="a-tab" href="/admin?tab=messages" data-on={tab === "messages"}>
-              MESSAGES
+              ENQUIRIES<span className="a-tab-count">{arrivals.enquiries}</span>
             </Link>
             <Link className="a-tab" href="/admin?tab=documents" data-on={tab === "documents"}>
               DOCUMENTS<span className="a-tab-count">{docCount}</span>
@@ -87,6 +96,7 @@ export default async function AdminPage({
             </Link>
           </div>
 
+          <Arrivals applications={arrivals.applications} enquiries={arrivals.enquiries} />
           <ResyncSheet connected={sheetConfigured()} />
           <SignOut email={admin.email} />
         </div>
@@ -109,7 +119,7 @@ export default async function AdminPage({
               <Link className="a-tab" href={link({ departure: undefined })} data-on={!sp.departure}>
                 EVERY DEPARTURE
               </Link>
-              {DEPARTURES.map((d) => (
+              {ALL_DEPARTURES.map((d) => (
                 <Link
                   key={d.id}
                   className="a-tab"

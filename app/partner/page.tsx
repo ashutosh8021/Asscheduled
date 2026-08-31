@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { currentViewer } from "@/lib/admin";
-import { listApplications, listDocumentBundles, listMessagesFor } from "@/lib/adminData";
-import { DEPARTURES } from "@/lib/departures";
+import {
+  arrivalCounts,
+  listApplications,
+  listDocumentBundles,
+  listMessagesFor,
+} from "@/lib/adminData";
+import { ALL_DEPARTURES } from "@/lib/departures";
 import PartnerRoster from "./PartnerRoster";
 import SignOut from "../admin/SignOut";
+import Arrivals from "../admin/Arrivals";
 import "../admin/admin.css";
 
 /* The festival's own view of its departure.
@@ -37,9 +43,12 @@ export default async function PartnerPage() {
      another one. */
   const scope = viewer.departures.length
     ? viewer.departures
-    : DEPARTURES.filter((d) => d.sharedWith).map((d) => d.id);
+    : ALL_DEPARTURES.filter((d) => d.sharedWith).map((d) => d.id);
 
-  const [apps, bundles, enquiries] = await Promise.all([
+  const [arrivals, apps, bundles, enquiries] = await Promise.all([
+    /* Two numbers for the "something came in" pop, counted against
+       this partner's own scope — never the whole table. */
+    arrivalCounts(scope),
     Promise.all(scope.map((id) => listApplications({ departure: id }))).then((r) => r.flat()),
     Promise.all(scope.map((id) => listDocumentBundles(id))).then((r) => r.flat()),
     /* Custom-booking questions asked from this departure's page. Same
@@ -56,7 +65,7 @@ export default async function PartnerPage() {
   );
 
   const fests = scope
-    .map((id) => DEPARTURES.find((d) => d.id === id)?.fest ?? id)
+    .map((id) => ALL_DEPARTURES.find((d) => d.id === id)?.fest ?? id)
     .join(" · ");
 
   return (
@@ -64,6 +73,7 @@ export default async function PartnerPage() {
       <div className="a-wrap">
         <div className="a-bar">
           <span className="a-bar-title">AS SCHEDULED × {fests}</span>
+          <Arrivals applications={arrivals.applications} enquiries={arrivals.enquiries} />
           <SignOut email={viewer.email} />
         </div>
 

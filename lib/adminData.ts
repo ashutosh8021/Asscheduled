@@ -445,3 +445,77 @@ export async function setApplicationStatus(
     return false;
   }
 }
+
+/* ------------------------------------------------------------
+   NEW ARRIVALS
+   ------------------------------------------------------------
+   How many applications and enquiries exist right now, as two
+   numbers. Polled by the panels so somebody watching the page learns
+   that something came in without refreshing.
+
+   This exists because the notification emails go to an inbox nobody
+   can currently read: the panel is the only place a new application
+   or question shows up, and a panel you have to remember to reload is
+   a panel that misses things. */
+
+export interface Arrivals {
+  applications: number;
+  enquiries: number;
+}
+
+/**
+ * Count rows without fetching them.
+ *
+ * PostgREST returns the total in Content-Range when asked with
+ * `count=exact`, and `range: 0-0` keeps the body to a single row —
+ * so this stays cheap enough to poll every half minute rather than
+ * pulling every application back each time.
+ */
+async function countRows(path: string): Promise<number> {
+  const cfg = supabaseConfig();
+  if (!cfg) return 0;
+
+  try {
+    const res = await fetch(`${cfg.url}/rest/v1/${path}`, {
+      headers: { ...headers(cfg.serviceRoleKey), prefer: "count=exact", range: "0-0" },
+      cache: "no-store",
+    });
+    if (!res.ok) return 0;
+    /* "0-0/12" — the total is what follows the slash. "*" when the
+       range was unsatisfiable, which for an empty table means zero. */
+    const total = (res.headers.get("content-range") ?? "").split("/")[1];
+    const n = Number(total);
+    return Number.isFinite(n) ? n : 0;
+  } catch (err) {
+    console.error(`[adminData] count ${path} threw`, err);
+    return 0;
+  }
+}
+
+/**
+ * Current totals for a viewer.
+ *
+ * `departures` null means an admin — everything, including enquiries
+ * that are about no departure at all. A partner passes their own
+ * scope and gets only what that scope covers, exactly as their panel
+ * does; the count must never reveal that something exists which they
+ * are not allowed to open.
+ */
+export async function arrivalCounts(departures: string[] | null): Promise<Arrivals> {
+  if (departures === null) {
+    const [applications, enquiries] = await Promise.all([
+      countRows("applications?select=id"),
+      countRows("messages?select=id"),
+    ]);
+    return { applications, enquiries };
+  }
+
+  if (departures.length === 0) return { applications: 0, enquiries: 0 };
+
+  const list = departures.map((d) => encodeURIComponent(d)).join(",");
+  const [applications, enquiries] = await Promise.all([
+    countRows(`applications?departure_code=in.(${list})&select=id`),
+    countRows(`messages?departure_code=in.(${list})&select=id`),
+  ]);
+  return { applications, enquiries };
+}
