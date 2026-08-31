@@ -52,6 +52,14 @@ export interface Trip {
   /* Merchandising rails — build spec §6, §7, §8. Driven by real data only:
      `almostFull` is computed from seats, never hand-set to fake urgency. */
   mostWanted?: boolean;
+  /**
+   * Off the website, but not out of the codebase.
+   *
+   * Kept in ALL_TRIPS so anything already pointing at it still
+   * resolves; absent from TRIPS, so no listing, page, board or form
+   * offers it. Deleting the flag puts it back.
+   */
+  hidden?: boolean;
   /* One-line editorial hook for cards and hero. */
   hook: string;
   hero: ImageSlot;
@@ -85,7 +93,11 @@ export function almostFullTrips(): Trip[] {
   return TRIPS.filter(isAlmostFull);
 }
 
-export const TRIPS: Trip[] = [
+/**
+ * Every Season-01 trip file, hidden ones included. Lookups only —
+ * see the note on `hidden` in the Trip interface. Render TRIPS.
+ */
+export const ALL_TRIPS: Trip[] = [
   {
     id: "PUL-01", slug: "pulse-aiims-delhi",
     fest: "PULSE", campus: "AIIMS DELHI", city: "NEW DELHI",
@@ -139,6 +151,10 @@ export const TRIPS: Trip[] = [
     exc: ["Sleep — optional, statistically unlikely", "Personal shopping and merch damage", "Travel insurance (offered at payment — take it)", "Laundry, room service ambitions", "Your excuses on day six", "Anything the Trip Captain vetoes"]
   },
   {
+    /* Taken off the website on 2026-08-30 on instruction, alongside
+       REN-26 in lib/departures.ts. Data kept; delete `hidden` to
+       restore it. */
+    hidden: true,
     id: "REN-02", slug: "rendezvous-iit-delhi",
     fest: "RENDEZVOUS", campus: "IIT DELHI", city: "NEW DELHI",
     hook: "Five nights off Hauz Khas, and a fest that takes the whole campus hostage.",
@@ -293,6 +309,15 @@ export const TRIPS: Trip[] = [
   }
 ];
 
+/**
+ * The trip files the website has. Hidden ones are already gone.
+ *
+ * Filtered once, here, rather than at each of the half-dozen places
+ * that list trips — taking a fest off the site must not depend on
+ * remembering all of them.
+ */
+export const TRIPS: Trip[] = ALL_TRIPS.filter((t) => !t.hidden);
+
 export const SOON: [string, string][] = [
   ["THOMSO", "IIT ROORKEE"], ["MOOD INDIGO", "IIT BOMBAY"], ["ALCHERINGA", "IIT GUWAHATI"],
   ["SAARANG", "IIT MADRAS"], ["SUNBURN", "GOA"], ["WAVES", "BITS GOA"],
@@ -302,4 +327,11 @@ export const SOON: [string, string][] = [
 export function getTrip(code: string): Trip | undefined {
   const key = code.toLowerCase();
   return TRIPS.find((t) => t.id.toLowerCase() === key || t.slug === key);
+}
+
+/** By id or slug, hidden included. For anything holding a reference to
+ *  a trip that has since come off the site. */
+export function getAnyTrip(code: string): Trip | undefined {
+  const key = code.toLowerCase();
+  return ALL_TRIPS.find((t) => t.id.toLowerCase() === key || t.slug === key);
 }

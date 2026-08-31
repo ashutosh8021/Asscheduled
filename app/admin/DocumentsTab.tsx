@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { DEPARTURES } from "@/lib/departures";
+import { ALL_DEPARTURES } from "@/lib/departures";
 import type { DocumentBundle } from "@/lib/adminData";
 
 /* Every uploaded document in one place, grouped by traveller.
@@ -27,7 +27,7 @@ const KIND_LABEL: Record<string, string> = {
 const EXPECTED = ["photo_id", "college_id"];
 
 function departureName(code: string): string {
-  const d = DEPARTURES.find((x) => x.id === code);
+  const d = ALL_DEPARTURES.find((x) => x.id === code);
   return d ? `${d.fest} — ${d.campus}` : code;
 }
 

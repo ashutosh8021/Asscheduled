@@ -10,7 +10,7 @@ import { abs } from "@/lib/site";
 export const metadata: Metadata = {
   title: "SOMEWHERE ELSE — Departures · AS SCHEDULED",
   description:
-    "College fests. New cities. New faces. A few days outside the usual programming. Rendezvous at IIT Delhi, Thomso at IIT Roorkee — dates, batches and what is included.",
+    "College fests. New cities. New faces. A few days outside the usual programming. Pulse at AIIMS Delhi, Thomso at IIT Roorkee — dates, batches and what is included.",
   alternates: { canonical: abs("/somewhere") },
 };
 

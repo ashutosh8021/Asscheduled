@@ -21,7 +21,6 @@ const DEVICES = [
 const ROUTES = [
   "/",
   "/somewhere",
-  "/somewhere/rendezvous-iit-delhi",
   "/somewhere/thomso-iit-roorkee",
   "/gallery",
   "/about",

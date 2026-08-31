@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { Fragment, useState } from "react";
 import type { ApplicationRow, ApplicationStatus } from "@/lib/adminData";
-import { DEPARTURES, inr } from "@/lib/departures";
+import { ALL_DEPARTURES, inr } from "@/lib/departures";
 import { findPlan } from "@/lib/packages";
 import { Detail, fullWhen, type Field } from "./Detail";
 import DocumentsPanel from "./DocumentsPanel";
@@ -21,7 +21,7 @@ const NEXT: { label: string; status: ApplicationStatus }[] = [
 const COLUMNS = 11;
 
 function departureName(code: string): string {
-  const d = DEPARTURES.find((x) => x.id === code);
+  const d = ALL_DEPARTURES.find((x) => x.id === code);
   return d ? `${d.fest} — ${d.campus}` : code;
 }
 
@@ -88,7 +88,7 @@ export default function ApplicationsTable({ rows }: { rows: ApplicationRow[] }) 
        Gating on "accepted" alone hid every PULSE applicant's uploads
        completely — the files were in the bucket and nothing in the
        admin said so. Anywhere else stays clean. */
-    const departure = DEPARTURES.find((x) => x.id === r.departure_code);
+    const departure = ALL_DEPARTURES.find((x) => x.id === r.departure_code);
     const mayHaveDocuments = r.status === "accepted" || departure?.documentsAtApply === true;
 
     const docs: Field[] = mayHaveDocuments

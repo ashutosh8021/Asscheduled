@@ -10,7 +10,7 @@ import { abs } from "@/lib/site";
 export const metadata: Metadata = {
   title: "AS SCHEDULED — The next story is somewhere else",
   description:
-    "College fests. New cities. New faces. A few days outside the usual programming. Rendezvous at IIT Delhi and Thomso at IIT Roorkee, all inclusive.",
+    "College fests. New cities. New faces. A few days outside the usual programming. Pulse at AIIMS Delhi and Thomso at IIT Roorkee, all inclusive.",
   alternates: { canonical: abs("/") },
   openGraph: {
     title: "AS SCHEDULED — The next story is somewhere else",

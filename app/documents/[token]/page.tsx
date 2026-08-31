@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Shell from "@/components/as/Shell";
 import UploadForm from "./UploadForm";
 import { listDocuments, resolveUploadToken, type DocumentKind } from "@/lib/documents";
-import { getDeparture, DEPARTURES } from "@/lib/departures";
+import { getDeparture, ALL_DEPARTURES } from "@/lib/departures";
 
 /* The document upload page for an accepted applicant.
 
@@ -49,7 +49,7 @@ export default async function DocumentsPage({
 
   const departure =
     getDeparture(
-      DEPARTURES.find((d) => d.id === target.departure_code)?.slug ?? ""
+      ALL_DEPARTURES.find((d) => d.id === target.departure_code)?.slug ?? ""
     ) ?? null;
 
   const already = (await listDocuments(target.id)).map((d) => d.kind) as DocumentKind[];

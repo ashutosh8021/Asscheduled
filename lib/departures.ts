@@ -104,6 +104,20 @@ export interface Departure {
    * browser stops nobody who opens devtools.
    */
   soldOut?: boolean;
+
+  /**
+   * Off the website, but not out of the codebase.
+   *
+   * A hidden departure appears nowhere a visitor can reach: no card,
+   * no listing, no detail page, no sitemap entry, and the apply route
+   * refuses it. It stays in ALL_DEPARTURES so that anything already
+   * attached to it still resolves — an application taken before it was
+   * hidden must still show its fest name in the admin rather than a
+   * bare code.
+   *
+   * Deliberately not deletion. Turning it back on is one line.
+   */
+  hidden?: boolean;
   /** Genuine remaining count. null when not confirmed — the UI then
    *  shows "Spots are limited. Vibes are unlimited." instead of a number.
    *  TODO(mannat): wire real availability before launch. */
@@ -235,7 +249,15 @@ export interface Departure {
   sharedWith?: string;
 }
 
-export const DEPARTURES: Departure[] = [
+/**
+ * Every departure, hidden ones included.
+ *
+ * For LOOKUPS ONLY — the admin naming a code on an old application,
+ * the sheet, a document upload link somebody already holds. Never
+ * render this list: it contains departures that are deliberately not
+ * on the website. Use DEPARTURES below for anything a visitor sees.
+ */
+export const ALL_DEPARTURES: Departure[] = [
   {
     /* PULSE'26 — AIIMS New Delhi's own festival. Structured on the
        Rendezvous departure per instruction ("keep it like delhi"), with
@@ -411,6 +433,11 @@ export const DEPARTURES: Departure[] = [
   },
   {
     id: "REN-26",
+    /* Taken off the website on 2026-08-30 on instruction. The data
+       stays — see `hidden` — so any application already carrying
+       REN-26 still resolves to a name in the admin. Delete this line
+       to put it back. */
+    hidden: true,
     slug: "rendezvous-iit-delhi",
     fest: "RENDEZVOUS'26",
     campus: "IIT DELHI",
@@ -697,6 +724,16 @@ export const DEPARTURES: Departure[] = [
 ];
 
 /**
+ * The departures the website has. Hidden ones are already gone.
+ *
+ * This is the default export everything renders from, and it is
+ * filtered here rather than at each call site on purpose: there are
+ * two dozen places that list departures, and hiding one must not
+ * depend on remembering all of them.
+ */
+export const DEPARTURES: Departure[] = ALL_DEPARTURES.filter((d) => !d.hidden);
+
+/**
  * Departures run with a partner festival.
  *
  * The single derivation of "who is this shared with", used by the
@@ -705,13 +742,21 @@ export const DEPARTURES: Departure[] = [
  * for both to read the same field.
  */
 export function sharedDepartureIds(): string[] {
-  return DEPARTURES.filter((d) => d.sharedWith).map((d) => d.id);
+  /* ALL_DEPARTURES: hiding a departure does not un-share the
+     applications already taken for it. A partner who could read them
+     yesterday must still be able to today, and the privacy policy
+     said so at the time. */
+  return ALL_DEPARTURES.filter((d) => d.sharedWith).map((d) => d.id);
 }
 
 /** By id, for the places that hold a departure code rather than a
- *  slug — the plan cards, the admin, the sheet. */
+ *  slug — the plan cards, the admin, the sheet.
+ *
+ *  Searches ALL_DEPARTURES, hidden included. This answers "what is
+ *  REN-26 called", and an application taken while it was live still
+ *  needs that answer after it comes off the website. */
 export function getDepartureById(id: string): Departure | undefined {
-  return DEPARTURES.find((d) => d.id === id);
+  return ALL_DEPARTURES.find((d) => d.id === id);
 }
 
 export function getDeparture(slug: string): Departure | undefined {

@@ -18,7 +18,7 @@
  * See docs/admin.md for the script itself and the deployment steps.
  */
 
-import { DEPARTURES, sharedDepartureIds } from "./departures";
+import { ALL_DEPARTURES, sharedDepartureIds } from "./departures";
 
 /* ------------------------------------------------------------------
    WHAT GETS MIRRORED
@@ -171,7 +171,7 @@ export function sheetConfigured(): boolean {
 
 /** The display name a sheet row uses for a departure. */
 export function departureLabel(code: string): string {
-  const d = DEPARTURES.find((x) => x.id === code);
+  const d = ALL_DEPARTURES.find((x) => x.id === code);
   return d ? `${d.fest} — ${d.campus}` : code;
 }
 
