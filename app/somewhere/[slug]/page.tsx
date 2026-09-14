@@ -8,7 +8,7 @@ import PlanCards from "@/components/as/PlanCards";
 import { hasPlans } from "@/lib/packages";
 import Link from "next/link";
 import { CONTACT, CONTACT_EMAIL, DETAIL, SOMEWHERE } from "@/lib/copy";
-import { DEPARTURES, batchLabel, getDeparture, priceRange } from "@/lib/departures";
+import { DEPARTURES, batchLabel, closure, getDeparture, priceRange } from "@/lib/departures";
 import { abs } from "@/lib/site";
 
 /* Experience detail — comps (7) and (8). One template, both departures;
@@ -49,6 +49,10 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
   const d = getDeparture(slug);
   if (!d) notFound();
 
+  /* Null when open. Everything below asks this rather than `soldOut`,
+     so a paused departure never says "sold out". */
+  const shut = closure(d);
+
   return (
     /* overHero: the header floats transparent over the full-screen
        photography until it has scrolled past. */
@@ -62,13 +66,7 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
           clip={d.clip}
           hint={d.campus}
           stamp={
-            d.soldOut
-              ? {
-                  label: SOMEWHERE.soldOutLabel,
-                  top: SOMEWHERE.soldOutArcTop,
-                  bottom: SOMEWHERE.soldOutArcBottom,
-                }
-              : undefined
+            shut ? { label: shut.label, top: shut.arcTop, bottom: shut.arcBottom } : undefined
           }
         >
           <p className="s-eyebrow" style={{ color: "var(--s-butter)" }}>
@@ -174,9 +172,9 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
 
                 {/* A span, not a disabled button: there is nothing to
                     press, so it should not look pressable or take focus. */}
-                {d.soldOut ? (
+                {shut ? (
                   <span className="s-btn-closed" style={{ width: "100%", justifyContent: "center" }}>
-                    {SOMEWHERE.soldOutCta}
+                    {shut.cta}
                   </span>
                 ) : (
                   <ApplyButton label={DETAIL.applyCta} event={d.id} full source="departure-panel" />
@@ -185,8 +183,8 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
                 {/* A real remaining count when one is confirmed; the
                     comp's line when it is not. Never a fake number. */}
                 <p className="s-hint" style={{ marginTop: 14 }}>
-                  {d.soldOut ? (
-                    SOMEWHERE.soldOutNote
+                  {shut ? (
+                    shut.note
                   ) : (
                     <>
                       ⚡{" "}
@@ -209,7 +207,7 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
         {hasPlans(d.id) ? (
           <section className="s-wrap s-sec-tight">
             <Reveal>
-              <PlanCards departureId={d.id} soldOut={d.soldOut === true} />
+              <PlanCards departureId={d.id} soldOut={shut !== null} />
             </Reveal>
           </section>
         ) : null}
@@ -333,8 +331,8 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
                   <br />
                   {DETAIL.stamp[1]}
                 </span>
-                {d.soldOut ? (
-                  <span className="s-btn-closed">{SOMEWHERE.soldOutCta}</span>
+                {shut ? (
+                  <span className="s-btn-closed">{shut.cta}</span>
                 ) : (
                   <ApplyButton label={DETAIL.applyCta} event={d.id} source="departure-close" />
                 )}

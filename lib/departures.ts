@@ -12,6 +12,7 @@
    ============================================================ */
 
 import { departureSpan } from "./packages";
+import { SOMEWHERE } from "./copy";
 
 /** An image slot. `src` stays null until approved photography exists;
  *  components render a labelled placeholder with identical geometry. */
@@ -104,6 +105,18 @@ export interface Departure {
    * browser stops nobody who opens devtools.
    */
   soldOut?: boolean;
+
+  /**
+   * WHY it is closed. "full" when the seats are gone, "paused" when we
+   * have simply stopped taking applications for now.
+   *
+   * They are not the same thing and the difference is not cosmetic:
+   * stamping SOLD OUT on a departure that has seats left tells people
+   * something untrue about why they cannot apply, and invites them to
+   * stop asking. Defaults to "full", which is what soldOut meant
+   * before this existed.
+   */
+  closedReason?: "full" | "paused";
 
   /**
    * Off the website, but not out of the codebase.
@@ -293,6 +306,15 @@ export const ALL_DEPARTURES: Departure[] = [
        applicant is actually quoted is the one in the fare table. */
     price: departureSpan("PUL-26")!.min,
     priceMax: departureSpan("PUL-26")!.max,
+    /* Paused on instruction, 2026-09-14: not taking applications for
+       now. Closed rather than hidden — the page, the plans and the
+       prices stay readable, and anyone PULSE has already sent here
+       still sees what they applied for. `closedReason` keeps it from
+       claiming to be full, which it is not.
+
+       Reopening is deleting these two lines. */
+    soldOut: true,
+    closedReason: "paused",
     /* AIIMS asks for ID up front — see the note on the field. */
     documentsAtApply: true,
     panelStamps: ["₹1,000 off at final payment", "Delegate pass included"],
@@ -820,4 +842,44 @@ export function priceRange(d: Pick<Departure, "price" | "priceMax">): string {
   return d.priceMax && d.priceMax !== d.price
     ? `${inr(d.price)} – ${inr(d.priceMax)}`
     : inr(d.price);
+}
+
+/**
+ * What a closed departure should say, and why.
+ *
+ * One function so every surface agrees. Before this, each render site
+ * reached for SOMEWHERE.soldOut* directly, which meant a departure
+ * that was merely paused would still have been stamped SOLD OUT on
+ * the card, the hero, the button and the note — four separate lies to
+ * fix in four separate files.
+ *
+ * Returns null when the departure is open, so callers can branch on
+ * one value instead of two.
+ */
+export function closure(d: Pick<Departure, "soldOut" | "closedReason">): {
+  label: string;
+  arcTop: string;
+  arcBottom: string;
+  note: string;
+  cta: string;
+} | null {
+  if (!d.soldOut) return null;
+
+  if (d.closedReason === "paused") {
+    return {
+      label: SOMEWHERE.pausedLabel,
+      arcTop: SOMEWHERE.pausedArcTop,
+      arcBottom: SOMEWHERE.pausedArcBottom,
+      note: SOMEWHERE.pausedNote,
+      cta: SOMEWHERE.pausedCta,
+    };
+  }
+
+  return {
+    label: SOMEWHERE.soldOutLabel,
+    arcTop: SOMEWHERE.soldOutArcTop,
+    arcBottom: SOMEWHERE.soldOutArcBottom,
+    note: SOMEWHERE.soldOutNote,
+    cta: SOMEWHERE.soldOutCta,
+  };
 }

@@ -5,7 +5,7 @@ import Slot from "./Slot";
 import Stamp from "./Stamp";
 import Tilt from "./Tilt";
 import { SOMEWHERE } from "@/lib/copy";
-import { batchLabel, inr, priceRange, type Departure } from "@/lib/departures";
+import { batchLabel, closure, inr, priceRange, type Departure } from "@/lib/departures";
 import type { EffectivePrice } from "@/lib/partners";
 
 /* Two card shapes, both from the comps:
@@ -37,6 +37,9 @@ export default function DepartureCard({
   pricing,
 }: Props) {
   const href = `/somewhere/${d.slug}`;
+  /* Null when open. What a closed card says — and why — comes from
+     one place, so a paused departure is never stamped SOLD OUT. */
+  const shut = closure(d);
   const shown = pricing ?? { price: d.price, priceMax: d.priceMax, discountInr: 0 };
 
   if (variant === "detail") {
@@ -62,7 +65,7 @@ export default function DepartureCard({
 
             <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
               <p className="s-chip">{batchLabel(d.batches)}</p>
-              {d.soldOut ? <span className="s-soldout">{SOMEWHERE.soldOutLabel}</span> : null}
+              {shut ? <span className="s-soldout">{shut.label}</span> : null}
             </div>
 
           <hr className="s-rule" />
@@ -122,7 +125,7 @@ export default function DepartureCard({
 
   return (
     <Tilt max={5} lift={10}>
-      <article className={d.soldOut ? "s-card s-card-closed" : "s-card"}>
+      <article className={shut ? "s-card s-card-closed" : "s-card"}>
         <div className="s-card-media">
           <Slot
             slot={d.card}
@@ -130,12 +133,12 @@ export default function DepartureCard({
             sizes="(max-width: 900px) 100vw, 46vw"
             hint={d.campus}
           />
-            {d.soldOut ? (
+            {shut ? (
               <Stamp
                 className="s-stamp-round-over"
-                label={SOMEWHERE.soldOutLabel}
-                top={SOMEWHERE.soldOutArcTop}
-                bottom={SOMEWHERE.soldOutArcBottom}
+                label={shut.label}
+                top={shut.arcTop}
+                bottom={shut.arcBottom}
               />
             ) : null}
           <div className="s-card-over">

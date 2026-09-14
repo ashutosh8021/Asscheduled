@@ -79,7 +79,16 @@ export async function POST(request: Request) {
      message, because "did not pass validation" would be baffling when
      every field was filled in correctly. */
   if (departure!.soldOut) {
-    return fail(`${departure!.fest} is full. Applications are closed.`, 409, ["event"]);
+    /* The reason, not just the refusal. Telling somebody a departure
+       is full when it is only paused is a different claim, and they
+       act on it — one means stop asking, the other means ask later. */
+    return fail(
+      departure!.closedReason === "paused"
+        ? `${departure!.fest} is not taking applications right now.`
+        : `${departure!.fest} is full. Applications are closed.`,
+      409,
+      ["event"]
+    );
   }
 
   const reference = newReference();

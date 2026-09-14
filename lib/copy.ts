@@ -201,6 +201,15 @@ export const SOMEWHERE = {
   soldOutArcBottom: "SEASON 02",
   soldOutNote: "This one is full. Applications are closed.",
   soldOutCta: "SOLD OUT",
+
+  /* Closed, but not full — the two are different and saying the wrong
+     one is a lie about why somebody cannot apply. Used when a
+     departure sets closedReason: "paused". */
+  pausedLabel: "PAUSED",
+  pausedArcTop: "APPLICATIONS PAUSED",
+  pausedArcBottom: "SEASON 02",
+  pausedNote: "Applications are paused while we work through the ones we have.",
+  pausedCta: "APPLICATIONS PAUSED",
   priceLabel: "PRICE (ALL INCLUSIVE)",
   pricePer: "/ person",
   priceIncludes: ["Travel", "Stay", "Food", "Event Access", "Crew"],

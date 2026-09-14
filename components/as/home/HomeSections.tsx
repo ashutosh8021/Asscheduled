@@ -6,9 +6,9 @@ import Slot from "../Slot";
 import Stamp from "../Stamp";
 import Tilt from "../Tilt";
 import { useModal } from "../ModalProvider";
-import { HOME, SOMEWHERE } from "@/lib/copy";
+import { HOME } from "@/lib/copy";
 import { GALLERY_ALL, GALLERY_WIDE } from "@/lib/gallery";
-import { DEPARTURES, shortPrice } from "@/lib/departures";
+import { DEPARTURES, closure, shortPrice } from "@/lib/departures";
 import type { EffectivePrice } from "@/lib/partners";
 
 /* Homepage body, in the comp's order:
@@ -78,12 +78,12 @@ export default function HomeSections({
                           sizes="(max-width: 720px) 100vw, (max-width: 900px) 50vw, 24vw"
                           hint={d.campus}
                         />
-                        {d.soldOut ? (
+                        {closure(d) ? (
                           <Stamp
                             className="s-stamp-round-over s-stamp-round-sm"
-                            label={SOMEWHERE.soldOutLabel}
-                            top={SOMEWHERE.soldOutArcTop}
-                            bottom={SOMEWHERE.soldOutArcBottom}
+                            label={closure(d)!.label}
+                            top={closure(d)!.arcTop}
+                            bottom={closure(d)!.arcBottom}
                           />
                         ) : null}
                       </div>
