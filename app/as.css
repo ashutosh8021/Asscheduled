@@ -3083,3 +3083,122 @@ body.s-locked { overflow: hidden; }
 .s-custom-reach a:hover { color: var(--s-rust-soft, #e08b74); }
 
 .s-custom-cta { margin-top: auto; align-self: flex-start; }
+
+/* ------------------------------------------------------------
+   CREW — the ambassador signup at /crew
+   ------------------------------------------------------------ */
+
+/* The headline's last line, set on an ink block like the contact
+   page's — the same device, so the two recruitment-and-reach pages
+   read as one family. */
+.s-crew-mark {
+  display: inline-block;
+  margin-top: 0.1em;
+  padding: 0.06em 0.16em;
+  background: var(--s-ink-2);
+  color: var(--s-bone);
+  font-style: italic;
+  transform: rotate(-1.2deg);
+}
+
+/* Three numbered steps. The number hangs in its own column so the
+   words line up however long each one runs. */
+.s-crew-steps {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.s-crew-steps li {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 12px;
+  align-items: baseline;
+}
+.s-crew-steps strong {
+  display: block;
+  font-family: var(--s-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: var(--s-ink);
+}
+.s-crew-n {
+  font-family: var(--s-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--s-rust);
+}
+.s-crew-d {
+  display: block;
+  margin-top: 4px;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--s-grey);
+}
+
+/* What counts, with a hanging mark in the margin — the custom-booking
+   panel's device, with a tick in place of its question mark. */
+.s-crew-rewards {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  font-size: clamp(14px, 1.35vw, 16px);
+  line-height: 1.45;
+  color: var(--s-ink);
+}
+.s-crew-rewards li {
+  position: relative;
+  padding-left: 22px;
+}
+.s-crew-rewards li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-family: var(--s-mono);
+  font-weight: 700;
+  color: var(--s-rust);
+  opacity: 0.7;
+}
+
+.s-crew-done {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+.s-crew-phones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 22px;
+  margin: 0;
+}
+.s-crew-phones a {
+  font-family: var(--s-mono);
+  font-size: 15px;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--s-rust);
+  padding-bottom: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .s-crew-mark { transform: none; }
+}
+
+/* A departure announced before its fares exist. Set like the price it
+   stands in for — same weight and position — so the panel keeps its
+   shape, but in mono and grey so it never reads as a figure. */
+.s-price-soon {
+  margin: 0 0 18px;
+  font-family: var(--s-mono);
+  font-size: clamp(15px, 1.7vw, 20px);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: var(--s-grey);
+}

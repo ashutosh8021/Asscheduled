@@ -8,6 +8,7 @@ import {
   partnerFor,
   resolvePartner,
 } from "@/lib/partners";
+import { LIMITS, rateLimit, tooMany } from "@/lib/rateLimit";
 
 /* What a coupon is worth, for display only.
  *
@@ -31,6 +32,11 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
+  /* The endpoint a code-guesser would use, so it gets a ceiling. High,
+     because every form asks on open. */
+  const wait = rateLimit(request, LIMITS.pricing);
+  if (wait !== null) return tooMany(wait);
+
   const params = new URL(request.url).searchParams;
   const event = params.get("event") ?? "";
   /* Capped before it is looked at. A code is a short string; anything

@@ -86,6 +86,9 @@ export interface ApplicationRecord {
   amountDue: number | null;
   /** The UPI reference the applicant typed. Checked by hand. */
   utr: string | null;
+  /** The code of whoever referred them, whether or not that code won
+   *  on price. See referrerFor in lib/partners.ts. */
+  referredBy: string | null;
 }
 
 export async function saveApplication(a: ApplicationRecord): Promise<boolean> {
@@ -118,29 +121,48 @@ export async function saveApplication(a: ApplicationRecord): Promise<boolean> {
     ...(a.utr ? { utr: a.utr } : {}),
   };
 
-  if (Object.keys(extra).length === 0) return insert("applications", core);
-
-  if (await insert("applications", { ...core, ...extra })) return true;
+  /* Who referred them. Its own group because it arrives with a later
+     migration, docs/schema-mi.sql. */
+  const referral = a.referredBy ? { referred_by: a.referredBy } : {};
 
   /* PostgREST rejects the entire insert when it is handed a column
-     that does not exist — so before that SQL is run, every PULSE
-     application fails on `plan` and is lost to a migration nobody had
-     got round to. It is not a hypothetical: it happened in testing.
+     that does not exist — so before a migration is run, every
+     application naming one of its columns fails outright. It is not a
+     hypothetical: PULSE applications were lost to exactly this.
 
-     So the application goes in without the extras rather than not at
-     all. It is the right trade in both directions — a row missing its
-     plan can be repaired from the email, and a row that was never
-     written cannot be repaired from anything. It also means no upload
-     token is issued, so the ID documents cannot go up either.
+     So the row is tried largest first, and each retry drops only the
+     columns from the NEWEST migration. The order matters. Dropping
+     everything at the first failure would mean an unrun schema-mi.sql
+     quietly cost every referred applicant their plan, amount and UTR
+     too — a referral column taking the payment record down with it.
 
-     Loud, because this is a state somebody has to come and fix: the
-     data really is incomplete until the migration runs. */
-  console.error(
-    `[store] applications insert failed with plan/payment columns for ${a.reference} — ` +
-      `retrying without them. Run docs/schema-partner.sql: until then ` +
-      `${Object.keys(extra).join(", ")} are NOT being recorded.`
-  );
-  return insert("applications", core);
+     A row missing some detail can be repaired from the email. A row
+     that was never written cannot be repaired from anything. Loud,
+     because each fallback is a state somebody has to come and fix. */
+  const tiers: { row: Record<string, unknown>; dropping: string; migration: string }[] = [];
+  if (Object.keys(referral).length) {
+    tiers.push({ row: { ...core, ...extra }, dropping: "referred_by", migration: "docs/schema-mi.sql" });
+  }
+  if (Object.keys(extra).length) {
+    tiers.push({
+      row: core,
+      dropping: Object.keys(extra).join(", "),
+      migration: "docs/schema-partner.sql",
+    });
+  }
+
+  if (await insert("applications", { ...core, ...extra, ...referral })) return true;
+
+  for (const tier of tiers) {
+    console.error(
+      `[store] applications insert failed for ${a.reference} — retrying without ` +
+        `${tier.dropping}. If a column is missing, run ${tier.migration}: until then ` +
+        `${tier.dropping} is NOT being recorded.`
+    );
+    if (await insert("applications", tier.row)) return true;
+  }
+
+  return false;
 }
 
 export interface CollabRecord {
@@ -202,6 +224,67 @@ export async function saveMessage(m: MessageRecord): Promise<boolean> {
       "and will not appear on the partner page."
   );
   return insert("messages", core);
+}
+
+export interface AmbassadorRecord {
+  name: string;
+  phone: string;
+  email: string;
+  age: number;
+  college: string;
+  year: string;
+  city: string;
+  state: string;
+  instagram: string;
+  reach: string;
+  why: string;
+}
+
+/**
+ * A Crew signup.
+ *
+ * Three outcomes rather than a boolean, because the middle one is not
+ * a failure: somebody signing up twice — the same number, a second
+ * tab, a friend filling it in for them — should be told they are
+ * already on the list, not that something broke and they should try
+ * again. The phone number is unique in docs/schema-mi.sql, and a 409
+ * from PostgREST is that constraint answering.
+ */
+export async function saveAmbassador(
+  r: AmbassadorRecord
+): Promise<"stored" | "duplicate" | "failed"> {
+  const cfg = supabaseConfig();
+  if (!cfg) return "failed";
+
+  try {
+    const res = await fetch(`${cfg.url}/rest/v1/ambassadors`, {
+      method: "POST",
+      headers: headers(cfg.serviceRoleKey),
+      body: JSON.stringify({
+        name: r.name,
+        phone: r.phone,
+        email: r.email,
+        age: r.age,
+        college: r.college,
+        year: r.year,
+        city: r.city,
+        state: r.state,
+        instagram: r.instagram || null,
+        reach: r.reach,
+        why: r.why || null,
+      }),
+      cache: "no-store",
+    });
+
+    if (res.ok) return "stored";
+    if (res.status === 409) return "duplicate";
+
+    console.error(`[store] ambassadors insert failed (${res.status}): ${await res.text()}`);
+    return "failed";
+  } catch (err) {
+    console.error("[store] ambassadors insert threw", err);
+    return "failed";
+  }
 }
 
 export interface SubscriberRecord {

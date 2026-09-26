@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { isEmail, readStrings } from "@/lib/inbox";
 import { saveSubscriber } from "@/lib/store";
+import { LIMITS, rateLimit, tooMany } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -14,6 +15,9 @@ export const dynamic = "force-dynamic";
 const KEYS = ["email", "preference", "website"] as const;
 
 export async function POST(request: Request) {
+  const wait = rateLimit(request, LIMITS.subscribe);
+  if (wait !== null) return tooMany(wait);
+
   let body: unknown;
   try {
     body = await request.json();

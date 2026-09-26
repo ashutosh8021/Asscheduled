@@ -6,7 +6,7 @@ import Slot from "../Slot";
 import Stamp from "../Stamp";
 import Tilt from "../Tilt";
 import { useModal } from "../ModalProvider";
-import { HOME } from "@/lib/copy";
+import { HOME, SOMEWHERE } from "@/lib/copy";
 import { GALLERY_ALL, GALLERY_WIDE } from "@/lib/gallery";
 import { DEPARTURES, closure, shortPrice } from "@/lib/departures";
 import type { EffectivePrice } from "@/lib/partners";
@@ -21,6 +21,13 @@ import type { EffectivePrice } from "@/lib/partners";
 /* "A few from our previous trips" — so these must be exactly that.
    Real frames from trips that ran; see lib/gallery.ts. */
 const STRIP = GALLERY_ALL.slice(0, 8);
+
+/* "From ₹9,679", or the honest absence of a price. A departure can be
+   announced before its fares are agreed; the card says so in words
+   rather than printing a number nobody has approved. */
+function priceOrSoon(n: number | null): string {
+  return n === null ? SOMEWHERE.priceSoon : shortPrice(n);
+}
 
 export default function HomeSections({
   /* Partner pricing per departure id, resolved on the server. This is a
@@ -111,7 +118,7 @@ export default function HomeSections({
                         </Link>
 
                         <p style={{ marginTop: "auto", fontSize: 15, fontWeight: 500 }}>
-                          {shortPrice(pricing[d.id]?.price ?? d.price)}
+                          {priceOrSoon(pricing[d.id]?.price ?? d.price)}
                         </p>
                       </div>
                     </div>

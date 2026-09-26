@@ -101,7 +101,7 @@ export default function DepartureCard({
                   {priceRange({ price: shown.wasPrice, priceMax: shown.wasPriceMax })}
                 </span>
               ) : null}
-              {priceRange({ price: shown.price, priceMax: shown.priceMax })}
+              {priceRange({ price: shown.price, priceMax: shown.priceMax }) ?? SOMEWHERE.priceSoon}
               <span className="s-price-per">{SOMEWHERE.pricePer}</span>
             </p>
             {/* Stamped under the figure it qualifies. */}

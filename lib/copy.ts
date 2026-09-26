@@ -175,7 +175,10 @@ export const SOMEWHERE = {
   /* Names the departures that are actually on the site. Rendezvous was
      here until it came off on 2026-08-30 — this line is hand-written,
      not derived, so it has to be edited whenever DEPARTURES changes. */
-  next: ["Pulse. Thomso.", "And whatever", "happens after."],
+  /* Named departures, so this has to move when the board does.
+     TODO(mannat): a derived list would never drift — but the line
+     breaks are part of the comp, so it stays copy for now. */
+  next: ["Hallucia. Pulse.", "Thomso. And whatever", "happens after."],
 
   moreTitle: "MORE SOMEWHERE, SOON.",
   moreSub: ["KEEP A LITTLE ROOM", "IN THE CALENDAR."],
@@ -210,6 +213,18 @@ export const SOMEWHERE = {
   pausedArcBottom: "SEASON 02",
   pausedNote: "Applications are paused while we work through the ones we have.",
   pausedCta: "APPLICATIONS PAUSED",
+
+  /* Announced, not yet open. Used when a departure sets
+     closedReason: "soon" — the dates are real, the form is not built
+     yet, and saying "sold out" or "paused" would both be untrue. */
+  soonLabel: "SOON",
+  soonArcTop: "APPLICATIONS OPEN SOON",
+  soonArcBottom: "SEASON 02",
+  soonNote: "Dates are set. Applications open soon.",
+  soonCta: "APPLICATIONS OPEN SOON",
+  /* Shown where a figure would go, for a departure with no published
+     fare. Never a number, never a guess. */
+  priceSoon: "PRICING SOON",
   priceLabel: "PRICE (ALL INCLUSIVE)",
   pricePer: "/ person",
   priceIncludes: ["Travel", "Stay", "Food", "Event Access", "Crew"],
@@ -332,6 +347,76 @@ export const CONTACT = {
     ["NOT ORDINARY.", "NEVER."],
     ["UNSCHEDULED HITS", "DIFFERENT."],
   ],
+} as const;
+
+/* ---------- CREW (ambassadors) ----------
+
+   NEEDS REVIEW — no comp exists for this page. Written in the two
+   voices CLAUDE.md sets out: editorial for the headline and pitch,
+   deadpan for the form.
+
+   Deliberately says nothing about Mood Indigo by name. There is no
+   agreement with them yet, and a public page implying one is the
+   wrong thing for them to find the week we pitch. Outreach can name
+   the fest in person; the site should not claim it.
+
+   Reward AMOUNTS are absent on purpose. The shape is agreed — credit
+   per paid booking, a free trip at a milestone, a paid crew role for
+   the best — but the numbers are TODO(mannat), and a page that
+   promises a figure cannot take it back. */
+export const CREW = {
+  eyebrow: "AS SCHEDULED CREW",
+  titleTop: ["YOU KNOW", "THE PEOPLE."],
+  titleMark: "WE KNOW THE TRIP.",
+  body: [
+    "Crew are the people in each college who get their friends onto a departure.",
+    "You get a personal code. Every confirmed booking on it counts toward your rewards.",
+  ],
+  stepsLabel: "HOW IT WORKS",
+  steps: [
+    { n: "01", t: "APPLY", d: "Two minutes. Tell us which groups you can actually reach." },
+    { n: "02", t: "GET YOUR CODE", d: "We call the people we select and issue a personal code." },
+    { n: "03", t: "FILL SEATS", d: "Rewards count on confirmed, paid bookings. Not on sign-ups." },
+  ],
+  rewardsLabel: "WHAT COUNTS",
+  rewards: [
+    "Credit for every confirmed booking on your code.",
+    "A free trip once you reach the milestone.",
+    "A certificate and a letter of recommendation.",
+    "The best Crew work the trip with us, paid.",
+  ],
+
+  formTitle: "APPLY TO CREW",
+  fields: {
+    name: { label: "FULL NAME", ph: "As on your college ID" },
+    phone: { label: "CONTACT NUMBER", ph: "We call from this" },
+    email: { label: "EMAIL", ph: "Where your code will go" },
+    age: { label: "AGE", ph: "18 or over", hint: "Crew must be 18 or over." },
+    college: { label: "COLLEGE", ph: "Full name of your college" },
+    year: { label: "YEAR OF STUDY", ph: "Select" },
+    city: { label: "CITY", ph: "Where your college is" },
+    state: { label: "STATE", ph: "Select your state" },
+    instagram: { label: "INSTAGRAM HANDLE", ph: "Optional" },
+    reach: {
+      label: "WHICH GROUPS CAN YOU REACH?",
+      ph: "Societies, clubs, hostels, class groups. Name them.",
+      hint: "This is what we select on. Be specific.",
+    },
+    why: { label: "ANYTHING ELSE?", ph: "Optional" },
+  },
+  years: ["1ST YEAR", "2ND YEAR", "3RD YEAR", "4TH YEAR", "5TH YEAR", "POSTGRADUATE"],
+  consentLead: "By applying you accept our",
+  consentLink: "privacy policy",
+  submit: "APPLY TO CREW",
+
+  sentTitle: "RECEIVED.",
+  sentBody: "We call everyone we select. Keep your phone on.",
+  duplicateTitle: "ALREADY ON THE LIST.",
+  duplicateBody: "This number has applied to Crew before. We will be in touch.",
+  failedTitle: "NOT SENT.",
+  /* Phone rather than email: the published inbox is not currently
+     being read, and pointing somebody at it would lose them. */
+  failedBody: "We could not send that from here. Call us instead:",
 } as const;
 
 /* ---------- FAQ ---------- */

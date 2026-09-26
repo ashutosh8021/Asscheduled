@@ -1,13 +1,20 @@
 import { NextResponse, after } from "next/server";
 import { cookies } from "next/headers";
 import { deliver, isIndianMobile, readStrings } from "@/lib/inbox";
-import { effectivePrice, notifyFor, partnerFor, PARTNER_COOKIE } from "@/lib/partners";
+import {
+  effectivePrice,
+  notifyFor,
+  partnerFor,
+  PARTNER_COOKIE,
+  referrerFor,
+} from "@/lib/partners";
 import { mirrorApplication } from "@/lib/adminData";
 import { newReference } from "@/lib/reference";
 import { DEPARTURES } from "@/lib/departures";
 import { findApplicationId, saveApplication, storeConfigured } from "@/lib/store";
 import { issueUploadToken } from "@/lib/documents";
 import { amountDueInr, findPlan, plansFor } from "@/lib/packages";
+import { LIMITS, rateLimit, tooMany } from "@/lib/rateLimit";
 
 /* "I am coming." — the application overlay from comps (12) and (14).
 
@@ -40,6 +47,11 @@ function fail(error: string, status: number, fields: string[] = []) {
 }
 
 export async function POST(request: Request) {
+  /* Before anything is parsed, stored or mailed. See lib/rateLimit.ts
+     for what this does and, more importantly, what it does not. */
+  const wait = rateLimit(request, LIMITS.apply);
+  if (wait !== null) return tooMany(wait);
+
   let raw: unknown;
   try {
     raw = await request.json();
@@ -82,13 +94,14 @@ export async function POST(request: Request) {
     /* The reason, not just the refusal. Telling somebody a departure
        is full when it is only paused is a different claim, and they
        act on it — one means stop asking, the other means ask later. */
-    return fail(
-      departure!.closedReason === "paused"
-        ? `${departure!.fest} is not taking applications right now.`
-        : `${departure!.fest} is full. Applications are closed.`,
-      409,
-      ["event"]
-    );
+    const why =
+      departure!.closedReason === "soon"
+        ? `${departure!.fest} is not open for applications yet.`
+        : departure!.closedReason === "paused"
+          ? `${departure!.fest} is not taking applications right now.`
+          : `${departure!.fest} is full. Applications are closed.`;
+
+    return fail(why, 409, ["event"]);
   }
 
   const reference = newReference();
@@ -122,6 +135,12 @@ export async function POST(request: Request) {
   /* Who else hears about this. From the departure's own arrangement,
      plus the referral in force if it carries one — see notifyFor. */
   const notifyList = notifyFor(departure!.id, partner);
+
+  /* Who sent them — recorded whether or not their code won on price.
+     `partner` above is the discount that won; an ambassador whose code
+     lost to a bigger automatic discount still referred this person,
+     and still gets the credit. See referrerFor. */
+  const referrer = referrerFor(departure!.id, jar.get(PARTNER_COOKIE)?.value, coupon);
 
   /* Which package, for departures sold as more than one.
 ​
@@ -199,6 +218,7 @@ export async function POST(request: Request) {
     discountInr: pricing.discountInr || null,
     amountDue,
     utr: utr || null,
+    referredBy: referrer?.code ?? null,
   });
 
   const delivered = await deliver(
@@ -219,6 +239,7 @@ export async function POST(request: Request) {
       partner: partner ? `${partner.coupon} · ${partner.name} — ₹${pricing.discountInr} off` : null,
       amountDue: amountDue === null ? null : `₹${amountDue}`,
       utr: utr || null,
+      referredBy: referrer ? referrer.coupon : null,
     },
     null,
     /* Copied to the partner festival. Worked out from the DEPARTURE,

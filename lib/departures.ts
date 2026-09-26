@@ -94,7 +94,16 @@ export interface Departure {
   batches: Batch[];
   days: number;
   nights: number;
-  price: number;
+  /**
+   * The headline fare, or NULL when there is no price to publish yet.
+   *
+   * Null is not zero and must never render as a figure. A departure can
+   * be announced before its fares are agreed — dates first, numbers
+   * later — and inventing a placeholder would put a price on the page
+   * that nobody has approved. Every render site handles null by saying
+   * so in words; TypeScript makes sure none of them forgets.
+   */
+  price: number | null;
   /** Upper bound when a departure spans package tiers. Omitted for a
    *  single flat price, in which case only `price` is shown. */
   priceMax?: number;
@@ -110,13 +119,17 @@ export interface Departure {
    * WHY it is closed. "full" when the seats are gone, "paused" when we
    * have simply stopped taking applications for now.
    *
+   * "soon" is the third: announced, dates public, applications not open
+   * yet. It is the honest state for a departure we have published
+   * before its fares and its form exist.
+   *
    * They are not the same thing and the difference is not cosmetic:
    * stamping SOLD OUT on a departure that has seats left tells people
    * something untrue about why they cannot apply, and invites them to
    * stop asking. Defaults to "full", which is what soldOut meant
    * before this existed.
    */
-  closedReason?: "full" | "paused";
+  closedReason?: "full" | "paused" | "soon";
 
   /**
    * Off the website, but not out of the codebase.
@@ -271,6 +284,151 @@ export interface Departure {
  * on the website. Use DEPARTURES below for anything a visitor sees.
  */
 export const ALL_DEPARTURES: Departure[] = [
+  /* ------------------------------------------------------------------
+     HALLUCIA'26 — AIIMS Nagpur's annual socio-cultural fest.
+
+     Announced ahead of its fares: the dates are confirmed (25–29 Nov,
+     from the fest's own artwork) and the page is live, but `price` is
+     null and applications are closed with closedReason "soon". Phase 2
+     adds the plans, the fares and the form.
+
+     Photography is the fest's own, from the previous edition — the one
+     the LED wall calls "The Mystic Carnival". It is credited as theirs
+     and never presented as ours.
+     TODO(mannat): confirm written permission to use these, and whether
+     AS SCHEDULED is a named partner (that decides `sharedWith`).
+     ------------------------------------------------------------------ */
+  {
+    id: "HAL-26",
+    slug: "hallucia-aiims-nagpur",
+    fest: "HALLUCIA'26",
+    campus: "AIIMS NAGPUR",
+    titleTop: "NAGPUR",
+    titleBottom: "HALLUCIA",
+    /* Their own 2026 line, used as they wrote it. */
+    cardNote: "DESI MAXIMALISM.",
+    homeNote: "AIIMS hallucia",
+    homeDates: "25th – 29th November",
+    range: "25 NOV → 29 NOV",
+    batches: [
+      {
+        label: "25 NOV, 2026 – 29 NOV, 2026",
+        start: "2026-11-25",
+        end: "2026-11-29",
+        days: 5,
+        nights: 4,
+      },
+    ],
+    days: 5,
+    nights: 4,
+    /* No fare published yet — see the note on Departure.price. Every
+       surface says "PRICING SOON" instead of showing a figure. */
+    price: null,
+    /* Announced, not open. Not sold out and not paused: the form does
+       not exist yet, and this is the state that says so honestly. */
+    soldOut: true,
+    closedReason: "soon",
+    spotsLeft: null,
+    /* NEEDS REVIEW — no comp for this departure. Written from the
+       fest's own artwork: "the annual socio-cultural fest", the 2026
+       theme "Desi Maximalism", and its line "culture, chaos, colours".
+       No footfall, no line-up and no claim we cannot stand behind. */
+    intro: [
+      "Five days in Nagpur, at the fest AIIMS throws for itself and then opens to everyone else.",
+      "HALLUCIA is their annual socio-cultural fest, and the 2026 edition is calling itself Desi Maximalism — culture, chaos and colour, turned all the way up.",
+      "Competitions through the day, the main stage after dark, and a campus that does not sit still in between.",
+    ],
+    /* Their own three words, stamped beside the intro. */
+    introStamps: ["Culture. Chaos. Colours."],
+    /* Not rendered anywhere today — see the notes on these fields.
+       TODO(mannat): supply what the fare covers when the plans exist. */
+    included: [],
+    excluded: [],
+    itinerary: [],
+    brochure: null,
+    hero: {
+      src: "/img/hallucia/stage.jpg",
+      alt: "The HALLUCIA main stage at night under purple beams and smoke, the crowd silhouetted below",
+      label: "HERO — HAL-26",
+      credit: "HALLUCIA, AIIMS Nagpur",
+    },
+    card: {
+      src: "/img/hallucia/crowd.jpg",
+      alt: "A student at the front barricade watching the stage, the crowd lit behind her",
+      label: "CARD — HAL-26",
+      credit: "HALLUCIA, AIIMS Nagpur",
+    },
+    /* The red silhouette, not the phone-lights frame. That one is the
+       better photograph and the wrong one here: the homepage prints
+       this small with a stamp over it, and a near-black image under a
+       rust stamp reads as a loading error. */
+    portrait: {
+      src: "/img/hallucia/silhouette.jpg",
+      alt: "Two dancers in silhouette against a red backdrop, hair mid-turn",
+      label: "PORTRAIT — HAL-26",
+      credit: "HALLUCIA, AIIMS Nagpur",
+    },
+    /* The hero cross-fades these in order, so the first frame is the
+       banner: the main stage with the fest's name on the truss. */
+    wide: [
+      {
+        src: "/img/wide/hallucia-stage.jpg",
+        alt: "The HALLUCIA main stage at night under purple beams and smoke, the crowd silhouetted below",
+        label: "WIDE — HALLUCIA STAGE",
+        credit: "HALLUCIA, AIIMS Nagpur",
+      },
+      {
+        src: "/img/wide/hallucia-crowd.jpg",
+        alt: "A student at the front barricade watching the stage, the crowd lit behind her",
+        label: "WIDE — CROWD",
+        credit: "HALLUCIA, AIIMS Nagpur",
+      },
+      {
+        src: "/img/wide/hallucia-confetti.jpg",
+        alt: "A singer mid-song with one arm raised as confetti falls through the stage light",
+        label: "WIDE — CONFETTI",
+        credit: "HALLUCIA, AIIMS Nagpur",
+      },
+      {
+        src: "/img/wide/hallucia-mainstage.jpg",
+        alt: "A singer in a red dress on the main stage, spotlights fanned out behind her",
+        label: "WIDE — MAIN STAGE",
+        credit: "HALLUCIA, AIIMS Nagpur",
+      },
+      {
+        src: "/img/wide/hallucia-pronite.jpg",
+        alt: "A performer at the microphone under red light at the pronite",
+        label: "WIDE — PRONITE",
+        credit: "HALLUCIA, AIIMS Nagpur",
+      },
+    ],
+    mosaic: [
+      {
+        src: "/img/hallucia/duet.jpg",
+        alt: "Two dancers mid-lift in gold costume under a stage spot",
+        label: "HAL-26 / DUET",
+        credit: "HALLUCIA, AIIMS Nagpur",
+      },
+      {
+        src: "/img/hallucia/silhouette.jpg",
+        alt: "Two dancers in silhouette against a red backdrop, hair mid-turn",
+        label: "HAL-26 / SILHOUETTE",
+        credit: "HALLUCIA, AIIMS Nagpur",
+      },
+      {
+        src: "/img/hallucia/couple.jpg",
+        alt: "A pair mid-performance in red and black against a deep red wash",
+        label: "HAL-26 / DUO",
+        credit: "HALLUCIA, AIIMS Nagpur",
+      },
+      {
+        src: "/img/hallucia/lights.jpg",
+        alt: "An artist on stage facing a field of raised phone lights in the dark",
+        label: "HAL-26 / PHONE LIGHTS",
+        credit: "HALLUCIA, AIIMS Nagpur",
+      },
+    ],
+  },
   {
     /* PULSE'26 — AIIMS New Delhi's own festival. Structured on the
        Rendezvous departure per instruction ("keep it like delhi"), with
@@ -838,7 +996,12 @@ export function departureStart(d: Departure): Date {
   return new Date(`${d.batches[0]?.start ?? ""}T00:00:00+05:30`);
 }
 
-export function priceRange(d: Pick<Departure, "price" | "priceMax">): string {
+export function priceRange(d: Pick<Departure, "price" | "priceMax">): string | null {
+  /* Null all the way through rather than a placeholder string: the
+     caller decides how "no price yet" looks in its own layout, and a
+     figure can never be faked here by accident. */
+  if (d.price === null) return null;
+
   return d.priceMax && d.priceMax !== d.price
     ? `${inr(d.price)} – ${inr(d.priceMax)}`
     : inr(d.price);
@@ -864,6 +1027,16 @@ export function closure(d: Pick<Departure, "soldOut" | "closedReason">): {
   cta: string;
 } | null {
   if (!d.soldOut) return null;
+
+  if (d.closedReason === "soon") {
+    return {
+      label: SOMEWHERE.soonLabel,
+      arcTop: SOMEWHERE.soonArcTop,
+      arcBottom: SOMEWHERE.soonArcBottom,
+      note: SOMEWHERE.soonNote,
+      cta: SOMEWHERE.soonCta,
+    };
+  }
 
   if (d.closedReason === "paused") {
     return {

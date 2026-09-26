@@ -103,6 +103,11 @@ export default function ApplicationsTable({ rows }: { rows: ApplicationRow[] }) 
     const money: Field[] = [];
 
     if (plan) money.push({ label: "Plan", value: `${plan.n} — ${plan.name}` });
+    /* Before the discount, because it answers a different question:
+       who sent this person, not what they pay. They can differ — an
+       ambassador's code can lose on price to a bigger automatic
+       discount and still be the referral. */
+    if (r.referred_by) money.push({ label: "Referred by", value: r.referred_by.toUpperCase() });
     if (r.partner_code) {
       money.push({
         label: "Partner",
@@ -151,7 +156,17 @@ export default function ApplicationsTable({ rows }: { rows: ApplicationRow[] }) 
   const needle = q.trim().toLowerCase();
   const shown = needle
     ? rows.filter((r) =>
-        [r.name, r.phone, r.college, r.reference, r.state, r.utr ?? "", r.instagram ?? ""]
+        [
+          r.name,
+          r.phone,
+          r.college,
+          r.reference,
+          r.state,
+          r.utr ?? "",
+          r.instagram ?? "",
+          /* So typing an ambassador's code lists everyone they sent. */
+          r.referred_by ?? "",
+        ]
           .join(" ")
           .toLowerCase()
           .includes(needle)

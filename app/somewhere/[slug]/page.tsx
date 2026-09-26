@@ -52,6 +52,8 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
   /* Null when open. Everything below asks this rather than `soldOut`,
      so a paused departure never says "sold out". */
   const shut = closure(d);
+  /* Null when no fare is published yet. */
+  const fare = priceRange({ price: d.price, priceMax: d.priceMax });
 
   return (
     /* overHero: the header floats transparent over the full-screen
@@ -165,10 +167,18 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
                   </ul>
                 ) : null}
 
-                <p className="s-price-now s-price-now-block">
-                  {priceRange({ price: d.price, priceMax: d.priceMax })}
-                  <span className="s-price-per">{SOMEWHERE.pricePer}</span>
-                </p>
+                {/* A fare, or the honest absence of one. A departure can
+                    be announced before its prices are agreed, and this
+                    says so in words rather than showing a figure
+                    nobody has approved. */}
+                {fare ? (
+                  <p className="s-price-now s-price-now-block">
+                    {fare}
+                    <span className="s-price-per">{SOMEWHERE.pricePer}</span>
+                  </p>
+                ) : (
+                  <p className="s-price-soon">{SOMEWHERE.priceSoon}</p>
+                )}
 
                 {/* A span, not a disabled button: there is nothing to
                     press, so it should not look pressable or take focus. */}

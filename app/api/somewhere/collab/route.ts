@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { deliver, isEmail, isIndianMobile, readStrings } from "@/lib/inbox";
 import { saveCollaboration } from "@/lib/store";
+import { LIMITS, rateLimit, tooMany } from "@/lib/rateLimit";
 
 /* "Let's collaborate." — comp (13). */
 
@@ -14,6 +15,9 @@ function fail(error: string, status: number, fields: string[] = []) {
 }
 
 export async function POST(request: Request) {
+  const wait = rateLimit(request, LIMITS.collab);
+  if (wait !== null) return tooMany(wait);
+
   let raw: unknown;
   try {
     raw = await request.json();

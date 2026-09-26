@@ -304,9 +304,40 @@ export function resolvePartner(
   return partner;
 }
 
+/**
+ * Who referred this applicant — a different question from who priced
+ * them, and it must not be answered by the same function.
+ *
+ * `partnerFor` returns the discount that WON. That is right for the
+ * price and wrong for credit: when an automatic discount is worth more
+ * than somebody's referral code, the code loses on price, and reading
+ * the referrer off the winner would quietly erase the person who sent
+ * the applicant. For an ambassador paid per booking, that is money they
+ * earned and would never see.
+ *
+ * So: the typed code first, because typing one is a deliberate act;
+ * then the link they arrived on. Automatic arrangements are never a
+ * referral — everybody gets them, so they say nothing about who sent
+ * anyone. A code that does not resolve for this departure refers
+ * nobody.
+ */
+export function referrerFor(
+  departureCode: string,
+  code?: string | null,
+  typed?: string | null,
+  now: Date = new Date()
+): Partner | null {
+  for (const candidate of [typed, code]) {
+    const p = resolvePartner(candidate, departureCode, now);
+    if (p && !p.auto) return p;
+  }
+  return null;
+}
+
 export interface EffectivePrice {
-  /** What to charge, after any discount. Never below zero. */
-  price: number;
+  /** What to charge, after any discount. Never below zero, and null
+   *  when the departure has no published fare — see Departure.price. */
+  price: number | null;
   /** Upper bound of a tiered departure, discounted by the same amount. */
   priceMax?: number;
   /** The original, for striking through. Undefined when nothing applies. */
@@ -324,10 +355,15 @@ export interface EffectivePrice {
  * is trivially testable.
  */
 export function effectivePrice(
-  price: number,
+  price: number | null,
   priceMax: number | undefined,
   partner: Partner | null
 ): EffectivePrice {
+  /* Nothing to discount. A departure with no published fare cannot be
+     given money off — there is no number to take it from, and
+     inventing one here would be the most expensive kind of guess. */
+  if (price === null) return { price: null, priceMax: undefined, discountInr: 0 };
+
   if (!partner || partner.discountInr <= 0) {
     return { price, priceMax, discountInr: 0 };
   }

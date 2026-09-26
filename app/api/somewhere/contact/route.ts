@@ -3,6 +3,7 @@ import { deliver, isEmail, isIndianMobile, readStrings } from "@/lib/inbox";
 import { saveMessage } from "@/lib/store";
 import { DEPARTURES } from "@/lib/departures";
 import { partnerFor } from "@/lib/partners";
+import { LIMITS, rateLimit, tooMany } from "@/lib/rateLimit";
 
 /* "TELL US WHAT'S UNSCHEDULED." — the contact form on comps (2)/(3). */
 
@@ -16,6 +17,9 @@ function fail(error: string, status: number, fields: string[] = []) {
 }
 
 export async function POST(request: Request) {
+  const wait = rateLimit(request, LIMITS.contact);
+  if (wait !== null) return tooMany(wait);
+
   let raw: unknown;
   try {
     raw = await request.json();

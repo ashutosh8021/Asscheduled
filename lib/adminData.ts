@@ -49,6 +49,9 @@ export interface ApplicationRow {
   amount_due?: number | null;
   utr?: string | null;
   paid_at?: string | null;
+  /** Who referred them, independent of which discount won. Arrives
+   *  with docs/schema-mi.sql; absent on rows written before it. */
+  referred_by?: string | null;
 }
 
 export interface MessageRow {
@@ -78,6 +81,26 @@ export interface CollaborationRow {
   collab_on: string[];
   details: string;
   status: string;
+}
+
+/** A Crew signup. From docs/schema-mi.sql. */
+export interface AmbassadorRow {
+  id: string;
+  created_at: string;
+  name: string;
+  phone: string;
+  email: string;
+  age: number;
+  college: string;
+  year: string;
+  city: string;
+  state: string;
+  instagram: string | null;
+  reach: string;
+  why: string | null;
+  status: string;
+  tier: string;
+  code: string | null;
 }
 
 function headers(key: string) {
@@ -262,6 +285,17 @@ export function listMessagesFor(departures: string[]): Promise<MessageRow[]> {
   return select<MessageRow>(
     `messages?departure_code=in.(${list})&select=*&order=created_at.desc`
   );
+}
+
+/**
+ * Crew signups, newest first.
+ *
+ * Returns an empty list rather than failing when docs/schema-mi.sql
+ * has not been run — `select` logs the missing table and the tab reads
+ * as empty, which is true: nothing has been stored yet.
+ */
+export function listAmbassadors(): Promise<AmbassadorRow[]> {
+  return select<AmbassadorRow>("ambassadors?select=*&order=created_at.desc");
 }
 
 export function listCollaborations(): Promise<CollaborationRow[]> {
@@ -501,6 +535,12 @@ async function countRows(path: string): Promise<number> {
  * does; the count must never reveal that something exists which they
  * are not allowed to open.
  */
+/** How many Crew signups there are, for the tab badge. A count, never
+ *  the rows — cheap enough to run on every admin page load. */
+export function ambassadorCount(): Promise<number> {
+  return countRows("ambassadors?select=id");
+}
+
 export async function arrivalCounts(departures: string[] | null): Promise<Arrivals> {
   if (departures === null) {
     const [applications, enquiries] = await Promise.all([

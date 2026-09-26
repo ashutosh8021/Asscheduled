@@ -18,7 +18,7 @@ export default async function SomewherePage() {
   /* List price while browsing. The coupon is applied at the payment
      step instead, so nothing here is discounted and the cards show
      what the trip costs. */
-  const priceFor = (d: { id: string; price: number; priceMax?: number }) =>
+  const priceFor = (d: { id: string; price: number | null; priceMax?: number }) =>
     effectivePrice(d.price, d.priceMax, null);
 
   return (

@@ -47,21 +47,22 @@ export default async function AdminPage({
       ? sp.tab
       : "applications";
 
-  const [counts, docCount, arrivals, apps, messages, collabs, bundles] = await Promise.all([
-    applicationCounts(),
-    documentBundleCount(),
-    /* Totals for the badge and for the "something came in" pop. Cheap
-       enough to run on every tab: two counts, no rows. */
-    arrivalCounts(null),
-    tab === "applications"
-      ? listApplications({ status: sp.status, departure: sp.departure })
-      : Promise.resolve([]),
-    tab === "messages" ? listMessages() : Promise.resolve([]),
-    tab === "collabs" ? listCollaborations() : Promise.resolve([]),
-    /* Signed URLs are minted here and expire the same day, so this is
-       fetched only for the tab that shows them. */
-    tab === "documents" ? listDocumentBundles() : Promise.resolve([]),
-  ]);
+  const [counts, docCount, arrivals, apps, messages, collabs, bundles] =
+    await Promise.all([
+      applicationCounts(),
+      documentBundleCount(),
+      /* Totals for the badge and for the "something came in" pop. Cheap
+         enough to run on every tab: two counts, no rows. */
+      arrivalCounts(null),
+      tab === "applications"
+        ? listApplications({ status: sp.status, departure: sp.departure })
+        : Promise.resolve([]),
+      tab === "messages" ? listMessages() : Promise.resolve([]),
+      tab === "collabs" ? listCollaborations() : Promise.resolve([]),
+      /* Signed URLs are minted here and expire the same day, so this is
+         fetched only for the tab that shows them. */
+      tab === "documents" ? listDocumentBundles() : Promise.resolve([]),
+    ]);
 
   /* Preserve the other filters when building a link. */
   const link = (next: Partial<Search>) => {
