@@ -3202,3 +3202,66 @@ body.s-locked { overflow: hidden; }
   letter-spacing: 0.14em;
   color: var(--s-grey);
 }
+
+/* ------------------------------------------------------------
+   LAST YEAR — photographs from the previous edition
+   ------------------------------------------------------------
+   The grid itself is .s-trip-grid / .s-trip-tile, borrowed from the
+   gallery page rather than rewritten: same device, same rhythm, and
+   landscape frames already span two columns there. */
+.s-glimpse-head {
+  max-width: 58ch;
+  margin-bottom: clamp(22px, 3vw, 34px);
+}
+.s-glimpse-title {
+  margin-top: 10px;
+  font-size: clamp(26px, 3.8vw, 48px);
+  line-height: 1.02;
+  color: var(--s-ink);
+}
+.s-glimpse-note {
+  margin-top: 16px;
+  color: var(--s-grey);
+}
+
+/* Every tile is the same height, so the rows actually line up: two
+   row units tall for all of them, two columns wide for a landscape
+   frame. Sizing the rows rather than setting an aspect-ratio per tile
+   is what makes that exact — aspect ratios left portraits and
+   landscapes a few pixels apart and the grid read as ragged.
+   `dense` lets a narrow frame fill a gap a wide one could not. */
+.s-glimpse-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
+  grid-auto-rows: 120px;
+  grid-auto-flow: dense;
+  gap: 10px;
+}
+.s-glimpse-tile {
+  position: relative;
+  overflow: hidden;
+  grid-row: span 2;
+}
+.s-glimpse-tile[data-wide="true"] { grid-column: span 2; }
+.s-glimpse-tile .s-slot > img { transition: transform 0.7s var(--s-bez); }
+.s-glimpse-tile:hover .s-slot > img { transform: scale(1.05); }
+
+/* Two columns on a phone, with landscape frames taking the full
+   width. One column would make every portrait a full-bleed tower. */
+@media (max-width: 560px) {
+  .s-glimpse-grid { grid-template-columns: 1fr 1fr; grid-auto-rows: 92px; }
+}
+
+.s-glimpse-credit {
+  margin-top: 14px;
+  font-family: var(--s-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--s-grey);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .s-glimpse-tile:hover .s-slot > img,
+  .s-trip-tile:hover .s-slot > img { transform: none; }
+}

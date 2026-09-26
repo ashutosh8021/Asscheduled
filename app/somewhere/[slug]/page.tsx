@@ -5,6 +5,7 @@ import Reveal from "@/components/as/Reveal";
 import ApplyButton from "@/components/as/ApplyButton";
 import DepartureHero from "@/components/as/DepartureHero";
 import PlanCards from "@/components/as/PlanCards";
+import Glimpse from "@/components/as/Glimpse";
 import { hasPlans } from "@/lib/packages";
 import Link from "next/link";
 import { CONTACT, CONTACT_EMAIL, DETAIL, SOMEWHERE } from "@/lib/copy";
@@ -218,6 +219,24 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
           <section className="s-wrap s-sec-tight">
             <Reveal>
               <PlanCards departureId={d.id} soldOut={shut !== null} />
+            </Reveal>
+          </section>
+        ) : null}
+
+        {/* ---------- LAST YEAR ----------
+            Photographs from the previous edition, for departures that
+            have them. Sits after the plans and before the ask: it is
+            what the place is actually like, which is the argument the
+            custom-booking panel below then asks people to act on. */}
+        {d.glimpse ? (
+          <section className="s-wrap s-sec-tight">
+            <Reveal>
+              <Glimpse
+                eyebrow={d.glimpse.eyebrow}
+                title={d.glimpse.title}
+                note={d.glimpse.note}
+                photos={d.glimpse.photos}
+              />
             </Reveal>
           </section>
         ) : null}

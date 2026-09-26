@@ -65,6 +65,17 @@ export interface ItineraryDay {
   detail: string | null;
 }
 
+/**
+ * One photograph in the "last year" grid.
+ *
+ * `wide` gives a landscape frame two columns and its own ratio — a
+ * 16:9 stage shot squeezed into a portrait tile loses both its ends.
+ * Mirrors PastPhoto in lib/gallery.ts, which solved this first.
+ */
+export interface GlimpsePhoto extends Slot {
+  wide?: boolean;
+}
+
 /** A vertical clip in the "last year" strip. */
 export interface Reel {
   src: string;
@@ -211,6 +222,22 @@ export interface Departure {
     title: string;
     note: string;
     reels: Reel[];
+  };
+
+  /**
+   * Photographs from the last edition of this fest.
+   *
+   * The stills counterpart to `lastYear`, which takes video. Same rule
+   * and the same reason: it is only ever a previous year, it is
+   * credited to whoever shot it, and the section says so. Showing what
+   * the place was actually like is honest; letting it read as one of
+   * ours would not be.
+   */
+  glimpse?: {
+    eyebrow: string;
+    title: string;
+    note: string;
+    photos: GlimpsePhoto[];
   };
   /**
    * Booking amount, in rupees, taken by UPI at application time.
@@ -428,6 +455,75 @@ export const ALL_DEPARTURES: Departure[] = [
         credit: "HALLUCIA, AIIMS Nagpur",
       },
     ],
+    /* The rest of the photographs they sent, as the last edition
+       rather than as this one. "The Mystic Carnival" is readable on
+       the stage LED in these frames, which is how we can say which
+       edition it was without guessing at a year.
+
+       Eight frames, four of them landscape: twelve column units, which
+       divides evenly by 6, 4, 3 and 2 — so the last row fills at every
+       breakpoint instead of leaving an orphan. The silhouette is the
+       one left out; it is already the card portrait, so the grid shows
+       eight frames nobody has seen yet. */
+    glimpse: {
+      eyebrow: "LAST YEAR",
+      title: "WHAT IT ACTUALLY LOOKED LIKE.",
+      note: "Shot on the ground at the last edition — the one they called The Mystic Carnival. Their photographs, not ours, and not a showreel.",
+      photos: [
+        {
+          src: "/img/hallucia/crowd.jpg",
+          alt: "A student at the front barricade watching the stage, the crowd lit behind her",
+          label: "LAST YEAR / BARRICADE",
+          credit: "HALLUCIA, AIIMS Nagpur",
+          wide: true,
+        },
+        {
+          src: "/img/hallucia/duet.jpg",
+          alt: "Two dancers mid-lift in gold costume under a stage spot",
+          label: "LAST YEAR / DUET",
+          credit: "HALLUCIA, AIIMS Nagpur",
+        },
+        {
+          src: "/img/hallucia/lights.jpg",
+          alt: "An artist on stage facing a field of raised phone lights in the dark",
+          label: "LAST YEAR / PHONE LIGHTS",
+          credit: "HALLUCIA, AIIMS Nagpur",
+        },
+        {
+          src: "/img/hallucia/confetti.jpg",
+          alt: "A singer mid-song with one arm raised as confetti falls through the stage light",
+          label: "LAST YEAR / CONFETTI",
+          credit: "HALLUCIA, AIIMS Nagpur",
+          wide: true,
+        },
+        {
+          src: "/img/hallucia/couple.jpg",
+          alt: "A pair mid-performance in red and black against a deep red wash",
+          label: "LAST YEAR / DUO",
+          credit: "HALLUCIA, AIIMS Nagpur",
+        },
+        {
+          src: "/img/hallucia/solo.jpg",
+          alt: "A soloist mid-routine in a bandaged costume under warm stage light",
+          label: "LAST YEAR / SOLO",
+          credit: "HALLUCIA, AIIMS Nagpur",
+        },
+        {
+          src: "/img/hallucia/mainstage.jpg",
+          alt: "A singer in a red dress on the main stage, spotlights fanned out behind her",
+          label: "LAST YEAR / MAIN STAGE",
+          credit: "HALLUCIA, AIIMS Nagpur",
+          wide: true,
+        },
+        {
+          src: "/img/hallucia/pronite.jpg",
+          alt: "A performer at the microphone under red light at the pronite",
+          label: "LAST YEAR / PRONITE",
+          credit: "HALLUCIA, AIIMS Nagpur",
+          wide: true,
+        },
+      ],
+    },
   },
   {
     /* PULSE'26 — AIIMS New Delhi's own festival. Structured on the
