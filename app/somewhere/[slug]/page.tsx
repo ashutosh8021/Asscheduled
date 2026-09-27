@@ -223,24 +223,6 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
           </section>
         ) : null}
 
-        {/* ---------- LAST YEAR ----------
-            Photographs from the previous edition, for departures that
-            have them. Sits after the plans and before the ask: it is
-            what the place is actually like, which is the argument the
-            custom-booking panel below then asks people to act on. */}
-        {d.glimpse ? (
-          <section className="s-wrap s-sec-tight">
-            <Reveal>
-              <Glimpse
-                eyebrow={d.glimpse.eyebrow}
-                title={d.glimpse.title}
-                note={d.glimpse.note}
-                photos={d.glimpse.photos}
-              />
-            </Reveal>
-          </section>
-        ) : null}
-
         {/* ---------- ITINERARY + BROCHURE ---------- */}
         <section className="s-wrap s-sec-tight">
           <div className="s-split s-split-even">
@@ -341,6 +323,26 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
             </Reveal>
           </div>
         </section>
+
+        {/* ---------- LAST YEAR ----------
+            Photographs from the previous edition, for departures that
+            have them. Sits after the ask, on instruction: the panels
+            above are what somebody is meant to act on, and a grid of
+            photographs between them and the brochure pushed both down
+            the page. Last thing before the closing, so the page ends
+            on what the fest actually looks like. */}
+        {d.glimpse ? (
+          <section className="s-wrap s-sec-tight">
+            <Reveal>
+              <Glimpse
+                eyebrow={d.glimpse.eyebrow}
+                title={d.glimpse.title}
+                note={d.glimpse.note}
+                photos={d.glimpse.photos}
+              />
+            </Reveal>
+          </section>
+        ) : null}
 
         {/* ---------- CLOSING ---------- */}
         <section
