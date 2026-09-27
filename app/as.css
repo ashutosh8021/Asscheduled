@@ -3265,3 +3265,8 @@ body.s-locked { overflow: hidden; }
   .s-glimpse-tile:hover .s-slot > img,
   .s-trip-tile:hover .s-slot > img { transform: none; }
 }
+
+/* On a one-step application the optional fields follow the required
+   ones directly, and two adjacent grids would sit flush with no gap
+   between the last answer and the next question. */
+.s-form-grid[data-more="true"] { margin-top: 18px; }

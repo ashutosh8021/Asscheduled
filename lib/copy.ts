@@ -569,6 +569,12 @@ export const APPLY = {
      two lines and public/pay/upi-qr.jpg with the LLP's account — the
      payee name here has to match what the payer's UPI app shows them,
      or the transfer looks like a scam and gets abandoned. */
+  /* What happens after an application with nothing left to collect —
+     no documents, no payment, just their details. Says who acts next
+     and that it is a person, because "we'll come back to you" leaves
+     somebody wondering whether anything was received at all. */
+  doneConnect: "Our team will connect with you.",
+
   payHead: "BOOKING AMOUNT",
   payNote: "Pay this by UPI, then tell us the reference below.",
   payQrCaption: "Scan with any UPI app",

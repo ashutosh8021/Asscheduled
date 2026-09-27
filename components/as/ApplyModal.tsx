@@ -174,6 +174,17 @@ export default function ApplyModal() {
 
   const needsPayment = amountDue !== null;
 
+  /* One step, when step two would have nothing in it.
+​
+     Step two exists to collect a plan, identity documents and a
+     payment. A departure that asks for none of those left it holding
+     an Instagram handle and a text box — a second screen, a NEXT, a
+     BACK and a progress bar for two optional fields. Derived rather
+     than set per departure, so this is simply true whenever it is
+     true, and a departure that later adds a plan or a payment gets
+     its second step back with no other change. */
+  const oneStep = plans.length === 0 && !needsDocuments && !needsPayment;
+
   /* Chose a plan, but we have no fare from their state. They can still
      apply — we come back with the amount. */
   const fareUnknown = activePlan !== null && fareFor(activePlan, a.state) === null;
@@ -342,6 +353,14 @@ export default function ApplyModal() {
   function set<K extends keyof Answers>(k: K, v: Answers[K]) {
     setA((prev) => ({ ...prev, [k]: v }));
     if (errors[k]) setErrors((prev) => ({ ...prev, [k]: undefined }));
+  }
+
+  /* From a single screen there is no NEXT to have validated the
+     answers, so this does it before sending. */
+  function submitOneStep() {
+    const e = validateStep1(a);
+    setErrors(e);
+    if (Object.keys(e).length === 0) void submit();
   }
 
   function next() {
@@ -527,7 +546,7 @@ export default function ApplyModal() {
           {done.delivered
             ? done.upload
               ? "Two documents and you're done."
-              : "We read every single one. We'll come back to you."
+              : APPLY.doneConnect
             : "We could not file that from here."}
         </p>
 
@@ -604,8 +623,8 @@ export default function ApplyModal() {
       </h2>
       <p className="s-modal-sub">{APPLY.sub}</p>
 
-      {/* stepper */}
-      <div className="s-steps">
+      {/* stepper — hidden when there is only one step to be on */}
+      <div className="s-steps" hidden={oneStep}>
         <div className="s-step" data-active={step === 1}>
           <span className="s-step-dot">1</span>
           <span className="s-step-l">{APPLY.steps[0]}</span>
@@ -620,11 +639,12 @@ export default function ApplyModal() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          if (step === 1) next();
+          if (oneStep) submitOneStep();
+          else if (step === 1) next();
           else void submit();
         }}
       >
-        {step === 1 ? (
+        {oneStep || step === 1 ? (
           <div className="s-form-grid">
             <div className="s-field s-field-full">
               <label htmlFor="ap-name">
@@ -793,8 +813,10 @@ export default function ApplyModal() {
               {err("event")}
             </div>
           </div>
-        ) : (
-          <div className="s-form-grid">
+        ) : null}
+
+        {oneStep || step === 2 ? (
+          <div className="s-form-grid" data-more={oneStep}>
             <div className="s-field s-field-full">
               <label htmlFor="ap-ig">{APPLY.fields.instagram.label}</label>
               <div className="s-phone">
@@ -1191,24 +1213,24 @@ export default function ApplyModal() {
               .
             </p>
           </div>
-        )}
+        ) : null}
 
         <div className="s-modal-actions">
-          {step === 2 ? (
+          {step === 2 && !oneStep ? (
             <button type="button" className="s-back" onClick={() => setStep(1)}>
               {APPLY.back}
             </button>
           ) : null}
 
           <button type="submit" className="s-btn s-btn-forest" disabled={sending}>
-            {step === 1 ? (
+            {sending ? (
+              "SENDING…"
+            ) : oneStep || step === 2 ? (
+              APPLY.submit
+            ) : (
               <>
                 {APPLY.next} <span className="s-arrow">→</span>
               </>
-            ) : sending ? (
-              "SENDING…"
-            ) : (
-              APPLY.submit
             )}
           </button>
         </div>

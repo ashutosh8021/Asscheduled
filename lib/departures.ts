@@ -351,10 +351,12 @@ export const ALL_DEPARTURES: Departure[] = [
     /* No fare published yet — see the note on Departure.price. Every
        surface says "PRICING SOON" instead of showing a figure. */
     price: null,
-    /* Announced, not open. Not sold out and not paused: the form does
-       not exist yet, and this is the state that says so honestly. */
-    soldOut: true,
-    closedReason: "soon",
+    /* Open, on instruction (2026-09-27): details only. No plan, no
+       documents and no payment, so the form collapses to a single
+       screen and the confirmation says the team will be in touch.
+       Pricing is still unpublished — the panel says PRICING SOON
+       above a working apply button, which is honest: we are taking
+       details, not money. */
     spotsLeft: null,
     /* NEEDS REVIEW — no comp for this departure. Written from the
        fest's own artwork: "the annual socio-cultural fest", the 2026
