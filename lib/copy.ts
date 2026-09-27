@@ -244,7 +244,15 @@ export const DETAIL = {
   introTitle: "THE WEEK YOU'LL TALK ABOUT.",
   datesLabel: "TRIP DATES",
   fromLabel: "STARTING FROM",
-  applyCta: "REQUEST YOUR INVITE",
+  /* "REGISTER", not "REQUEST YOUR INVITE". The panel above it now
+     stamps "No payment to register" and the block that closes the
+     page says REGISTER NOW — three different words for one action
+     made somebody work out whether they were the same thing. One
+     word, used everywhere.
+
+     Still an application with a selection behind it; registering is
+     what the visitor does, not a seat they have bought. */
+  applyCta: "REGISTER NOW",
   /* Shown when a genuine remaining count is not confirmed. */
   spotsFallback: "Spots are limited. Vibes are unlimited.",
   /* ---- plans ----

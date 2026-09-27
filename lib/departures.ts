@@ -379,6 +379,12 @@ export const ALL_DEPARTURES: Departure[] = [
     ],
     /* Their own three words, stamped beside the intro. */
     introStamps: ["Culture. Chaos. Colours."],
+    /* Stamped above the price, where somebody decides whether to fill
+       the form in. Both are plainly true and neither invents urgency:
+       the form genuinely takes no money, and a departure genuinely
+       runs on a fixed number of seats. The second is not a count —
+       `spotsLeft` is still null, and no figure is claimed anywhere. */
+    panelStamps: ["No payment to register", "Limited slots"],
     /* Not rendered anywhere today — see the notes on these fields.
        TODO(mannat): supply what the fare covers when the plans exist. */
     included: [],
