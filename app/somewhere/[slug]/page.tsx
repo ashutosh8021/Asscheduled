@@ -310,7 +310,21 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
                 </dl>
 
                 <div className="s-panel-brochure">
-                  {d.brochure ? (
+                  {/* A departure sold as more than one trip has a PDF
+                      each, and each button says which — two identical
+                      "DOWNLOAD BROCHURE" buttons would make somebody
+                      guess. One PDF keeps the plain label. */}
+                  {d.brochures?.length ? (
+                    <ul className="s-brochures">
+                      {d.brochures.map((b) => (
+                        <li key={b.href}>
+                          <a href={b.href} className="s-btn" download>
+                            ⬇ {b.label}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : d.brochure ? (
                     <a href={d.brochure} className="s-btn" download>
                       ⬇ {DETAIL.brochureCta}
                     </a>

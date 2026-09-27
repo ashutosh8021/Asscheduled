@@ -3270,3 +3270,17 @@ body.s-locked { overflow: hidden; }
    ones directly, and two adjacent grids would sit flush with no gap
    between the last answer and the next question. */
 .s-form-grid[data-more="true"] { margin-top: 18px; }
+
+/* Two brochures, stacked, each saying which trip it describes. They
+   sit at the foot of the dark panel, so they wrap rather than shrink
+   the labels away. */
+.s-brochures {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.s-brochures li { margin: 0; }
+.s-brochures .s-btn { white-space: nowrap; }

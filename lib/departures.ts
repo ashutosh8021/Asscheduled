@@ -191,6 +191,16 @@ export interface Departure {
   /** Brochure is referenced by both detail comps at "PDF · 1.2 MB".
    *  TODO(mannat): supply the real brochure PDFs, then set these. */
   brochure: string | null;
+
+  /**
+   * More than one brochure, when a departure is sold as more than one
+   * trip. Each needs its own label — two buttons both reading
+   * "DOWNLOAD BROCHURE" tell somebody nothing about which is which.
+   *
+   * Supersedes `brochure` where it is set. Kept as a separate field so
+   * departures with a single PDF are untouched.
+   */
+  brochures?: { label: string; href: string }[];
   hero: Slot;
   card: Slot;
   /** A genuinely portrait frame, for the tall boxes on the homepage.
@@ -375,6 +385,15 @@ export const ALL_DEPARTURES: Departure[] = [
     excluded: [],
     itinerary: [],
     brochure: null,
+    /* Two trips, two PDFs, supplied 2026-09-27. They are not plans in
+       lib/packages.ts yet — there are no fares — so for now they are
+       two labelled downloads rather than two priced cards.
+       TODO(mannat): confirm the second is Pachmarhi, spelled that way;
+       the file came in as "pachmari". */
+    brochures: [
+      { label: "HALLUCIA", href: "/brochure/hallucia-2026.pdf" },
+      { label: "HALLUCIA × PACHMARHI", href: "/brochure/hallucia-pachmarhi-2026.pdf" },
+    ],
     hero: {
       src: "/img/hallucia/stage.jpg",
       alt: "The HALLUCIA main stage at night under purple beams and smoke, the crowd silhouetted below",
