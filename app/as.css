@@ -3284,3 +3284,60 @@ body.s-locked { overflow: hidden; }
 }
 .s-brochures li { margin: 0; }
 .s-brochures .s-btn { white-space: nowrap; }
+
+/* ------------------------------------------------------------
+   REGISTER — the closing block on a departure page
+   ------------------------------------------------------------
+   The page's last word. Two columns: what and why on the left, the
+   button and the honest availability line on the right, so the thing
+   to press is never below the fold of its own block. */
+.s-register {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(260px, 0.65fr);
+  gap: clamp(24px, 4vw, 56px);
+  align-items: start;
+  padding: clamp(26px, 3.6vw, 44px);
+  background: var(--s-paper-2);
+  border: 1px solid var(--s-line);
+}
+.s-register-title {
+  margin-top: 12px;
+  font-size: clamp(28px, 4.4vw, 56px);
+  line-height: 1.02;
+  color: var(--s-ink);
+}
+.s-register-body {
+  margin-top: 16px;
+  max-width: 46ch;
+  color: var(--s-grey);
+}
+.s-register-stamp { margin-top: clamp(20px, 2.6vw, 28px); }
+
+/* The button sits at the top of its column so it lines up with the
+   headline rather than drifting to the bottom of a tall block. */
+.s-register-act {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.s-register-spots {
+  font-family: var(--s-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  color: var(--s-rust);
+  margin: 0;
+}
+.s-register-fine {
+  font-family: var(--s-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  line-height: 1.5;
+  color: var(--s-grey);
+  margin: 0;
+}
+
+/* One column on a phone, with the button under the words it argues
+   for rather than beside them. */
+@media (max-width: 780px) {
+  .s-register { grid-template-columns: 1fr; }
+}

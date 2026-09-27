@@ -295,6 +295,24 @@ export const DETAIL = {
   closing: "JUST COME.",
   closingSub: "We'll handle the rest.",
   closingAlt: ["JUST COME,", "WE WILL HANDLE THE REST."],
+
+  /* The closing block, rewritten to ask for a registration rather
+     than admire itself. NEEDS REVIEW — no comp for this.
+
+     The scarcity is real and stays that way: a departure runs on a
+     fixed number of seats (CLAUDE.md), which is a fact about the
+     product, not a number invented to hurry anybody. A COUNT is only
+     ever shown when `spotsLeft` is set on the departure; otherwise
+     this says seats are limited without pretending to know how many.
+
+     Says nothing about payment either way — PULSE takes money at
+     application and Hallucia takes none, and this block is shared. */
+  registerEyebrow: "LIMITED SLOTS",
+  registerTitle: ["REGISTER YOURSELF.", "BE PART OF IT."],
+  registerBody:
+    "Two minutes is all it takes. Tell us who you are and our team comes back to you with the rest — how you get there, where you stay, and everything in between.",
+  registerCta: "REGISTER NOW",
+  registerFinePrint: "Every departure runs on a fixed number of seats.",
   stamp: ["SOMEWHERE", "WORTH IT."],
 } as const;
 

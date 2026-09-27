@@ -352,35 +352,48 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
           <hr className="s-rule" style={{ marginBottom: "clamp(34px,5vw,56px)" }} />
 
           <Reveal>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                gap: 30,
-                flexWrap: "wrap",
-              }}
-            >
+            {/* The page's last word, and the one that has to do the
+                work: what to do, why now, and the button to do it. */}
+            <div className="s-register">
               <div>
-                <p className="s-h2" style={{ color: "var(--s-rust)", fontSize: "clamp(26px,3.4vw,44px)" }}>
-                  {DETAIL.closingAlt[0]}
+                <p className="s-eyebrow" style={{ color: "var(--s-rust)" }}>
+                  {DETAIL.registerEyebrow}
                 </p>
-                <p className="s-h2" style={{ color: "var(--s-rust)", fontSize: "clamp(26px,3.4vw,44px)" }}>
-                  {DETAIL.closingAlt[1]}
-                </p>
-              </div>
-
-              <div style={{ display: "flex", alignItems: "center", gap: 22, flexWrap: "wrap" }}>
-                <span className="s-stamp">
+                <h2 className="s-h2 s-register-title">
+                  {DETAIL.registerTitle[0]}
+                  <br />
+                  {DETAIL.registerTitle[1]}
+                </h2>
+                <p className="s-body s-register-body">{DETAIL.registerBody}</p>
+                <span className="s-stamp s-register-stamp">
                   {DETAIL.stamp[0]}
                   <br />
                   {DETAIL.stamp[1]}
                 </span>
+              </div>
+
+              <div className="s-register-act">
                 {shut ? (
-                  <span className="s-btn-closed">{shut.cta}</span>
+                  <span className="s-btn-closed" style={{ width: "100%", justifyContent: "center" }}>
+                    {shut.cta}
+                  </span>
                 ) : (
-                  <ApplyButton label={DETAIL.applyCta} event={d.id} source="departure-close" />
+                  <ApplyButton
+                    label={DETAIL.registerCta}
+                    event={d.id}
+                    full
+                    source="departure-close"
+                  />
                 )}
+
+                {/* A real count when the departure has one, and the
+                    honest line when it does not. Never a number we
+                    cannot stand behind. */}
+                <p className="s-register-spots">
+                  ⚡{" "}
+                  {d.spotsLeft !== null ? `${d.spotsLeft} SPOTS LEFT` : DETAIL.spotsFallback}
+                </p>
+                <p className="s-register-fine">{DETAIL.registerFinePrint}</p>
               </div>
             </div>
           </Reveal>
