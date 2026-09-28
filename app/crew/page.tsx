@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import Shell from "@/components/as/Shell";
 import Reveal from "@/components/as/Reveal";
 import CrewForm from "@/components/as/CrewForm";
@@ -84,6 +85,13 @@ export default function CrewPage() {
 
           <Reveal delay={1}>
             <CrewForm />
+
+            {/* For the Crew who already have a passcode. Under the form
+                rather than in the navigation: it is a door for the few
+                people we have handed a key to. */}
+            <p className="s-consent" style={{ marginTop: 20 }}>
+              {CREW.signedLead} <Link href="/crew/login">{CREW.signedCta}</Link>
+            </p>
           </Reveal>
         </div>
       </section>

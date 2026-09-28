@@ -3191,6 +3191,105 @@ body.s-locked { overflow: hidden; }
   .s-crew-mark { transform: none; }
 }
 
+/* ---------- CREW SIGN-IN AND PANEL ----------
+   A single column, narrower than a reading measure, because both pages
+   are one task: sign in, or read your own numbers. The signup page next
+   door is a two-column pitch; this is the inside of the door. */
+.s-crew-in {
+  max-width: 620px;
+}
+
+.s-crew-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+/* Sign out is an exit, not an action to encourage: mono, small, and the
+   same weight as a label rather than a button. */
+.s-crew-out {
+  flex: none;
+  appearance: none;
+  background: none;
+  border: 1px solid var(--s-line);
+  padding: 8px 12px;
+  font-family: var(--s-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  color: var(--s-grey);
+  cursor: pointer;
+  transition: color 0.2s var(--s-bez), border-color 0.2s var(--s-bez);
+}
+.s-crew-out:hover {
+  color: var(--s-ink);
+  border-color: var(--s-ink);
+}
+.s-crew-out:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* The code is the whole reason for this page, so it is set at the size
+   of a price rather than the size of a field value. */
+.s-crew-code {
+  margin: 8px 0 0;
+  font-family: var(--s-heavy);
+  font-size: clamp(34px, 6vw, 58px);
+  line-height: 0.95;
+  letter-spacing: 0.02em;
+  color: var(--s-rust);
+  word-break: break-all;
+}
+
+/* Mono and wrappable: a link that runs off the side of a phone is a
+   link somebody cannot read back to check. */
+.s-crew-link {
+  margin: 8px 0 0;
+  font-family: var(--s-mono);
+  font-size: clamp(12px, 1.4vw, 14px);
+  line-height: 1.5;
+  color: var(--s-ink);
+  overflow-wrap: anywhere;
+  user-select: all;
+}
+
+.s-crew-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: 14px;
+  background: var(--s-line);
+  border: 1px solid var(--s-line);
+}
+.s-crew-stats > div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: clamp(16px, 2.2vw, 24px);
+  background: var(--s-bone);
+}
+.s-crew-stat-n {
+  font-family: var(--s-heavy);
+  font-size: clamp(30px, 5vw, 46px);
+  line-height: 1;
+  color: var(--s-ink);
+}
+.s-crew-stat-l {
+  font-family: var(--s-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  color: var(--s-grey);
+}
+
+/* Issued in capitals and read off a message — spaced so a 4 and a 7
+   cannot be mistaken for one another while typing. */
+.s-input-code {
+  font-family: var(--s-mono);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
 /* A departure announced before its fares exist. Set like the price it
    stands in for — same weight and position — so the panel keeps its
    shape, but in mono and grey so it never reads as a figure. */
@@ -3369,7 +3468,7 @@ body.s-locked { overflow: hidden; }
   border: 1px solid var(--s-line);
   cursor: pointer;
   font: inherit;
-  transition: border-color 0.2s var(--s-ease), background 0.2s var(--s-ease);
+  transition: border-color 0.2s var(--s-bez), background 0.2s var(--s-bez);
 }
 .s-exp-card:hover { border-color: var(--s-rust); }
 /* Chosen: a rust rule and an inner line, the same "stamped" language
@@ -3439,7 +3538,7 @@ body.s-locked { overflow: hidden; }
   border: 1px solid var(--s-line);
   cursor: pointer;
   font: inherit;
-  transition: border-color 0.2s var(--s-ease), background 0.2s var(--s-ease);
+  transition: border-color 0.2s var(--s-bez), background 0.2s var(--s-bez);
 }
 .s-travel-card:hover { border-color: var(--s-rust); }
 .s-travel-card[data-on="true"] {

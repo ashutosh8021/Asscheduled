@@ -101,6 +101,11 @@ export interface AmbassadorRow {
   status: string;
   tier: string;
   code: string | null;
+  /* From docs/schema-crew.sql. Optional so the panel still renders
+     against a database where that migration has not been run — the
+     table predates it, and a missing column must not blank the tab. */
+  activated_at?: string | null;
+  last_login_at?: string | null;
 }
 
 function headers(key: string) {

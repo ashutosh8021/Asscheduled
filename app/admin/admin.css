@@ -528,3 +528,59 @@ button.a-tab { font: inherit; cursor: pointer; }
   .a-pop-body { flex: 1 1 auto; min-width: 0; }
   .a-pop-text { white-space: normal; }
 }
+
+/* ---------- CREW ----------
+   The code in the table, and the credentials shown once after issuing. */
+.a-crew-code {
+  font-family: var(--s-mono), ui-monospace, Menlo, monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  padding: 2px 6px;
+  border: 1px solid #3a4150;
+  color: #9aa3b2;
+}
+/* Live accounts read as live. A paused ambassador's code still counts
+   referrals, so it is dimmed rather than struck through. */
+.a-crew-code[data-live="true"] { color: #FFAD84; border-color: #BE452A; }
+
+.a-crew-issued {
+  border: 1px solid #BE452A;
+  background: #1b1410;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+.a-crew-issued-head {
+  margin: 0 0 10px;
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  color: #FFAD84;
+}
+.a-crew-issued dl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 28px;
+  margin: 0;
+}
+.a-crew-issued dt {
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  color: #8A8FA1;
+  margin-bottom: 3px;
+}
+.a-crew-issued dd {
+  margin: 0;
+  font-family: var(--s-mono), ui-monospace, Menlo, monospace;
+  font-size: 19px;
+  letter-spacing: 0.16em;
+  color: #fff;
+  /* Selectable in one drag: this is copied into WhatsApp by hand. */
+  user-select: all;
+}
+.a-crew-issued-note {
+  margin: 11px 0 0;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #9aa3b2;
+}
+
+.a-crew-failed { margin: 9px 0 0; font-size: 11.5px; color: #FF9463; }

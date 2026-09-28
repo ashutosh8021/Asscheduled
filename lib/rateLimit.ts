@@ -82,6 +82,13 @@ const TEN_MINUTES = 10 * 60 * 1000;
 export const LIMITS = {
   apply: { bucket: "apply", max: 30, windowMs: TEN_MINUTES },
   crew: { bucket: "crew", max: 20, windowMs: TEN_MINUTES },
+  /* Crew sign-in. Lower than the rest because it is the one endpoint
+     that takes a credential — but not low enough to lock out a common
+     room where four people are signing in off one Wi-Fi and one of them
+     has mistyped their passcode twice. The passcode itself is eight
+     random characters, so guessing is not the threat this defends
+     against; a script hammering the route is. */
+  crewLogin: { bucket: "crew-login", max: 20, windowMs: TEN_MINUTES },
   contact: { bucket: "contact", max: 15, windowMs: TEN_MINUTES },
   collab: { bucket: "collab", max: 15, windowMs: TEN_MINUTES },
   subscribe: { bucket: "subscribe", max: 30, windowMs: TEN_MINUTES },

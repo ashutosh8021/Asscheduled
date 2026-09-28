@@ -451,6 +451,68 @@ export const CREW = {
   /* Phone rather than email: the published inbox is not currently
      being read, and pointing somebody at it would lose them. */
   failedBody: "We could not send that from here. Call us instead:",
+
+  /* Already in. Sits under the form rather than in the navigation:
+     somebody who has a passcode was given this link on a call. */
+  signedLead: "Already Crew?",
+  signedCta: "SIGN IN",
+} as const;
+
+/* ---------- CREW SIGN-IN AND PANEL ---------- */
+
+/* Editorial on the way in, plain once you are inside. The signup page
+   is a pitch; this is somebody checking their own numbers, and numbers
+   are a bureaucratic surface — stamps and labels, not adjectives. */
+export const CREW_IN = {
+  eyebrow: "CREW ONLY",
+  title: ["SIGN IN", "TO YOUR CREW."],
+  body: "Your number and the passcode we gave you on the call.",
+  phone: { label: "CONTACT NUMBER", ph: "The number you applied with" },
+  passcode: { label: "PASSCODE", ph: "Eight characters" },
+  submit: "SIGN IN",
+  sending: "CHECKING…",
+  /* One message for every failure. Which part was wrong is not
+     something this page should teach anybody. */
+  wrong: "That number and passcode do not match an active Crew account.",
+  offline: "No connection. Try again.",
+  lost: "Lost your passcode? Message us and we will issue a new one.",
+  notCrew: "Not Crew yet?",
+  applyCta: "APPLY TO CREW",
+} as const;
+
+export const CREW_PANEL = {
+  eyebrow: "AS SCHEDULED CREW",
+  codeLabel: "YOUR CODE",
+  /* Said plainly, because it is the one thing they have to get right.
+     The LINK is what counts somebody — the code is how they say your
+     name to us, which we match by hand. Promising that typing the code
+     counts them automatically would be promising something the form
+     does not yet do. */
+  codeNote: "Anyone who registers through your link is counted as yours, automatically.",
+  linkLabel: "YOUR LINK",
+  copyCta: "COPY LINK",
+  copied: "COPIED",
+  statsLabel: "WHAT YOU HAVE BROUGHT IN",
+  stats: {
+    registrations: "REGISTRATIONS",
+    selected: "SELECTED",
+  },
+  /* No cash figure on this page. Rewards are paid on confirmed, paid
+     bookings, and nothing in the system records a verified payment yet
+     — so a number here would be one we made up. */
+  moneyNote:
+    "Cash is confirmed once we have checked each payment against the bank. We tell you when it is.",
+  emptyStats: "Nothing yet. Send your link to one group chat and watch this move.",
+  noCode:
+    "Your code has not been issued yet. We do that on the call — if you have already had it, message us.",
+  howLabel: "HOW TO USE IT",
+  how: [
+    "Send your link, not a screenshot. The link is what counts somebody as yours.",
+    "Post it where your people already are: the class group, the society chat, your story.",
+    "If somebody reached us another way, tell us your code and we will put it on their name.",
+    "You are not selling. You are telling people you are going and asking who is in.",
+  ],
+  signOut: "SIGN OUT",
 } as const;
 
 /* ---------- FAQ ---------- */

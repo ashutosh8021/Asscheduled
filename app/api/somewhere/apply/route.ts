@@ -8,6 +8,7 @@ import {
   PARTNER_COOKIE,
   referrerFor,
 } from "@/lib/partners";
+import { CREW_REF_COOKIE, resolveCrewCode } from "@/lib/crew";
 import { mirrorApplication } from "@/lib/adminData";
 import { newReference } from "@/lib/reference";
 import { DEPARTURES } from "@/lib/departures";
@@ -163,8 +164,38 @@ export async function POST(request: Request) {
      and still gets the credit. See referrerFor. */
   const referrer = referrerFor(departure!.id, jar.get(PARTNER_COOKIE)?.value, coupon);
 
+  /* No festival code? Then possibly a Crew member's.
+
+     Crew codes are issued from the ambassadors table rather than
+     lib/partners.ts — that is what lets somebody be taken on without a
+     deploy — so this is a lookup, and it is the ONLY place the code is
+     checked. The middleware could not: there is no database at the
+     edge, so it remembers the shape of a code and leaves the verdict
+     here. Anything that is not an issued code resolves to null, and
+     `referred_by` never holds a string somebody invented.
+
+     Typed first, then the cookie, exactly as referrerFor does it: a
+     code somebody entered by hand is a more deliberate statement than a
+     link they clicked three weeks ago. Each is tried on its own rather
+     than one falling back to the other only when empty — otherwise
+     somebody who arrived on a Crew link and then typed a nonsense
+     coupon would cost that Crew member the credit. */
+  let crewCode: string | null = null;
+  if (!referrer) {
+    for (const candidate of [coupon, jar.get(CREW_REF_COOKIE)?.value]) {
+      if (!candidate) continue;
+      crewCode = await resolveCrewCode(candidate);
+      if (crewCode) break;
+    }
+  }
+
+  /* Who gets the credit: a festival's referral if there was one, else
+     the Crew code. Never a price — a Crew code carries no discount
+     today, and giving one is Mannat's decision to make. */
+  const referredBy = referrer?.code ?? crewCode;
+
   /* Which package, for departures sold as more than one.
-​
+
      Scoped to the departure: a plan id is only accepted if this
      departure actually sells it, so a PULSE plan posted against Thomso
      resolves to nothing rather than to a PULSE fare. Anything unknown
@@ -243,7 +274,7 @@ export async function POST(request: Request) {
     discountInr: pricing.discountInr || null,
     amountDue,
     utr: utr || null,
-    referredBy: referrer?.code ?? null,
+    referredBy,
     email: email || null,
     city: city || null,
     /* 'details' means step one is in and step two is still to come.
@@ -269,7 +300,7 @@ export async function POST(request: Request) {
       partner: partner ? `${partner.coupon} · ${partner.name} — ₹${pricing.discountInr} off` : null,
       amountDue: amountDue === null ? null : `₹${amountDue}`,
       utr: utr || null,
-      referredBy: referrer ? referrer.coupon : null,
+      referredBy: referrer ? referrer.coupon : referredBy,
     },
     null,
     /* Copied to the partner festival. Worked out from the DEPARTURE,

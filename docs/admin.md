@@ -365,3 +365,84 @@ the same rules.
 Nothing verifies a UTR. It is recorded as typed and **checked against the bank
 by hand** — the form says as much rather than implying a confirmation that has
 not happened.
+
+## Crew accounts
+
+Crew are ambassadors: students who bring their own people to a departure and
+are paid on confirmed bookings. They sign in at **`/crew/login`** and see one
+page — their own code, their own link and their own numbers.
+
+### They are not admin accounts, and cannot become one
+
+A Crew member has **no Supabase Auth user at all**. Their identity is a row in
+`ambassadors`, their credential is a passcode we issue, and their session is a
+random token in `crew_sessions` behind the `as_crew` cookie.
+
+`/admin` and `/partner` are guarded by `currentAdmin()` and `currentViewer()`,
+which read the `as_admin` cookie and verify it against Supabase Auth, then check
+`ADMIN_EMAILS` or `PARTNER_EMAILS`. There is nothing a Crew member could present
+to either: they hold no JWT and no account exists behind their token. The
+reverse holds too — `currentCrew()` never consults an allowlist, so an admin's
+cookie is not a Crew session.
+
+Two cookies, two tables, no shared code path. `lib/crew.ts` deliberately does
+not import `lib/admin.ts`.
+
+### Taking somebody on
+
+1. They apply at `/crew`. The row lands in `ambassadors` with `status='new'`,
+   no code and no passcode. **A signup is a request to join, not membership.**
+2. Call them. Selection rests on the "groups they can reach" answer.
+3. In ADMIN → CREW, open their row and press **ACTIVATE**. That issues a
+   referral code and an eight-character passcode, and sets `status='active'`.
+4. **Copy both out of the panel there and then and send them.** Only their
+   hashes are stored, so that is the one moment either is readable.
+
+Their link is `asscheduled.com/somewhere?p=<CODE>`.
+
+### Losing a passcode, and pausing somebody
+
+**NEW PASSCODE** issues a fresh one and **invalidates the old one** — so it is
+how you replace a lost passcode, and it takes two presses once an account
+exists. It never changes the code: links carrying it are already circulating.
+
+**PAUSE** and **DECLINE** stop somebody signing in without touching their row,
+their code or their history. `currentCrew()` re-checks the status on every
+request, so a paused member's open sessions stop working immediately. Their code
+keeps crediting referrals — where an application came from is a fact; whether
+they are paid for it is a separate decision.
+
+### How credit is recorded
+
+A Crew link sets the **`as_ref`** cookie, which is not the partner cookie.
+`as_partner` decides a price, and a Crew code carries no discount today —
+writing one into `as_partner` would take away a discount somebody had already
+earned on a festival's link.
+
+The apply route resolves `as_ref` (or a code typed into the coupon field)
+against `ambassadors.code` and stores the result in `applications.referred_by`.
+An unknown code stores nothing, so that column only ever holds a code that
+exists. Codes are issued from the database, not from `lib/partners.ts`, which is
+what lets you take somebody on without a deploy.
+
+### What is not built yet
+
+- **Nothing records a verified payment.** `applications.paid_at` exists and
+  nothing sets it, so the Crew panel shows registrations and selections and
+  says plainly that cash is confirmed by hand. A MARK PAID action is what a
+  payout figure would have to be built on.
+- **The coupon field does not recognise a Crew code as valid.** A typed code is
+  recorded on submit, but the form checks it against the partner list and will
+  say it is not a discount code. The Hallucia registration has no coupon field
+  at all — the link is the only automatic route there.
+- **No leaderboard.** Each Crew member sees their own numbers; nobody sees a
+  ranking.
+
+### Housekeeping
+
+Expired sessions are harmless — `currentCrew()` checks `expires_at` — but they
+accumulate:
+
+```sql
+delete from crew_sessions where expires_at < now();
+```
