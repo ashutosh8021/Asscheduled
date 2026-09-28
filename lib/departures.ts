@@ -909,7 +909,11 @@ export const ALL_DEPARTURES: Departure[] = [
     titleTop: "IITR THOMSO",
     titleBottom: "MUSSOORIE",
     cardNote: "ROORKEE, TEMPORARILY.",
-    homeNote: "Roorkee rendezvous",
+    /* "Roorkee rendezvous" until 2026-09-28 — Rendezvous is a
+       different fest at a different campus, so the homepage card named
+       the wrong one under IIT ROORKEE. Copied from the Rendezvous
+       entry when this one was written. */
+    homeNote: "Roorkee thomso",
     homeDates: "5th – 10th October",
     range: "05 OCT → 11 OCT",
     batches: [

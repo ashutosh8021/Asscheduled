@@ -8,12 +8,9 @@ see `CLAUDE.md`, "Assets".
 ## HALLUCIA, AIIMS Nagpur — `HAL-26`
 
 Festival photography from a previous edition of HALLUCIA — the one whose
-stage LED reads "The Mystic Carnival" — supplied by the festival.
+stage LED reads "The Mystic Carnival" — supplied by the festival and used
+with their permission (confirmed by Mannat, 2026-09-28).
 Shot by the HALLUCIA / AIIMS Nagpur media team.
-
-⚠️ TODO(mannat): written permission is NOT yet recorded here. The files were
-handed over on 2026-09-26 for this purpose, which is the basis they ship on.
-Get it in writing and replace this note, or pull the images.
 
 Originals are in `asset/hallucia  AIIMS  NAGPUR/`. The web files are 16:9
 crops (`public/img/wide/`) and size-reduced full frames (`public/img/hallucia/`);
