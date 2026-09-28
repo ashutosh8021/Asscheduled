@@ -8,6 +8,8 @@ import {
   listCollaborations,
   applicationCounts,
   arrivalCounts,
+  ambassadorCount,
+  listAmbassadors,
   listDocumentBundles,
   documentBundleCount,
   APPLICATION_STATUSES,
@@ -16,6 +18,7 @@ import { ALL_DEPARTURES } from "@/lib/departures";
 import ApplicationsTable from "./ApplicationsTable";
 import MessagesTable from "./MessagesTable";
 import CollabsTable from "./CollabsTable";
+import CrewTable from "./CrewTable";
 import DocumentsTab from "./DocumentsTab";
 import SignOut from "./SignOut";
 import ResyncSheet from "./ResyncSheet";
@@ -43,14 +46,18 @@ export default async function AdminPage({
 
   const sp = await searchParams;
   const tab =
-    sp.tab === "messages" || sp.tab === "collabs" || sp.tab === "documents"
+    sp.tab === "messages" || sp.tab === "collabs" || sp.tab === "documents" || sp.tab === "crew"
       ? sp.tab
       : "applications";
 
-  const [counts, docCount, arrivals, apps, messages, collabs, bundles] =
+  const [counts, docCount, crewCount, arrivals, apps, messages, collabs, bundles, crew] =
     await Promise.all([
       applicationCounts(),
       documentBundleCount(),
+      /* Counted on every tab, so the badge says how many are waiting.
+         A tab with no number reads as empty — that is how a real
+         enquiry sat unread for two weeks. */
+      ambassadorCount(),
       /* Totals for the badge and for the "something came in" pop. Cheap
          enough to run on every tab: two counts, no rows. */
       arrivalCounts(null),
@@ -62,6 +69,7 @@ export default async function AdminPage({
       /* Signed URLs are minted here and expire the same day, so this is
          fetched only for the tab that shows them. */
       tab === "documents" ? listDocumentBundles() : Promise.resolve([]),
+      tab === "crew" ? listAmbassadors() : Promise.resolve([]),
     ]);
 
   /* Preserve the other filters when building a link. */
@@ -94,6 +102,9 @@ export default async function AdminPage({
             </Link>
             <Link className="a-tab" href="/admin?tab=collabs" data-on={tab === "collabs"}>
               COLLABS
+            </Link>
+            <Link className="a-tab" href="/admin?tab=crew" data-on={tab === "crew"}>
+              CREW<span className="a-tab-count">{crewCount}</span>
             </Link>
           </div>
 
@@ -141,6 +152,8 @@ export default async function AdminPage({
         {tab === "documents" ? <DocumentsTab bundles={bundles} /> : null}
 
         {tab === "collabs" ? <CollabsTable rows={collabs} /> : null}
+
+        {tab === "crew" ? <CrewTable rows={crew} /> : null}
       </div>
     </div>
   );

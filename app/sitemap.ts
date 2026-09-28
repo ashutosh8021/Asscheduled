@@ -23,6 +23,9 @@ const STATIC: {
   { path: "/about", priority: 0.6, freq: "monthly" },
   { path: "/faqs", priority: 0.7, freq: "monthly" },
   { path: "/contact", priority: 0.6, freq: "monthly" },
+  /* Not in the navigation — Crew outreach hands the link out — but a
+     public page people search for by name once it is circulating. */
+  { path: "/crew", priority: 0.5, freq: "monthly" },
   { path: "/paperwork", priority: 0.4, freq: "yearly" },
   { path: "/paperwork/privacy", priority: 0.3, freq: "yearly" },
   { path: "/paperwork/terms", priority: 0.3, freq: "yearly" },

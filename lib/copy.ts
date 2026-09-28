@@ -392,24 +392,32 @@ export const CONTACT = {
    promises a figure cannot take it back. */
 export const CREW = {
   eyebrow: "AS SCHEDULED CREW",
-  titleTop: ["YOU KNOW", "THE PEOPLE."],
-  titleMark: "WE KNOW THE TRIP.",
+  titleTop: ["ANY COLLEGE.", "ANY CITY."],
+  titleMark: "ONE CREW.",
   body: [
-    "Crew are the people in each college who get their friends onto a departure.",
-    "You get a personal code. Every confirmed booking on it counts toward your rewards.",
+    "Crew are the ones who make a departure happen in their own college — the people who get their friends onto the train and end up running the group chat the whole way there.",
+    "You are not selling anything. You are building the group you are going to travel with.",
   ],
+  /* The number is Mannat's, given 2026-09-28. Written as a ceiling
+     with the condition attached, because "earn ₹10,000" on its own is
+     a promise to somebody who fills in a form and books nobody. */
+  payoffLead: "Cash rewards up to",
+  payoffFigure: "₹10,000",
+  payoffTail: "and past it, if you keep going.",
+
   stepsLabel: "HOW IT WORKS",
   steps: [
-    { n: "01", t: "APPLY", d: "Two minutes. Tell us which groups you can actually reach." },
-    { n: "02", t: "GET YOUR CODE", d: "We call the people we select and issue a personal code." },
-    { n: "03", t: "FILL SEATS", d: "Rewards count on confirmed, paid bookings. Not on sign-ups." },
+    { n: "01", t: "APPLY", d: "Two minutes. Any college, any city, anywhere in India." },
+    { n: "02", t: "GET YOUR CODE", d: "We call the people we pick and hand you a code of your own." },
+    { n: "03", t: "BRING YOUR PEOPLE", d: "Cash on every confirmed, paid booking. Not on sign-ups." },
   ],
-  rewardsLabel: "WHAT COUNTS",
+  rewardsLabel: "WHAT YOU GET",
   rewards: [
-    "Credit for every confirmed booking on your code.",
+    "Cash on every confirmed booking, up to ₹10,000 and beyond.",
     "A free trip once you reach the milestone.",
-    "A certificate and a letter of recommendation.",
-    "The best Crew work the trip with us, paid.",
+    "The best Crew work the trip with us, paid, on the ground.",
+    "A certificate and a letter of recommendation from ROITCOVE.",
+    "Every departure, before anybody else hears about it.",
   ],
 
   formTitle: "APPLY TO CREW",
@@ -436,7 +444,7 @@ export const CREW = {
   submit: "APPLY TO CREW",
 
   sentTitle: "RECEIVED.",
-  sentBody: "We call everyone we select. Keep your phone on.",
+  sentBody: "We call everyone we pick. Keep your phone on.",
   duplicateTitle: "ALREADY ON THE LIST.",
   duplicateBody: "This number has applied to Crew before. We will be in touch.",
   failedTitle: "NOT SENT.",
