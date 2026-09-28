@@ -1,6 +1,6 @@
 import { NextResponse, after } from "next/server";
 import { cookies } from "next/headers";
-import { deliver, isIndianMobile, readStrings } from "@/lib/inbox";
+import { deliver, isEmail, isIndianMobile, readStrings } from "@/lib/inbox";
 import {
   effectivePrice,
   notifyFor,
@@ -75,13 +75,26 @@ export async function POST(request: Request) {
   if (!Number.isInteger(age) || age < MIN_AGE || age > MAX_AGE) bad.push("age");
 
   if (!a.state) bad.push("state");
-  if (!a.occupation) bad.push("occupation");
   if (a.college.length < 2) bad.push("college");
 
   /* The event must be one we actually run — an unknown id means a
      stale or tampered client. */
   const departure = DEPARTURES.find((d) => d.id === a.event);
   if (!departure) bad.push("event");
+
+  /* Which questions were actually asked depends on the departure, so
+     these are checked once it is known. The experience flow drops
+     occupation and adds email and a city; every other form is the
+     other way round. Both are enforced here, not only in the browser. */
+  if (departure?.experienceFlow) {
+    const src0 = raw as Record<string, unknown>;
+    const e = typeof src0.email === "string" ? src0.email.trim() : "";
+    const c = typeof src0.city === "string" ? src0.city.trim() : "";
+    if (!isEmail(e)) bad.push("email");
+    if (c.length < 2) bad.push("city");
+  } else if (!a.occupation) {
+    bad.push("occupation");
+  }
 
   if (bad.length) return fail("Some answers did not pass validation.", 422, bad);
 
@@ -125,6 +138,14 @@ export async function POST(request: Request) {
      no code at all all mean the price without it. None is an error:
      somebody who mistypes a coupon should get an application, not a
      refusal — the form already told them it did not take. */
+  /* Step one of the experience flow asks for these; nothing else
+     does. Read on their own rather than through readStrings, which
+     would make them mandatory for every application including from a
+     cached client that has never heard of them. */
+  const src = raw as Record<string, unknown>;
+  const email = typeof src.email === "string" ? src.email.trim().slice(0, 200) : "";
+  const city = typeof src.city === "string" ? src.city.trim().slice(0, 120) : "";
+
   const rawCoupon = (raw as Record<string, unknown>).coupon;
   const coupon = typeof rawCoupon === "string" ? rawCoupon.trim().slice(0, 40) : "";
 
@@ -158,7 +179,9 @@ export async function POST(request: Request) {
      fare, so nothing to quote and nothing to check a transfer against.
      Refused here as well as in the form, because the form can be
      bypassed. */
-  if (plansFor(departure!.id).length > 0 && !plan) {
+  /* The experience flow picks its package in step two, so step one
+     posts no plan and must not be refused for it. */
+  if (!departure!.experienceFlow && plansFor(departure!.id).length > 0 && !plan) {
     return fail("Pick which plan you want.", 422, ["plan"]);
   }
 
@@ -170,13 +193,15 @@ export async function POST(request: Request) {
      Null is a legitimate outcome, not a failure: the departure takes
      no payment, or their state has no fare set yet. An application
      still stands; we come back with the amount. */
-  const amountDue = amountDueInr({
-    departureId: departure!.id,
-    planId: plan?.id ?? null,
-    state: a.state,
-    bookingInr: departure!.bookingInr,
-    discountInr: pricing.discountInr,
-  });
+  const amountDue = departure!.experienceFlow
+    ? null
+    : amountDueInr({
+        departureId: departure!.id,
+        planId: plan?.id ?? null,
+        state: a.state,
+        bookingInr: departure!.bookingInr,
+        discountInr: pricing.discountInr,
+      });
 
   /* Read on its own rather than through readStrings, which requires
      every key it is given. Listing `utr` there would have made it
@@ -219,6 +244,11 @@ export async function POST(request: Request) {
     amountDue,
     utr: utr || null,
     referredBy: referrer?.code ?? null,
+    email: email || null,
+    city: city || null,
+    /* 'details' means step one is in and step two is still to come.
+       Only the experience flow has a half-finished state. */
+    stage: departure!.experienceFlow ? "details" : null,
   });
 
   const delivered = await deliver(
@@ -295,7 +325,7 @@ export async function POST(request: Request) {
      no token: an upload with nowhere to land is worse than asking for
      it by email. */
   let upload: string | null = null;
-  if (departure?.documentsAtApply && stored) {
+  if ((departure?.documentsAtApply || departure?.experienceFlow) && stored) {
     const row = await findApplicationId(reference);
     if (row) upload = await issueUploadToken(row);
     if (!upload) console.error(`[apply] could not issue an upload token for ${reference}`);

@@ -89,6 +89,17 @@ export interface ApplicationRecord {
   /** The code of whoever referred them, whether or not that code won
    *  on price. See referrerFor in lib/partners.ts. */
   referredBy: string | null;
+
+  /* The "build your experience" answers. All optional, because only
+     Hallucia asks them and they arrive with docs/schema-hallucia.sql. */
+  email: string | null;
+  city: string | null;
+  /**
+   * 'details' when step one has been saved on its own and step two is
+   * still to come; 'complete' once they finish. Null for the plain
+   * form, which has no half-finished state.
+   */
+  stage: string | null;
 }
 
 export async function saveApplication(a: ApplicationRecord): Promise<boolean> {
@@ -125,6 +136,14 @@ export async function saveApplication(a: ApplicationRecord): Promise<boolean> {
      migration, docs/schema-mi.sql. */
   const referral = a.referredBy ? { referred_by: a.referredBy } : {};
 
+  /* The Hallucia answers, from docs/schema-hallucia.sql — the newest
+     migration, so the first thing dropped if the insert is refused. */
+  const experience = {
+    ...(a.email ? { email: a.email } : {}),
+    ...(a.city ? { city: a.city } : {}),
+    ...(a.stage ? { stage: a.stage } : {}),
+  };
+
   /* PostgREST rejects the entire insert when it is handed a column
      that does not exist — so before a migration is run, every
      application naming one of its columns fails outright. It is not a
@@ -139,30 +158,93 @@ export async function saveApplication(a: ApplicationRecord): Promise<boolean> {
      A row missing some detail can be repaired from the email. A row
      that was never written cannot be repaired from anything. Loud,
      because each fallback is a state somebody has to come and fix. */
-  const tiers: { row: Record<string, unknown>; dropping: string; migration: string }[] = [];
-  if (Object.keys(referral).length) {
-    tiers.push({ row: { ...core, ...extra }, dropping: "referred_by", migration: "docs/schema-mi.sql" });
-  }
-  if (Object.keys(extra).length) {
-    tiers.push({
-      row: core,
-      dropping: Object.keys(extra).join(", "),
-      migration: "docs/schema-partner.sql",
-    });
-  }
+  /* Newest migration first. Each rung drops one group and keeps
+     everything older, and a group that is empty is not a rung at all —
+     so there is never an identical row tried twice. */
+  const groups: { fields: Record<string, unknown>; migration: string }[] = [
+    { fields: experience, migration: "docs/schema-hallucia.sql" },
+    { fields: referral, migration: "docs/schema-mi.sql" },
+    { fields: extra, migration: "docs/schema-partner.sql" },
+  ];
 
-  if (await insert("applications", { ...core, ...extra, ...referral })) return true;
+  const row: Record<string, unknown> = { ...core, ...extra, ...referral, ...experience };
+  if (await insert("applications", row)) return true;
 
-  for (const tier of tiers) {
+  for (const group of groups) {
+    const names = Object.keys(group.fields);
+    if (names.length === 0) continue;
+
+    for (const name of names) delete row[name];
+
     console.error(
       `[store] applications insert failed for ${a.reference} — retrying without ` +
-        `${tier.dropping}. If a column is missing, run ${tier.migration}: until then ` +
-        `${tier.dropping} is NOT being recorded.`
+        `${names.join(", ")}. If a column is missing, run ${group.migration}: until ` +
+        `then ${names.join(", ")} ${names.length === 1 ? "is" : "are"} NOT being recorded.`
     );
-    if (await insert("applications", tier.row)) return true;
+    if (await insert("applications", row)) return true;
   }
 
   return false;
+}
+
+export interface ExperienceRecord {
+  plan: string;
+  travelMode: string;
+  travelCity: string | null;
+  travelType: string | null;
+  /** The deposit, worked out on the server. Null where travel has to
+   *  be quoted by a person and nothing is taken yet. */
+  amountDue: number | null;
+  utr: string | null;
+}
+
+/**
+ * Finish an application that was saved at step one.
+ *
+ * A PATCH rather than an insert: the row already exists, because the
+ * details were stored the moment they were given. That is the point of
+ * the two steps — somebody who chooses a package and then vanishes is
+ * still a person we can call.
+ *
+ * Returns false on any failure, including a missing column, and the
+ * caller must surface that: a step that stored nothing has not
+ * completed, whatever the screen says.
+ */
+export async function completeApplication(
+  id: string,
+  e: ExperienceRecord
+): Promise<boolean> {
+  const cfg = supabaseConfig();
+  if (!cfg) return false;
+
+  try {
+    const res = await fetch(`${cfg.url}/rest/v1/applications?id=eq.${encodeURIComponent(id)}`, {
+      method: "PATCH",
+      headers: { ...headers(cfg.serviceRoleKey), prefer: "return=minimal" },
+      body: JSON.stringify({
+        plan: e.plan,
+        travel_mode: e.travelMode,
+        travel_city: e.travelCity,
+        travel_type: e.travelType,
+        amount_due: e.amountDue,
+        utr: e.utr,
+        stage: "complete",
+      }),
+      cache: "no-store",
+    });
+
+    if (!res.ok) {
+      console.error(
+        `[store] completing ${id} failed (${res.status}): ${await res.text()} — ` +
+          `if a column is missing, run docs/schema-hallucia.sql.`
+      );
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error("[store] completing application threw", err);
+    return false;
+  }
 }
 
 export interface CollabRecord {

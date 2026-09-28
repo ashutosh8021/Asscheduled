@@ -143,6 +143,20 @@ export interface Departure {
   closedReason?: "full" | "paused" | "soon";
 
   /**
+   * Sells by "build your experience" rather than a single form.
+   *
+   * Two steps that mean different things. Step one is details, and it
+   * is SAVED on its own — somebody who gets that far and then leaves
+   * is a person we can ring, not a lost visit. Step two is the package
+   * and how they travel, and it ends one of two ways: a deposit where
+   * they arrange their own travel, or a promise to call where they
+   * need a train or a flight quoted.
+   *
+   * Only Hallucia today. Everything else keeps the plain form.
+   */
+  experienceFlow?: boolean;
+
+  /**
    * Off the website, but not out of the codebase.
    *
    * A hidden departure appears nowhere a visitor can reach: no card,
@@ -358,9 +372,11 @@ export const ALL_DEPARTURES: Departure[] = [
     ],
     days: 5,
     nights: 4,
-    /* No fare published yet — see the note on Departure.price. Every
-       surface says "PRICING SOON" instead of showing a figure. */
-    price: null,
+    /* Derived from the two experiences in lib/packages.ts — ₹8,899 for
+       the festival, ₹12,999 with Pachmarhi. Written there and nowhere
+       else, so the board and the form cannot quote different numbers. */
+    price: departureSpan("HAL-26")!.min,
+    priceMax: departureSpan("HAL-26")!.max,
     /* Open, on instruction (2026-09-27): details only. No plan, no
        documents and no payment, so the form collapses to a single
        screen and the confirmation says the team will be in touch.
@@ -379,12 +395,19 @@ export const ALL_DEPARTURES: Departure[] = [
     ],
     /* Their own three words, stamped beside the intro. */
     introStamps: ["Culture. Chaos. Colours."],
+    /* Turns on the "build your experience" form: package, then travel,
+       then a deposit or a callback. See components/as/ApplyModal. */
+    experienceFlow: true,
     /* Stamped above the price, where somebody decides whether to fill
        the form in. Both are plainly true and neither invents urgency:
        the form genuinely takes no money, and a departure genuinely
        runs on a fixed number of seats. The second is not a count —
        `spotsLeft` is still null, and no figure is claimed anywhere. */
-    panelStamps: ["No payment to register", "Limited slots"],
+    /* "No payment to register" came off when the deposit went on: it
+       stopped being true the moment a self-arranged trip ended in a
+       30% payment. Both of these hold for everybody, whichever way
+       they travel. */
+    panelStamps: ["Trip captain included", "Limited slots"],
     /* Not rendered anywhere today — see the notes on these fields.
        TODO(mannat): supply what the fare covers when the plans exist. */
     included: [],

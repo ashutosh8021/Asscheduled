@@ -601,6 +601,35 @@ export const APPLY = {
      somebody wondering whether anything was received at all. */
   doneConnect: "Our team will connect with you.",
 
+  /* ---- build your experience (Hallucia) ----
+     NEEDS REVIEW: no comp for this flow. Deadpan, as every other form
+     label on this screen is. */
+  continueCta: "CONTINUE",
+  experienceHead: "CHOOSE YOUR EXPERIENCE",
+  experienceCta: "SUBMIT",
+  travelHead: "HOW DO YOU WANT TO TRAVEL?",
+  travelModes: [
+    { id: "train", label: "🚆 TRAIN", note: "We book it. Quoted after you register." },
+    { id: "flight", label: "✈️ FLIGHT", note: "We book it. Quoted after you register." },
+    { id: "self", label: "🚗 SELF ARRANGE", note: "You get there. No travel cost from us." },
+  ],
+  travelCityLabel: "WHICH CITY ARE YOU TRAVELLING FROM?",
+  travelCityPh: "Your starting city",
+  travelTypeLabel: "TRAVEL TYPE",
+  travelTypes: [
+    { id: "round", label: "ROUND TRIP" },
+    { id: "oneway", label: "ONE WAY" },
+  ],
+  /* Said instead of a total, because a train or a flight cannot be
+     priced here. Promises a conversation, not a number. */
+  travelQuoted: "We'll contact you shortly to confirm your travel options and pricing. Nothing to pay right now.",
+
+  depositHead: "PAY 30% TO CONFIRM",
+  depositNote: "30% of the package. The rest before you travel. Package price",
+  depositCta: "PAY & CONFIRM",
+  proofTitle: "PAYMENT SCREENSHOT",
+  proofHint: "The confirmation from your UPI app.",
+
   payHead: "BOOKING AMOUNT",
   payNote: "Pay this by UPI, then tell us the reference below.",
   payQrCaption: "Scan with any UPI app",
@@ -635,6 +664,9 @@ export const APPLY = {
     state: { label: "STATE", ph: "Select your state" },
     occupation: { label: "OCCUPATION", ph: "Select your occupation" },
     college: { label: "COLLEGE", ph: "Where do you study?" },
+    /* The experience flow asks these two and not occupation. */
+    email: { label: "EMAIL", ph: "Where we send your confirmation" },
+    city: { label: "CITY", ph: "Where you're coming from" },
     event: { label: "WHICH EVENT YOU WANT TO COME?", ph: "Select the event you're most excited about" },
     instagram: { label: "INSTAGRAM HANDLE", ph: "Enter your Instagram handle", hint: "Helps us know you better." },
     why: {

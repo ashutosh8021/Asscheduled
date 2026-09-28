@@ -55,6 +55,25 @@ export interface Plan {
    */
   brochure?: string;
   fares: Fares;
+
+  /**
+   * A flat price, for a plan that does not vary by state.
+   *
+   * Hallucia is sold this way: one package price, with travel chosen
+   * and quoted separately, so there is nothing for a per-state fare
+   * table to say. Where this is set it IS the fare and `fares` is
+   * ignored — see fareFor.
+   */
+  baseInr?: number;
+
+  /**
+   * The share of the base taken up front, as a percentage.
+   *
+   * Only meaningful with `baseInr`. Kept as a percentage rather than a
+   * rupee figure so the deposit cannot drift from the price it is a
+   * share of: change the base and the deposit follows.
+   */
+  depositPct?: number;
 }
 
 /* ------------------------------------------------------------------
@@ -234,10 +253,62 @@ const PULSE_PLANS: Plan[] = [
   },
 ];
 
+/* ------------------------------------------------------------------
+   HALLUCIA'26 — AIIMS Nagpur.
+
+   Flat prices, not a per-state table: the package is the same from
+   everywhere and travel is chosen separately, then quoted by a person.
+   Supplied 2026-09-28.
+
+   30% holds a place, and only where somebody arranges their own
+   travel. Train and flight cannot be priced here — the fare depends on
+   the city, the class and the day — so those applications end with a
+   call rather than a payment. See app/api/somewhere/apply/finish.
+   ------------------------------------------------------------------ */
+const HALLUCIA_PLANS: Plan[] = [
+  {
+    id: "hallucia",
+    n: "HALLUCIA",
+    name: "THE FESTIVAL",
+    duration: "5 DAYS",
+    blurb: "The five days of Hallucia, and the city it happens in.",
+    brochure: "/brochure/hallucia-2026.pdf",
+    baseInr: 8899,
+    depositPct: 30,
+    includes: [
+      "Accommodation",
+      "Food",
+      "Transport within the package",
+      "Fest pass",
+      "Trip captain",
+    ],
+    fares: {},
+  },
+  {
+    id: "hallucia-pachmarhi",
+    n: "HALLUCIA × PACHMARHI",
+    name: "THE FESTIVAL + PACHMARHI",
+    duration: "7 DAYS",
+    blurb: "The festival, then two days in the hills at Pachmarhi.",
+    brochure: "/brochure/hallucia-pachmarhi-2026.pdf",
+    baseInr: 12999,
+    depositPct: 30,
+    includes: [
+      "Accommodation",
+      "Food",
+      "Transport within the package",
+      "Fest pass",
+      "Trip captain",
+    ],
+    fares: {},
+  },
+];
+
 /** Plans by departure id. A departure absent from here is sold at the
  *  single price on its own record. */
 export const PLANS: Record<string, Plan[]> = {
   "PUL-26": PULSE_PLANS,
+  "HAL-26": HALLUCIA_PLANS,
 };
 
 /** The plans a departure is sold as. Empty for a single-price one. */
@@ -271,12 +342,38 @@ export function findPlan(departureId: string, planId: string | null | undefined)
  * rather than shown a guess.
  */
 export function fareFor(plan: Plan | null, state: string): number | null {
-  if (!plan || !state) return null;
+  if (!plan) return null;
+  /* A flat-priced plan costs the same from everywhere, so it needs no
+     state at all — and must not wait for one before it can quote. */
+  if (typeof plan.baseInr === "number") return plan.baseInr;
+  if (!state) return null;
   return plan.fares[state as StateName] ?? null;
+}
+
+/**
+ * What is taken up front to hold a place, in rupees.
+ *
+ * Null for a plan that has no deposit arrangement — those are paid in
+ * full or not on the site at all. Rounded UP to the whole rupee: a
+ * deposit is a figure somebody types into a UPI app and we reconcile
+ * against a bank statement, and paise in either make both harder.
+ *
+ * Server and browser both call this, so the amount shown and the
+ * amount recorded come from one line of arithmetic.
+ */
+export function depositFor(plan: Plan | null): number | null {
+  if (!plan || typeof plan.baseInr !== "number" || typeof plan.depositPct !== "number") {
+    return null;
+  }
+  return Math.ceil((plan.baseInr * plan.depositPct) / 100);
 }
 
 /** Cheapest and dearest fare in a plan, for a range on a card. */
 export function planSpan(plan: Plan): { min: number; max: number } | null {
+  /* A flat-priced plan is its own span. Without this it would read as
+     unpriced, because its fare table is deliberately empty. */
+  if (typeof plan.baseInr === "number") return { min: plan.baseInr, max: plan.baseInr };
+
   const fares = Object.values(plan.fares).filter((f): f is number => typeof f === "number");
   /* Null rather than Infinity. An unpriced plan has no span, and
      Math.min() of nothing is Infinity, which would render as a price. */

@@ -13,6 +13,7 @@ import { DOCUMENT_LABELS, SizeNote } from "./UploadFields";
 import { DOCUMENT_KINDS, PAYMENT_KIND, type DocumentKind } from "@/lib/documentRules";
 import { amountDueInr, fareFor, findPlan, plansFor } from "@/lib/packages";
 import NoFare from "./NoFare";
+import ExperienceStep from "./ExperienceStep";
 
 /* "I am coming." — the two-step application overlay from comps (12) and (14).
 
@@ -30,6 +31,10 @@ interface Answers {
   event: string;
   instagram: string;
   why: string;
+  /* Asked only by the "build your experience" flow, which drops
+     occupation in their place. */
+  email: string;
+  city: string;
 }
 
 const EMPTY: Answers = {
@@ -43,6 +48,8 @@ const EMPTY: Answers = {
   event: "",
   instagram: "",
   why: "",
+  email: "",
+  city: "",
 };
 
 /* Eligibility bounds. Mirrored server-side in
@@ -52,7 +59,12 @@ export const MIN_AGE = 18;
 export const MAX_AGE = 60;
 
 /* Step 1 gates on the fields the comp marks required. */
-function validateStep1(a: Answers): Partial<Record<keyof Answers, string>> {
+/* `experience` decides which questions were actually asked: that flow
+   wants an email and a city and no occupation, and every other form
+   wants the opposite. Validating the fields that are not on screen
+   would block a form on an answer nobody was given the chance to
+   give. The server checks the same split. */
+function validateStep1(a: Answers, experience: boolean): Partial<Record<keyof Answers, string>> {
   const e: Partial<Record<keyof Answers, string>> = {};
   if (a.name.trim().length < 2) e.name = "We need a name.";
   if (!/^[6-9]\d{9}$/.test(a.phone.replace(/\s/g, ""))) e.phone = "Ten digits, Indian mobile.";
@@ -67,9 +79,18 @@ function validateStep1(a: Answers): Partial<Record<keyof Answers, string>> {
   else if (age > MAX_AGE) e.age = `Age ${MAX_AGE} or under.`;
 
   if (!a.state) e.state = "Pick your state.";
-  if (!a.occupation) e.occupation = "Pick one.";
   if (a.college.trim().length < 2) e.college = "Where do you study?";
   if (!a.event) e.event = "Pick the one you want.";
+
+  if (experience) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(a.email.trim())) {
+      e.email = "That email will not reach you.";
+    }
+    if (a.city.trim().length < 2) e.city = "Which city?";
+  } else if (!a.occupation) {
+    e.occupation = "Pick one.";
+  }
+
   return e;
 }
 
@@ -85,7 +106,12 @@ export default function ApplyModal() {
   const [a, setA] = useState<Answers>({ ...EMPTY, event: openPreselect });
   const [errors, setErrors] = useState<Partial<Record<keyof Answers, string>>>({});
   const [sending, setSending] = useState(false);
-  const [done, setDone] = useState<null | { reference: string; delivered: boolean; upload?: string | null }>(null);
+  const [done, setDone] = useState<
+    null | { reference: string; delivered: boolean; upload?: string | null; quoted?: boolean }
+  >(null);
+  /* The token step one hands back. It addresses the row step two
+     updates, and authorises the payment screenshot. */
+  const [expToken, setExpToken] = useState<string | null>(null);
 
   /* Documents are chosen in step 2 but cannot be sent yet — there is no
      application to attach them to until the form is submitted. They are
@@ -173,6 +199,7 @@ export default function ApplyModal() {
   const grossFare = activePlan ? fareFor(activePlan, a.state) : chosen?.bookingInr ?? null;
 
   const needsPayment = amountDue !== null;
+  const experience = chosen?.experienceFlow === true;
 
   /* One step, when step two would have nothing in it.
 ​
@@ -183,7 +210,10 @@ export default function ApplyModal() {
      than set per departure, so this is simply true whenever it is
      true, and a departure that later adds a plan or a payment gets
      its second step back with no other change. */
-  const oneStep = plans.length === 0 && !needsDocuments && !needsPayment;
+  const oneStep = plans.length === 0 && !needsDocuments && !needsPayment && !experience;
+
+  /* "Build your experience": details first and saved on their own,
+     then the package and the journey. See ExperienceStep. */
 
   /* Chose a plan, but we have no fare from their state. They can still
      apply — we come back with the amount. */
@@ -358,17 +388,65 @@ export default function ApplyModal() {
   /* From a single screen there is no NEXT to have validated the
      answers, so this does it before sending. */
   function submitOneStep() {
-    const e = validateStep1(a);
+    const e = validateStep1(a, experience);
     setErrors(e);
     if (Object.keys(e).length === 0) void submit();
   }
 
   function next() {
-    const e = validateStep1(a);
+    const e = validateStep1(a, experience);
     setErrors(e);
-    if (Object.keys(e).length === 0) {
+    if (Object.keys(e).length !== 0) return;
+
+    /* The experience flow SAVES here rather than only advancing. That
+       is the whole point of its two steps: somebody who gives their
+       details and then leaves is a person we can ring, not a visit we
+       never knew about. */
+    if (experience) {
+      void saveDetails();
+      return;
+    }
+
+    setStep(2);
+    track(EVENTS.applyStep2, { trip: a.event || "none" });
+  }
+
+  /** Step one of the experience flow: store the details, keep the
+   *  token that lets step two finish the same row. */
+  async function saveDetails() {
+    setSending(true);
+    try {
+      const res = await fetch("/api/somewhere/apply", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ ...a, plan: "", utr: "", coupon: couponApplied }),
+      });
+      const json = (await res.json()) as {
+        ok: boolean;
+        received?: boolean;
+        upload?: string | null;
+        error?: string;
+        fields?: string[];
+      };
+
+      if (!json.ok || !json.received || !json.upload) {
+        /* No token means nothing to attach step two to, so it cannot
+           continue. Said plainly rather than advancing into a form
+           that would fail at the end. */
+        setErrors((prev) => ({
+          ...prev,
+          name: json.error ?? "We could not save that. Try again.",
+        }));
+        return;
+      }
+
+      setExpToken(json.upload);
       setStep(2);
       track(EVENTS.applyStep2, { trip: a.event || "none" });
+    } catch {
+      setErrors((prev) => ({ ...prev, name: "No connection. Try again." }));
+    } finally {
+      setSending(false);
     }
   }
 
@@ -544,9 +622,11 @@ export default function ApplyModal() {
         </h2>
         <p className="s-modal-sub">
           {done.delivered
-            ? done.upload
-              ? "Two documents and you're done."
-              : APPLY.doneConnect
+            ? done.quoted
+              ? APPLY.travelQuoted
+              : done.upload
+                ? "Two documents and you're done."
+                : APPLY.doneConnect
             : "We could not file that from here."}
         </p>
 
@@ -636,6 +716,20 @@ export default function ApplyModal() {
         </div>
       </div>
 
+      {/* Step two of the experience flow replaces this form rather
+          than sitting inside it. ExperienceStep has its own <form>,
+          and a form nested in a form does not submit — the inner
+          handler never runs and the browser navigates away instead.
+          Found by watching a registration turn into a page reload. */}
+      {experience && step === 2 && expToken && chosen ? (
+        <ExperienceStep
+          departure={chosen}
+          token={expToken}
+          onDone={(f) =>
+            setDone({ reference: f.reference, delivered: f.delivered, quoted: f.quoted })
+          }
+        />
+      ) : (
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -749,28 +843,68 @@ export default function ApplyModal() {
               {err("state")}
             </div>
 
-            <div className="s-field">
-              <label htmlFor="ap-occ">
-                {APPLY.fields.occupation.label} <span className="s-req">*</span>
-              </label>
-              <div className="s-selwrap">
-                <select
-                  id="ap-occ"
-                  className="s-select"
-                  value={a.occupation}
-                  onChange={(e) => set("occupation", e.target.value)}
-                  aria-invalid={Boolean(errors.occupation)}
-                >
-                  <option value="">{APPLY.fields.occupation.ph}</option>
-                  {APPLY.occupations.map((o) => (
-                    <option key={o} value={o}>
-                      {o}
-                    </option>
-                  ))}
-                </select>
+            {/* City instead of occupation on the experience flow —
+                where somebody is coming FROM is what that form needs,
+                and what they do is not asked at all. */}
+            {experience ? (
+              <div className="s-field">
+                <label htmlFor="ap-city">
+                  {APPLY.fields.city.label} <span className="s-req">*</span>
+                </label>
+                <input
+                  id="ap-city"
+                  className="s-input"
+                  placeholder={APPLY.fields.city.ph}
+                  value={a.city}
+                  onChange={(e) => set("city", e.target.value)}
+                  aria-invalid={Boolean(errors.city)}
+                  autoComplete="address-level2"
+                />
+                {err("city")}
               </div>
-              {err("occupation")}
-            </div>
+            ) : (
+              <div className="s-field">
+                <label htmlFor="ap-occ">
+                  {APPLY.fields.occupation.label} <span className="s-req">*</span>
+                </label>
+                <div className="s-selwrap">
+                  <select
+                    id="ap-occ"
+                    className="s-select"
+                    value={a.occupation}
+                    onChange={(e) => set("occupation", e.target.value)}
+                    aria-invalid={Boolean(errors.occupation)}
+                  >
+                    <option value="">{APPLY.fields.occupation.ph}</option>
+                    {APPLY.occupations.map((o) => (
+                      <option key={o} value={o}>
+                        {o}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                {err("occupation")}
+              </div>
+            )}
+
+            {experience ? (
+              <div className="s-field s-field-full">
+                <label htmlFor="ap-email">
+                  {APPLY.fields.email.label} <span className="s-req">*</span>
+                </label>
+                <input
+                  id="ap-email"
+                  type="email"
+                  className="s-input"
+                  placeholder={APPLY.fields.email.ph}
+                  value={a.email}
+                  onChange={(e) => set("email", e.target.value)}
+                  aria-invalid={Boolean(errors.email)}
+                  autoComplete="email"
+                />
+                {err("email")}
+              </div>
+            ) : null}
 
             <div className="s-field s-field-full">
               <label htmlFor="ap-college">
@@ -815,7 +949,7 @@ export default function ApplyModal() {
           </div>
         ) : null}
 
-        {oneStep || step === 2 ? (
+        {!experience && (oneStep || step === 2) ? (
           <div className="s-form-grid" data-more={oneStep}>
             <div className="s-field s-field-full">
               <label htmlFor="ap-ig">{APPLY.fields.instagram.label}</label>
@@ -1225,6 +1359,10 @@ export default function ApplyModal() {
           <button type="submit" className="s-btn s-btn-forest" disabled={sending}>
             {sending ? (
               "SENDING…"
+            ) : experience ? (
+              <>
+                {APPLY.continueCta} <span className="s-arrow">→</span>
+              </>
             ) : oneStep || step === 2 ? (
               APPLY.submit
             ) : (
@@ -1235,6 +1373,7 @@ export default function ApplyModal() {
           </button>
         </div>
       </form>
+      )}
     </ModalShell>
   );
 }
