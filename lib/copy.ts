@@ -222,6 +222,23 @@ export const SOMEWHERE = {
   soonArcBottom: "SEASON 02",
   soonNote: "Dates are set. Applications open soon.",
   soonCta: "APPLICATIONS OPEN SOON",
+
+  /* The opposite stamp: a departure that is OPEN and taking
+     registrations right now.
+
+     Same device as the three above, which is the point — the round
+     stamp is how this site says what state a departure is in, and it
+     would be strange for it to appear only as bad news. It is opt-in
+     per departure (`applicationsLive`), so it marks the one we are
+     actively filling rather than every page that happens not to be
+     closed.
+
+     REGISTER, not REGISTER NOW: the middle word is nowrap in a fixed
+     12em block, and anything past eight characters or so runs out
+     through the rings. The urgency is carried by the top legend. */
+  liveLabel: "REGISTER",
+  liveArcTop: "APPLICATIONS ARE LIVE",
+  liveArcBottom: "SEASON 02",
   /* Shown where a figure would go, for a departure with no published
      fare. Never a number, never a guess. */
   priceSoon: "PRICING SOON",
@@ -647,7 +664,7 @@ export const APPLY = {
     "We haven't worked out the fare from your state yet. Pick the plan you want and send this in — nothing is due now, and we'll come back with the amount. If you'd rather ask first:",
 
   /* One line above the submit button, on every application.
-​
+
      Replaced the "WHO SEES THIS" panel, removed on instruction. The
      policy is where the detail lives now — including what a partner
      festival is told — so the form has to point at it. */

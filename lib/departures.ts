@@ -305,6 +305,21 @@ export interface Departure {
   introStamps?: string[];
 
   /**
+   * Strike the round stamp across the hero saying registrations are
+   * open, the way a closed departure is struck SOLD OUT.
+   *
+   * Opt-in rather than derived from `!soldOut`, on purpose. Every
+   * departure that is not closed would otherwise carry it, including
+   * ones we are not pushing, and a stamp that is on everything stops
+   * meaning anything. This marks the departure we are actively
+   * filling.
+   *
+   * A closure always wins — see liveStamp. The two can never be on the
+   * same hero.
+   */
+  applicationsLive?: boolean;
+
+  /**
    * One short line stamped on every plan card, qualifying the fare
    * above it. Text rather than the sticker artwork: three cards each
    * carrying an image would be heavier than the prices they annotate.
@@ -408,6 +423,10 @@ export const ALL_DEPARTURES: Departure[] = [
        30% payment. Both of these hold for everybody, whichever way
        they travel. */
     panelStamps: ["Trip captain included", "Limited slots"],
+    /* Struck across the hero: this is the departure we are filling, and
+       the round stamp is how the site says what state a departure is
+       in. See liveStamp — it turns itself off the moment this closes. */
+    applicationsLive: true,
     /* Not rendered anywhere today — see the notes on these fields.
        TODO(mannat): supply what the fare covers when the plans exist. */
     included: [],
@@ -1204,5 +1223,30 @@ export function closure(d: Pick<Departure, "soldOut" | "closedReason">): {
     arcBottom: SOMEWHERE.soldOutArcBottom,
     note: SOMEWHERE.soldOutNote,
     cta: SOMEWHERE.soldOutCta,
+  };
+}
+
+/**
+ * The round stamp for a departure that is OPEN and taking
+ * registrations — the counterpart to closure().
+ *
+ * Null unless the departure asks for it AND is genuinely open. The
+ * soldOut check is what stops the two stamps ever being true at once:
+ * leaving `applicationsLive` set on a departure that later closes
+ * would otherwise stamp REGISTER across a hero whose button says SOLD
+ * OUT. Closing something must not require remembering to unset a
+ * second field.
+ */
+export function liveStamp(d: Pick<Departure, "soldOut" | "applicationsLive">): {
+  label: string;
+  arcTop: string;
+  arcBottom: string;
+} | null {
+  if (d.soldOut || !d.applicationsLive) return null;
+
+  return {
+    label: SOMEWHERE.liveLabel,
+    arcTop: SOMEWHERE.liveArcTop,
+    arcBottom: SOMEWHERE.liveArcBottom,
   };
 }

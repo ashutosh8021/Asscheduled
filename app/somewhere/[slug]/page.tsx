@@ -9,7 +9,14 @@ import Glimpse from "@/components/as/Glimpse";
 import { hasPlans } from "@/lib/packages";
 import Link from "next/link";
 import { CONTACT, CONTACT_EMAIL, DETAIL, SOMEWHERE } from "@/lib/copy";
-import { DEPARTURES, batchLabel, closure, getDeparture, priceRange } from "@/lib/departures";
+import {
+  DEPARTURES,
+  batchLabel,
+  closure,
+  getDeparture,
+  liveStamp,
+  priceRange,
+} from "@/lib/departures";
 import { abs } from "@/lib/site";
 
 /* Experience detail — comps (7) and (8). One template, both departures;
@@ -53,6 +60,7 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
   /* Null when open. Everything below asks this rather than `soldOut`,
      so a paused departure never says "sold out". */
   const shut = closure(d);
+  const live = liveStamp(d);
   /* Null when no fare is published yet. */
   const fare = priceRange({ price: d.price, priceMax: d.priceMax });
 
@@ -68,8 +76,16 @@ export default async function DeparturePage({ params }: { params: Promise<{ slug
           frames={d.wide}
           clip={d.clip}
           hint={d.campus}
+          /* One stamp, either way round: struck SOLD OUT when it is
+             closed, or REGISTER when it is open and we are filling it.
+             liveStamp returns null for a closed departure, so the two
+             cannot collide. */
           stamp={
-            shut ? { label: shut.label, top: shut.arcTop, bottom: shut.arcBottom } : undefined
+            shut
+              ? { label: shut.label, top: shut.arcTop, bottom: shut.arcBottom }
+              : live
+                ? { label: live.label, top: live.arcTop, bottom: live.arcBottom }
+                : undefined
           }
         >
           <p className="s-eyebrow" style={{ color: "var(--s-butter)" }}>
