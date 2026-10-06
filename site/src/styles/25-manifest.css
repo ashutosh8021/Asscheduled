@@ -1,0 +1,15 @@
+/* =========================== MANIFEST (somewhere compare) =========================== */
+.mf{display:grid;gap:18px}
+@media (min-width:900px){.mf{grid-template-columns:1fr 1fr}}
+.mf-card{position:relative;background:var(--paper);border:1.5px solid var(--ink);border-radius:6px;overflow:visible}
+.mf-top{border-radius:5px 5px 0 0;display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:var(--ink);color:var(--bg);font:500 12.5px/1 var(--f-mono);letter-spacing:.14em;text-transform:uppercase}
+.mf-body{padding:22px 20px 24px;display:flex;flex-direction:column;gap:14px}
+.mf-body h3{font:600 clamp(32px,4vw,52px)/.92 var(--f-display);letter-spacing:-.05em}
+.mf-row{display:grid;grid-template-columns:118px minmax(0,1fr);gap:12px;padding-top:13px;border-top:1px dashed var(--line-strong)}
+.mf-row small{font:500 12px/1.5 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2)}
+.mf-row b{font:500 17px/1.4 var(--f-display)}
+.incs{display:flex;flex-wrap:wrap;gap:6px}
+.incs span{padding:7px 12px;border-radius:99px;border:1.5px solid currentColor;font:500 13.5px/1 var(--f-display)}
+.mf-stub{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:18px 20px;border-top:2px dashed var(--ink);position:relative}
+.mf-stub::before,.mf-stub::after{content:"";position:absolute;top:-12px;width:22px;height:22px;border-radius:50%;background:var(--bg);border:1.5px solid var(--ink)}
+.mf-stub::before{left:-12px}.mf-stub::after{right:-12px}

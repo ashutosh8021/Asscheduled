@@ -1,0 +1,8 @@
+/* =========================== OBJECTS (real cutouts, with depth) =========================== */
+.obj{position:absolute;z-index:2;pointer-events:none;left:var(--x);top:var(--y);width:var(--w);transform:rotate(var(--r,0deg));will-change:translate}
+.obj img{width:100%;height:auto;filter:drop-shadow(0 22px 26px rgba(0,0,0,.42)) drop-shadow(0 4px 6px rgba(0,0,0,.3))}
+.obj.dof img{filter:blur(var(--b,6px)) drop-shadow(0 22px 26px rgba(0,0,0,.35));opacity:.92}
+.obj.soft img{filter:drop-shadow(0 14px 18px rgba(60,40,20,.28)) drop-shadow(0 2px 3px rgba(60,40,20,.25))}
+@media (min-width:900px){.obj{left:var(--xd,var(--x));top:var(--yd,var(--y));width:var(--wd,var(--w))}}
+@media (max-width:899px){#now .obj.d-only{display:none}}
+@media (min-width:900px){.obj.d-only{display:block}.obj.m-only{display:none}}

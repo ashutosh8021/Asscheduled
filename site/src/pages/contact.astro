@@ -1,0 +1,20 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/contact/Hero.astro';
+import AllTheWaysIn from '../components/contact/AllTheWaysIn.astro';
+import Collab from '../components/contact/Collab.astro';
+import Strip from '../components/contact/Strip.astro';
+---
+
+<Base
+  title="Contact · AS SCHEDULED"
+  description="Tell us what’s unscheduled, email, call, WhatsApp or collab with AS SCHEDULED"
+  ogImage="/assets/img/contact-hero-l.jpg"
+  preloads={[{ href: '/assets/img/contact-hero-p.jpg', media: '(max-width: 767px)' }, { href: '/assets/img/contact-hero-l.jpg', media: '(min-width: 768px)' }]}
+  active="contact.html"
+>
+<Hero />
+<AllTheWaysIn />
+<Collab />
+<Strip />
+</Base>

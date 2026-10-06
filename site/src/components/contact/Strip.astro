@@ -1,0 +1,23 @@
+---
+/* contact.html — section 4 of 4, carried across verbatim.
+   See docs/PAGES.md for what it is and which hooks it carries. */
+---
+
+<section class="sec s-white" id="collab">
+  <div class="wrap split">
+    <div class="stack sticky-d"><p class="slug"><b>02</b><span>Collab</span><span class="ln"></span><span class="m hide-s">Fests · clubs · brands</span></p><h2 class="d-l" data-split>Running a fest, a club or a brand? <span class="it">Let’s make something loud</span></h2>
+      <p class="body muted">Tell us the idea, we’ll pack it into a WhatsApp message you can send in one tap</p></div>
+    <form id="collab-form" class="fgrid" novalidate>
+      <div class="field"><label for="c-name">Your name</label><input id="c-name" name="name" required autocomplete="name"><span class="err"></span></div>
+      <div class="field"><label for="c-org">Organisation</label><input id="c-org" name="org" required><span class="err"></span></div>
+      <div class="field"><label for="c-phone">Phone</label><input id="c-phone" name="phone" type="tel" required autocomplete="tel"><span class="err"></span></div>
+      <div class="field"><label for="c-email">Email</label><input id="c-email" name="email" type="email" required autocomplete="email"><span class="err"></span></div>
+      <div class="field full"><label for="c-idea">The idea</label><textarea id="c-idea" name="idea" required data-msg="Give us at least a line"></textarea><span class="err"></span></div>
+      <div class="full"><button class="btn btn-xl" type="submit" data-cursor="Pack">Pack it up <span class="ar" aria-hidden="true">→</span></button></div>
+      <div class="full" id="collab-out" hidden>
+        <div class="summary" style="padding:20px"><p class="label muted" style="margin:0 0 10px">Your message</p><pre id="collab-text" style="white-space:pre-wrap;font:400 15px/1.6 var(--f-mono);margin:0"></pre></div>
+        <div class="row mt-16"><a class="btn btn-acid" id="collab-wa" href="https://wa.me/917853022360" target="_blank" rel="noopener" data-cursor="Send">Send on WhatsApp <span class="ar" aria-hidden="true">↗</span></a><button class="copybtn" type="button" data-copy="collab-text" data-cursor="Copy">Copy instead</button></div>
+      </div>
+    </form>
+  </div>
+</section>

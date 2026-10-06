@@ -1,0 +1,30 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/about/Hero.astro';
+import WhoWeAre from '../components/about/WhoWeAre.astro';
+import Tally from '../components/about/Tally.astro';
+import WeExistTo from '../components/about/WeExistTo.astro';
+import HowItWorks from '../components/about/HowItWorks.astro';
+import OurVibe from '../components/about/OurVibe.astro';
+import TheGoal from '../components/about/TheGoal.astro';
+import Rules from '../components/about/Rules.astro';
+import Camcorder from '../components/about/Camcorder.astro';
+---
+
+<Base
+  title="About · AS SCHEDULED"
+  description="Built for people who don’t do ordinary shit, AS SCHEDULED takes students to India’s wildest college fests"
+  ogImage="/assets/img/about-hero2-l.jpg"
+  preloads={[{ href: '/assets/img/j-summit-uhd.jpg', media: '(max-width: 767px)' }, { href: '/assets/img/about-hero2-uhd.jpg', media: '(min-width: 768px)' }]}
+  active="about.html"
+>
+<Hero />
+<WhoWeAre />
+<Tally />
+<WeExistTo />
+<HowItWorks />
+<OurVibe />
+<TheGoal />
+<Rules />
+<Camcorder />
+</Base>

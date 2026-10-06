@@ -1,0 +1,46 @@
+/* The whole design system, carried across from the original
+   source-site/assets/css/site.css unchanged and split by the block map in
+   docs/ARCHITECTURE.md.
+
+   THE ORDER OF THESE IMPORTS IS THE DESIGN. Later rules override earlier
+   ones on purpose — the v4.1 and JOURNEY blocks at the end exist to
+   override what came before. Concatenating these files in this order
+   reproduces the original stylesheet byte for byte; tools/verify-css.mjs
+   checks that it still does. Do not reorder, merge or "tidy" them. */
+
+@import "./01-tokens.css";
+@import "./02-type.css";
+@import "./03-layout.css";
+@import "./04-surfaces.css";
+@import "./05-slug.css";
+@import "./06-buttons.css";
+@import "./07-ticker-header.css";
+@import "./08-menu.css";
+@import "./09-grain-cursor-wipe.css";
+@import "./10-reveals.css";
+@import "./11-hero.css";
+@import "./12-objects.css";
+@import "./13-prints.css";
+@import "./14-departures.css";
+@import "./15-tapes.css";
+@import "./16-manifesto.css";
+@import "./17-pinned-horizontal.css";
+@import "./18-side-effects.css";
+@import "./19-transcripts.css";
+@import "./20-camcorder.css";
+@import "./21-statement.css";
+@import "./22-facts-plans.css";
+@import "./23-itinerary-accordion-tabs.css";
+@import "./24-map.css";
+@import "./25-manifest.css";
+@import "./26-about-tally.css";
+@import "./27-contact-forms-faq.css";
+@import "./28-apply.css";
+@import "./29-darkroom.css";
+@import "./30-footer.css";
+@import "./31-legal-misc.css";
+@import "./32-v4-1-motion-texture.css";
+@import "./33-journey-edit.css";
+@import "./34-coupon-card.css";
+@import "./35-boarding-pass.css";
+@import "./36-journey-r4-r5.css";

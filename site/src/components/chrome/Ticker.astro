@@ -1,0 +1,12 @@
+---
+/* The scrolling strip above the header.
+   source-site/index.html — the .tick block, identical on all 13 pages.
+
+   data-marquee="30" is its idle speed; motion/marquees.js adds the
+   scroll velocity on top, so it only really travels when you do. */
+import { TICKER, TICKER_REPEATS } from '../../data/nav.js';
+
+const lines = Array.from({ length: TICKER_REPEATS }, () => TICKER).flat();
+---
+
+<div class="tick" data-marquee="30" aria-hidden="true"><div class="tick-track">{lines.map((l) => (<><span>{l}</span><i>✱</i></>))}</div></div>

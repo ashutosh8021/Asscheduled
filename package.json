@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "site:build": "cd site && npm run build && node tools/sync-to-public.mjs",
+    "site:verify": "cd site && node tools/verify-css.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.8",

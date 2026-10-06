@@ -1,0 +1,26 @@
+---
+/* The fixed header.
+   source-site/index.html — the header.hdr block.
+
+   Transparent over a dark hero, solid once you have scrolled past it
+   (core/frame.js toggles .is-solid), and always solid on a page whose
+   body carries .solid-head.
+
+   Two logos, light and dark: the CSS shows whichever suits the header's
+   current state, which is why both are in the markup rather than one
+   being swapped by script. */
+import { NAV } from '../../data/nav.js';
+
+interface Props {
+  /** The nav item for the page we are on, e.g. "somewhere.html". */
+  active?: string;
+}
+const { active } = Astro.props;
+---
+
+<header class="hdr">
+  <a class="hdr-logo" href="index.html" aria-label="AS SCHEDULED home"><img class="logo-light" src="/assets/brand/as-white.png" alt="AS SCHEDULED" width="1000" height="160"><img class="logo-dark" src="/assets/brand/as-navy.png" alt="" width="1000" height="160"></a>
+  <nav class="hdr-nav" aria-label="Main">{NAV.map((n) => (<a href={n.href} aria-current={n.href === active ? 'page' : undefined}>{n.label}</a>))}</nav>
+  <a class="btn-cta" href="apply.html" data-cursor="Go">Get your spot <span aria-hidden="true">→</span></a>
+  <button class="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><i></i><i></i></button>
+</header>

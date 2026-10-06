@@ -1,0 +1,8 @@
+/* =========================== JOURNEY EDIT: footage sits where photos sat =========================== */
+.hero-media video,.cam-media video,.print .ph video{display:block;width:100%;height:100%;object-fit:cover}
+.hero-media video{transform:scale(1.06);will-change:transform}
+.hm-run video{object-position:38% 62%}
+.hm-walk video{object-position:50% 58%}
+.hm-summit img{object-position:50% 30%}
+.cm-run video{object-position:38% 60%}
+@media (max-width:767px){.hm-run video{object-position:34% 60%}.hm-summit img{object-position:52% 40%}}

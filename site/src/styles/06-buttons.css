@@ -1,0 +1,39 @@
+/* =========================== BUTTONS =========================== */
+.btn{--bb:var(--ink);--bf:var(--bg);position:relative;display:inline-flex;align-items:center;gap:12px;min-height:54px;padding:0 10px 0 24px;border-radius:99px;
+  background:var(--bb);color:var(--bf);border:1.5px solid var(--bb);font:600 16px/1 var(--f-display);letter-spacing:-.01em;white-space:nowrap;
+  transition:background .3s,color .3s,border-color .3s,box-shadow .3s;will-change:transform}
+.btn .ar{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--bf);color:var(--bb);font-size:16px;transition:transform .5s var(--ease)}
+.btn:hover .ar{transform:rotate(-45deg)}
+.btn:active{box-shadow:inset 0 3px 0 rgba(0,0,0,.25)}
+.btn.no-ar{padding:0 24px}
+.btn-light{--bb:#fff;--bf:var(--ink)}
+.btn-paper{--bb:var(--bg);--bf:var(--ink)}
+.btn-acid{--bb:var(--acid);--bf:var(--ink)}
+.btn-pink{--bb:var(--pink);--bf:var(--ink)}
+.btn-ghost{background:transparent;color:var(--ink);border-color:var(--ink)}
+.btn-ghost .ar{background:var(--ink);color:var(--bg)}
+.btn-ghost:hover{background:var(--ink);color:var(--bg)}
+.btn-ghost-light{background:transparent;color:#fff;border-color:rgba(255,255,255,.85)}
+.btn-ghost-light .ar{background:#fff;color:var(--ink)}
+.btn-ghost-light:hover{background:#fff;color:var(--ink)}
+.btn-xl{min-height:62px;font-size:17.5px;padding-left:28px}
+.btn-xl .ar{width:42px;height:42px}
+.link{display:inline-flex;align-items:center;gap:10px;font:500 12.5px/1 var(--f-mono);letter-spacing:.16em;text-transform:uppercase;padding-bottom:8px;border-bottom:1.5px solid currentColor}
+.link span{transition:transform .35s var(--ease)}
+.link:hover span{transform:translateX(5px)}
+/* kept from v2, hero buttons */
+.pill{display:inline-flex;align-items:center;gap:10px;border-radius:99px;padding:14px 24px;font:500 14px/1 var(--f-display);letter-spacing:-.005em;
+  transition:transform .35s var(--ease),background .25s,color .25s,border-color .25s;white-space:nowrap}
+.pill-light{background:#fff;color:var(--ink)}
+.pill-ghost-light{border:1.2px solid rgba(255,255,255,.9);color:#fff}
+.pill-ghost-light:hover{background:#fff;color:var(--ink)}
+.pill .arr{transition:transform .35s var(--ease)}
+.pill:hover .arr{transform:translateX(4px)}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:99px;border:1.5px solid currentColor;font:500 12px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;white-space:nowrap}
+.chip-solid{background:#fff;color:var(--ink);border-color:#fff}
+.chip-acid{background:var(--acid);color:var(--ink);border-color:var(--acid)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--acid);box-shadow:0 0 0 0 rgba(228,255,58,.6);animation:pulse 2s infinite;flex:0 0 auto}
+@keyframes pulse{70%{box-shadow:0 0 0 8px rgba(228,255,58,0)}100%{box-shadow:0 0 0 0 rgba(228,255,58,0)}}
+.copybtn{display:inline-flex;align-items:center;gap:8px;padding:12px 16px;border-radius:99px;border:1.5px solid currentColor;font:500 12.5px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;transition:background .2s,color .2s}
+.copybtn:hover{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.s-night .copybtn:hover,.s-navy .copybtn:hover{background:var(--bg);color:var(--ink);border-color:var(--bg)}

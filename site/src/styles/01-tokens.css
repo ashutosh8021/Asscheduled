@@ -1,0 +1,62 @@
+/* =====================================================================
+   AS SCHEDULED · Season 02 · "The Archive"
+   An archive of things that happened and things about to happen.
+   Paper you can feel, night navy you can fall into, film you can count.
+   Type: Outfit (voice), Instrument Serif italic (the aside), IBM Plex Mono (the paperwork)
+   ===================================================================== */
+:root{
+  --bg:#F3ECE0;          /* paper */
+  --paper:#FBF8F2;       /* lifted paper */
+  --paper-2:#E8DECB;     /* older paper */
+  --ink:#11162A;         /* ink navy, all type on paper */
+  --ink-2:#2E3450;       /* secondary type on paper, still strong */
+  --navy:#1B2238;        /* navy surfaces */
+  --navy-2:#242C48;
+  --night:#0A0D1B;       /* almost black navy */
+  --muted:#454B63;
+  --line:rgba(17,22,42,.16);
+  --line-strong:rgba(17,22,42,.42);
+  --on-dark:#F3ECE0;
+  --on-dark-muted:rgba(243,236,224,.82);
+  --line-d:rgba(243,236,224,.18);
+  --acid:#E4FF3A;
+  --pink:#FF3D8B;
+  --rust:#B05038;
+  --rust-d:#8E3B28;
+  --stamp:#FF7B3A;       /* disposable camera date stamp */
+  --f-display:"Outfit", "Helvetica Neue", Arial, sans-serif;
+  --f-serif:"Instrument Serif", "Times New Roman", Georgia, serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --gut:clamp(16px, 4.2vw, 48px);
+  --tick:32px;
+  --hdr:64px;
+  --max:1360px;
+  --r:4px;
+  --ease:cubic-bezier(.2,.7,.1,1);
+  --ease-b:cubic-bezier(.34,1.5,.64,1);
+  --noise:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='260'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .07  0 0 0 0 .08  0 0 0 0 .16  0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.32'/></svg>");
+  --mottle:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='900' height='900'><filter id='m'><feTurbulence type='fractalNoise' baseFrequency='.006' numOctaves='4' seed='7' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .45  0 0 0 0 .36  0 0 0 0 .22  0 0 0 1.1 -.35'/></filter><rect width='100%' height='100%' filter='url(%23m)'/></svg>");
+  --fibers:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='600'><filter id='f'><feTurbulence type='fractalNoise' baseFrequency='.012 .45' numOctaves='2' seed='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .3  0 0 0 0 .26  0 0 0 0 .2  0 0 0 2.2 -1.55'/></filter><rect width='100%' height='100%' filter='url(%23f)'/></svg>");
+  color-scheme:light;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+.lenis.lenis-stopped{overflow:hidden}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-display);font-size:17px;line-height:1.6;font-weight:400;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden;overflow-x:clip}
+main{overflow-x:clip}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
+input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3,h4,p,figure,blockquote,ul,ol{margin:0}
+ul,ol{padding:0;list-style:none}
+:focus-visible{outline:3px solid var(--ink);outline-offset:3px;border-radius:2px}
+.on-dark :focus-visible,.hero :focus-visible,.s-night :focus-visible,.s-navy :focus-visible,.s-rust :focus-visible,.foot :focus-visible,.menu :focus-visible{outline-color:var(--acid)}
+[hidden]{display:none!important}
+::selection{background:var(--acid);color:var(--ink)}
+.skip{position:fixed;left:12px;top:-60px;z-index:300;background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:99px;font:500 14px var(--f-display)}
+.skip:focus{top:calc(var(--tick) + 12px + env(safe-area-inset-top,0px))}
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}

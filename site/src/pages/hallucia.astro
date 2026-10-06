@@ -1,0 +1,27 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/hallucia/Hero.astro';
+import TheWeek from '../components/hallucia/TheWeek.astro';
+import FieldNotes from '../components/hallucia/FieldNotes.astro';
+import Plans from '../components/hallucia/Plans.astro';
+import ThenTheHills from '../components/hallucia/ThenTheHills.astro';
+import DifferentPlan from '../components/hallucia/DifferentPlan.astro';
+import Stories from '../components/hallucia/Stories.astro';
+import GetYourSpot from '../components/hallucia/GetYourSpot.astro';
+---
+
+<Base
+  title="Hallucia’26 · AS SCHEDULED"
+  description="Five days at Hallucia, AIIMS Nagpur, 25 to 29 November, from ₹8,999 with travel, stay, food and fest pass"
+  ogImage="/assets/img/hal-hero-l.jpg"
+  preloads={[{ href: '/assets/img/hal-hero-p.jpg', media: '(max-width: 767px)' }, { href: '/assets/img/hal-hero-l.jpg', media: '(min-width: 768px)' }]}
+>
+<Hero />
+<TheWeek />
+<FieldNotes />
+<Plans />
+<ThenTheHills />
+<DifferentPlan />
+<Stories />
+<GetYourSpot />
+</Base>

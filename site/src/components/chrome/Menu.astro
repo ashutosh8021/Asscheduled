@@ -1,0 +1,29 @@
+---
+/* The full-screen menu behind the burger.
+   source-site/index.html — the #menu block.
+
+   Hidden until features/menu.js unsets `hidden`; opening it locks page
+   scroll, stops Lenis and moves focus to the first link.
+
+   The two cut-outs and the halftone/leak/grain layers are part of the
+   composition, not decoration somebody added — docs/DECISIONS.md says
+   not to add or remove any of them. */
+import { NAV, SOCIAL } from '../../data/nav.js';
+
+interface Props {
+  active?: string;
+}
+const { active } = Astro.props;
+---
+
+<div class="menu" id="menu" hidden>
+  <div class="halftone" style="--hx:85%;--hy:15%;--hx2:10%;--hy2:90%"></div><div class="leak l-rust" style="left:-20%;top:55%;width:70vw;height:70vw"></div><div class="leak l-blue" style="left:60%;top:-10%;width:60vw;height:60vw"></div><div class="grainy"></div>
+  <div class="obj" style="--x:72%;--y:58%;--w:clamp(110px,26vw,240px);--r:14deg;--xd:80%;--yd:14%" aria-hidden="true"><img src="/assets/el/x.webp" alt="" width="524" height="620" loading="lazy" decoding="async" draggable="false"></div>
+  <div class="obj dof" style="--x:-8%;--y:74%;--w:clamp(120px,30vw,260px);--r:0deg;--xd:58%;--yd:60%;--b:7px" aria-hidden="true"><img src="/assets/el/vinyl.webp" alt="" width="507" height="509" loading="lazy" decoding="async" draggable="false"></div>
+  <nav class="menu-links" aria-label="Menu">{NAV.map((n) => (<a href={n.href} aria-current={n.href === active ? 'page' : undefined}><small>{n.n}</small><span class="lbl">{n.label}</span><span class="it">{n.it}</span></a>))}</nav>
+  <div class="menu-foot">
+    <p class="serif">Your weekend called, it’s bored</p>
+    <a class="btn btn-acid btn-xl" href="apply.html" data-cursor="Go">Get your spot<span class="ar" aria-hidden="true">→</span></a>
+    <div class="menu-soc">{SOCIAL.map((s) => (<a href={s.href} target="_blank" rel="noopener">{s.label}</a>))}</div>
+  </div>
+</div>

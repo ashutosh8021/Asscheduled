@@ -3,6 +3,31 @@
 Application-only curated travel platform. ROITCOVE VENTURES LLP (LLPIN ACZ-2215, India).
 This file is a contract, not documentation. Every rule here changes behavior.
 
+## READ THIS FIRST — the public site is `site/`, not `app/`
+
+Everything a visitor sees is the **Astro project in `site/`**, built and copied into
+`public/` by `pnpm site:build`. It is a 1:1 migration of the Co-work redesign and is the
+live design. **This supersedes the docx spec, `docs/SPEC.md` and the `/asset` comps on
+page order, routes, navigation, copy, colour and the application flow.** Those three
+describe designs that are no longer on the site.
+
+- **Public URLs end in `.html`** (`/`, `/somewhere.html`, `/hallucia.html`, …). Not a
+  style choice: the page-wipe handler tests links against `/\.html(#…)?$/i`, so
+  extensionless URLs silently kill every page transition. Old routes redirect — see
+  `next.config.ts`.
+- **`app/` is now the application only**: `/admin`, `/partner`, `/crew`, `/crew/login`,
+  `/crew/dashboard`, `/api/*`, `/documents/[token]`. Its public pages still build but are
+  redirected away from and must not be developed further.
+- **`site/` has its own rules** in `site/README.md`, and they win inside that folder. Its
+  CSS import order and its JS import order are load-bearing; `pnpm site:verify` proves the
+  stylesheet still matches the original. It uses **no GSAP and no Framer Motion** — plain
+  JS and Lenis — whatever the Stack section below says.
+- **After editing `site/`, run `pnpm site:build`** and commit the result. Vercel runs
+  `next build` only, so `public/` is what actually ships.
+
+Below this line, treat anything about page order, routes, nav, hero copy or Form 7A as
+history for the application surfaces, not instructions for the public site.
+
 ## Canonical sources — read before building anything
 1. **`Website_Build_Specification_EXACT_NUDE_PROJECT_STRUCTURE.docx` (repo root) — THE MASTER SPEC.**
    It governs site architecture, page order, navigation, card system, merchandising rails,

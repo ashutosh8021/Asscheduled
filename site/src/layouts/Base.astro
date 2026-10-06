@@ -1,0 +1,74 @@
+---
+/* The page skeleton every page in the original shares.
+   source-site/*.html — head, then skip link → ticker → header → menu →
+   <main> → footer → grain → wipe.
+
+   Three things here are load-bearing and must not be rearranged:
+
+   1. The inline head script runs BEFORE first paint. It sets
+      scrollRestoration to manual (pages used to reopen at the footer
+      after Back or a reload), adds .no-js and .intro, and plays the
+      wipe-in if the page we came from set the flag. is:inline keeps
+      Astro's hands off it — bundled, it would run too late to matter.
+   2. The stylesheet import order. src/styles/site.css imports 36
+      partials whose order IS the design; see tools/verify-css.mjs.
+   3. The runtime is imported once, here, for every page. The modules
+      run on import in the original's order — see src/scripts/site.js. */
+import '../styles/site.css';
+import Ticker from '../components/chrome/Ticker.astro';
+import Header from '../components/chrome/Header.astro';
+import Menu from '../components/chrome/Menu.astro';
+import Footer from '../components/chrome/Footer.astro';
+
+interface Preload {
+  href: string;
+  media?: string;
+}
+
+interface Props {
+  title: string;
+  description: string;
+  ogImage: string;
+  /** Hero images worth fetching before the CSS asks for them. */
+  preloads?: Preload[];
+  /** "solid-head" on pages with no dark hero for the header to sit over. */
+  bodyClass?: string;
+  /** Which nav item is the page we are on. */
+  active?: string;
+}
+
+const {
+  title,
+  description,
+  ogImage,
+  preloads = [],
+  bodyClass = '',
+  active,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{title}</title><meta name="description" content={description}><meta name="theme-color" content="#F3ECE0">
+<meta property="og:title" content={title}><meta property="og:description" content={description}><meta property="og:image" content={ogImage}><meta property="og:type" content="website">
+{preloads.map((p) => (<link rel="preload" as="image" href={p.href} media={p.media} />))}
+<link rel="icon" href="/assets/brand/favicon-64.png"><link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<script is:inline>(function(){try{if('scrollRestoration' in history)history.scrollRestoration='manual'}catch(e){}var d=document.documentElement;d.classList.add('no-js');d.classList.add('intro');setTimeout(function(){d.classList.remove('intro')},3000);try{if(sessionStorage.getItem('as-wipe')){d.classList.add('wipe-in');sessionStorage.removeItem('as-wipe')}}catch(e){}})()</script>
+</head>
+<body class={bodyClass}>
+<a class="skip" href="#main">Skip to content</a>
+<Ticker />
+<Header active={active} />
+<Menu active={active} />
+<main id="main">
+<slot />
+</main>
+<Footer />
+<div class="grain" aria-hidden="true"></div>
+<div class="wipe" aria-hidden="true"><img src="/assets/brand/as-cream.png" alt=""></div>
+<script>import '../scripts/site.js';</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+/* =========================== DARKROOM (someone) =========================== */
+.roll{position:relative;z-index:2;padding-block:28px;border-top:1.5px solid var(--line-d)}
+.roll-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 18px}
+.roll-head h3{font:600 clamp(34px,5vw,64px)/.92 var(--f-display);letter-spacing:-.05em}
+.roll-head p{font:500 12.5px/1 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--on-dark-muted)}
+.strip{margin-top:18px;overflow-x:auto;scrollbar-width:none}
+.strip::-webkit-scrollbar{display:none}
+.strip .rebate{display:inline-block;min-width:100%;padding:28px 14px}
+.strip .edge{display:block;margin:0 0 10px 4px}
+.dframes{display:grid;grid-auto-flow:column;grid-auto-columns:clamp(150px,20vw,220px);gap:10px}
+.dframe{aspect-ratio:3/4;position:relative;border-radius:2px;overflow:hidden;background:linear-gradient(120deg,#151a30,#2a3360 45%,#151a30 70%);background-size:300% 100%;display:flex;flex-direction:column;justify-content:space-between;padding:12px;
+  font:500 11.5px/1.45 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:rgba(243,236,224,.78)}
+.dframe:nth-child(2n){background-position:40% 0}.dframe:nth-child(3n){background-position:80% 0}
+.dframe em{font-style:normal}
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}

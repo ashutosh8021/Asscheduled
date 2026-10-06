@@ -1,0 +1,9 @@
+/* =========================== TAPES (scroll driven) =========================== */
+.tapes{position:relative;height:clamp(170px,24vw,300px);overflow:hidden;display:grid;place-items:center}
+.tape{position:absolute;left:-10%;width:120%;padding-block:clamp(12px,1.4vw,18px);white-space:nowrap;overflow:hidden;box-shadow:0 12px 28px rgba(17,22,42,.22)}
+.tape.t1{background:var(--acid);color:var(--ink);transform:rotate(-4deg)}
+.tape.t2{background:var(--ink);color:var(--bg);transform:rotate(3deg)}
+.mq-track{display:inline-flex;align-items:center;will-change:transform}
+.tape span{font:600 clamp(24px,3.6vw,46px)/1 var(--f-display);letter-spacing:-.04em;padding-inline:clamp(14px,1.8vw,26px)}
+.tape span:nth-of-type(even){font-family:var(--f-serif);font-style:italic;font-weight:400;letter-spacing:-.02em}
+.tape i{font-style:normal;font:500 clamp(16px,2vw,24px)/1 var(--f-mono)}

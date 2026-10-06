@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/faqs/Hero.astro';
+import Questions from '../components/faqs/Questions.astro';
+import StillConfused from '../components/faqs/StillConfused.astro';
+---
+
+<Base
+  title="FAQs · AS SCHEDULED"
+  description="Before you get scheduled, what’s included, how to pay, who can come and what to pack"
+  ogImage="/assets/img/somewhere-hero-l.jpg"
+  preloads={[{ href: '/assets/img/somewhere-hero-p.jpg', media: '(max-width: 767px)' }, { href: '/assets/img/somewhere-hero-l.jpg', media: '(min-width: 768px)' }]}
+  active="faqs.html"
+>
+<Hero />
+<Questions />
+<StillConfused />
+</Base>

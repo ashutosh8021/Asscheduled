@@ -1,0 +1,7 @@
+/* =========================== SLUG (the archive index line) =========================== */
+.slug{display:flex;align-items:center;gap:14px;font:500 12.5px/1.2 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;margin-bottom:clamp(28px,4vw,52px)}
+.slug b{font-weight:600;display:inline-flex;align-items:center;justify-content:center;min-width:34px;height:24px;padding:0 6px;border:1.5px solid currentColor;border-radius:99px;letter-spacing:.06em}
+.slug .ln{flex:1;height:1.5px;background:currentColor;opacity:.3;transform-origin:left;transform:scaleX(var(--sl,1));transition:transform 1.4s var(--ease)}
+.js .slug.pre .ln{--sl:0}
+.slug .m{opacity:.85;white-space:nowrap}
+@media (max-width:600px){.slug .m.hide-s{display:none}}

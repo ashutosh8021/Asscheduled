@@ -1,0 +1,24 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/somewhere/Hero.astro';
+import Places from '../components/somewhere/Places.astro';
+import JustGo from '../components/somewhere/JustGo.astro';
+import RoutePlanner from '../components/somewhere/RoutePlanner.astro';
+import LittleThings from '../components/somewhere/LittleThings.astro';
+import Camcorder from '../components/somewhere/Camcorder.astro';
+---
+
+<Base
+  title="Somewhere else · AS SCHEDULED"
+  description="Departures for Season 02, Hallucia at AIIMS Nagpur and Mood Indigo at IIT Bombay"
+  ogImage="/assets/img/j-citywalk.jpg"
+  preloads={[{ href: '/assets/img/j-citywalk.jpg' }]}
+  active="somewhere.html"
+>
+<Hero />
+<Places />
+<JustGo />
+<RoutePlanner />
+<LittleThings />
+<Camcorder />
+</Base>

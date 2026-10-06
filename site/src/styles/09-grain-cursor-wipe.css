@@ -1,0 +1,41 @@
+/* =========================== GRAIN, CURSOR, WIPE =========================== */
+.grain{position:fixed;inset:-60%;z-index:200;pointer-events:none;background:url(/assets/brand/grain.png) 0 0/180px 180px;opacity:.1;animation:grain .9s steps(6) infinite}
+@keyframes grain{0%{transform:translate(0,0)}17%{transform:translate(-4%,3%)}33%{transform:translate(3%,-5%)}50%{transform:translate(-6%,-2%)}67%{transform:translate(5%,4%)}83%{transform:translate(-2%,6%)}100%{transform:translate(0,0)}}
+.cur,.cur-trail,.cur-vf{position:fixed;left:0;top:0;z-index:260;pointer-events:none;display:none}
+.has-cursor .cur,.has-cursor .cur-trail,.has-cursor .cur-vf{display:block}
+.cur{mix-blend-mode:difference}
+.cur-dot{width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:#fff;transition:transform .25s var(--ease)}
+.cur-ring{position:relative;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;border:1.2px solid #fff;display:grid;place-items:center;
+  transition:width .45s var(--ease),height .45s var(--ease),margin .45s var(--ease),background .3s,border-radius .45s var(--ease),border-color .3s}
+.cur-ring .t{position:relative;z-index:2;font:600 11px/1 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:#000;opacity:0;transition:opacity .2s;white-space:nowrap;display:flex;gap:6px;align-items:center}
+.cur-ring svg{position:absolute;inset:-14px;width:calc(100% + 28px);height:calc(100% + 28px);opacity:0;transition:opacity .3s;animation:spin 9s linear infinite}
+.cur-ring svg text{font:500 8.6px var(--f-mono);letter-spacing:.32em;fill:#fff;text-transform:uppercase}
+@keyframes spin{to{transform:rotate(360deg)}}
+.cur.is-label .cur-ring{width:96px;height:96px;margin:-48px 0 0 -48px;background:#fff}
+.cur.is-label .cur-ring .t{opacity:1}
+.cur.is-label .cur-ring svg{opacity:1}
+.cur.is-link .cur-ring{width:64px;height:64px;margin:-32px 0 0 -32px}
+.cur.is-down .cur-ring{transform:scale(.82)}
+.cur.is-text .cur-ring{width:4px;height:30px;margin:-15px 0 0 -2px;border-radius:2px;background:#fff}
+.cur.is-hidden{opacity:0}
+.cur-trail i{position:absolute;left:0;top:0;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;border-radius:50%;background:var(--acid);opacity:.0;transition:opacity .4s}
+.has-cursor.moving .cur-trail i{opacity:.55}
+.cur-vf{width:150px;height:110px;margin:-55px 0 0 -75px;opacity:0;transform:scale(1.25);transition:opacity .3s,transform .45s var(--ease)}
+.cur-vf.on{opacity:1;transform:none}
+.cur-vf b{position:absolute;width:18px;height:18px;border:solid #fff;filter:drop-shadow(0 0 2px rgba(0,0,0,.6))}
+.cur-vf b:nth-child(1){left:0;top:0;border-width:2px 0 0 2px}.cur-vf b:nth-child(2){right:0;top:0;border-width:2px 2px 0 0}
+.cur-vf b:nth-child(3){left:0;bottom:0;border-width:0 0 2px 2px}.cur-vf b:nth-child(4){right:0;bottom:0;border-width:0 2px 2px 0}
+.cur-vf span{position:absolute;left:0;right:0;top:calc(100% + 8px);text-align:center;font:600 11px/1 var(--f-mono);letter-spacing:.16em;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.8);text-transform:uppercase}
+.cur-vf span::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#FF3B30;margin-right:7px;vertical-align:1px;animation:blink 1s steps(2) infinite}
+.cur-vf em{position:absolute;left:50%;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;font-style:normal}
+.cur-vf em::before,.cur-vf em::after{content:"";position:absolute;background:#fff;filter:drop-shadow(0 0 2px rgba(0,0,0,.6))}
+.cur-vf em::before{left:6px;top:0;width:2px;height:14px}.cur-vf em::after{top:6px;left:0;height:2px;width:14px}
+@keyframes blink{50%{opacity:.2}}
+@media (pointer:fine){.has-cursor,.has-cursor a,.has-cursor button,.has-cursor label,.has-cursor summary,.has-cursor [data-cursor]{cursor:none}.has-cursor input,.has-cursor textarea,.has-cursor select{cursor:text}}
+.wipe{position:fixed;inset:0;z-index:300;background:var(--night);transform:translateY(101%);pointer-events:none;display:grid;place-items:center;visibility:hidden}
+.wipe img{width:min(52vw,380px);opacity:.95}
+.wipe::before{content:"";position:absolute;inset:0;background:radial-gradient(rgba(243,236,224,.12) 1.1px,transparent 1.5px) 0 0/9px 9px;opacity:.6}
+.leaving .wipe,.wipe-in .wipe{visibility:visible}
+.leaving .wipe{transform:translateY(0);transition:transform .45s cubic-bezier(.7,0,.2,1)}
+.wipe-in .wipe{transform:translateY(0);animation:wipeOut .6s .1s cubic-bezier(.7,0,.2,1) forwards}
+@keyframes wipeOut{99%{visibility:visible}to{transform:translateY(-101%);visibility:hidden}}

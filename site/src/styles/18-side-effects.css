@@ -1,0 +1,29 @@
+/* =========================== SIDE EFFECTS =========================== */
+.fx-wrap{display:grid;gap:30px}
+@media (min-width:900px){.fx-wrap{grid-template-columns:minmax(0,.78fr) minmax(0,1.22fr);gap:60px}}
+.fx-media{position:sticky;top:calc(var(--tick) + var(--hdr) + 18px);z-index:4;align-self:start}
+.fx-stack{position:relative;width:min(62vw,420px);aspect-ratio:4/5;margin-inline:auto}
+.fx-stack .print{position:absolute;inset:0;padding:8px 8px 36px;opacity:0;transform:rotate(var(--r)) translateY(30px) scale(.94);transition:opacity .5s,transform .7s var(--ease-b)}
+.fx-stack .print .ph{aspect-ratio:auto;height:100%}
+.fx-stack .print.on{opacity:1;transform:rotate(var(--r)) translateY(0) scale(1);z-index:2}
+.fx-stack .print.was{opacity:.0}
+.fx-count{display:flex;justify-content:space-between;align-items:center;margin-top:16px;font:500 13px/1 var(--f-mono);letter-spacing:.14em;text-transform:uppercase}
+.fx-count b{font:600 30px/1 var(--f-mono);letter-spacing:-.02em}
+@media (max-width:899px){
+  .fx-media{top:calc(var(--tick) + var(--hdr) + 6px);background:linear-gradient(var(--rust-d) 82%,transparent);margin-inline:calc(var(--gut) * -1);padding:10px var(--gut) 18px}
+  .fx-stack{width:min(46vw,210px)}
+  .fx-media .fx-count{max-width:420px;margin-inline:auto}
+}
+.fx{counter-reset:fx;border-top:1.5px solid var(--line-d)}
+.fx li{display:grid;grid-template-columns:44px minmax(0,1fr);gap:4px 14px;padding:clamp(22px,3vw,34px) 0;border-bottom:1.5px solid var(--line-d);opacity:.62;transition:opacity .45s,padding .5s var(--ease)}
+.fx li.on{opacity:1}
+.fx li i{grid-row:1/3;font:500 13px/1.8 var(--f-mono);font-style:normal;letter-spacing:.1em;color:var(--acid)}
+.fx li p{font:600 clamp(28px,4.4vw,60px)/.96 var(--f-display);letter-spacing:-.045em}
+.fx li .rate{display:flex;align-items:center;gap:12px;margin-top:12px;font:500 12.5px/1 var(--f-mono);letter-spacing:.14em;text-transform:uppercase}
+.fx li .bars{display:inline-flex;gap:3px}
+.fx li .bars u{width:14px;height:8px;background:var(--line-d);border-radius:1px;text-decoration:none}
+.fx li .bars u.f{background:var(--acid)}
+.fx-foot{display:grid;gap:22px;margin-top:clamp(36px,5vw,56px);align-items:end}
+@media (min-width:900px){.fx-foot{grid-template-columns:1fr auto}}
+.fx-foot .serif{font-size:clamp(86px,15vw,210px);line-height:.78;color:var(--bg)}
+.fx-note{font:500 13px/1.6 var(--f-mono);letter-spacing:.06em;max-width:42ch;color:var(--on-dark-muted)}

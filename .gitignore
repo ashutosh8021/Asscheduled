@@ -45,3 +45,12 @@ asset/**/*.mov
 # lib/copy.ts, which is a deliberate, reviewable line of text.
 asset/**/*QR*
 asset/**/*qr*
+
+# The Co-work redesign package and the Astro rebuild of it. A separate
+# project that happens to sit inside this folder while it is being
+# built — 21MB of final assets that must never land in this repo's
+# history by an accidental `git add -A`.
+/asscheduled-claude-code/
+/asscheduled-claude-code.zip
+/asscheduled-claude-code-videos/
+/asscheduled-claude-code-videos.zip

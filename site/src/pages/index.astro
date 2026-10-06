@@ -1,0 +1,25 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/index/Hero.astro';
+import NowScheduled from '../components/index/NowScheduled.astro';
+import Tapes from '../components/index/Tapes.astro';
+import Manifesto from '../components/index/Manifesto.astro';
+import WeekendRoughly from '../components/index/WeekendRoughly.astro';
+import SideEffects from '../components/index/SideEffects.astro';
+import Camcorder from '../components/index/Camcorder.astro';
+---
+
+<Base
+  title="AS SCHEDULED"
+  description="College fests, new cities, new faces, AS SCHEDULED sorts the travel, the stay and the crew, you bring the yes"
+  ogImage="/assets/img/j-hillrun.jpg"
+  preloads={[{ href: '/assets/img/j-hillrun-m.jpg', media: '(max-width: 767px)' }, { href: '/assets/img/j-hillrun.jpg', media: '(min-width: 768px)' }]}
+>
+<Hero />
+<NowScheduled />
+<Tapes />
+<Manifesto />
+<WeekendRoughly />
+<SideEffects />
+<Camcorder />
+</Base>

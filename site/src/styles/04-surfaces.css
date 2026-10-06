@@ -1,0 +1,36 @@
+/* =========================== SURFACES + TEXTURE =========================== */
+/* paper: noise + mottling + fibres + soft vignette, so the cream reads as stock, not CSS */
+.s-paper,.s-paper2,.s-white{position:relative;isolation:isolate;color:var(--ink)}
+.s-paper{background:var(--bg)}
+.s-paper2{background:var(--paper-2)}
+.s-white{background:var(--paper)}
+.s-paper::before,.s-paper2::before,.s-white::before,.paper-tex::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:var(--noise),var(--fibers),var(--mottle);background-size:260px,600px,900px;mix-blend-mode:multiply;opacity:.55}
+.s-paper::after,.s-paper2::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(130% 90% at 50% 40%,transparent 60%,rgba(80,58,30,.13) 100%)}
+/* night: almost black navy, halftone fields, light leaks, a huge cropped logo in the dark */
+.s-night,.s-navy,.s-rust{position:relative;isolation:isolate;color:var(--on-dark);overflow:hidden}
+.s-night{background:var(--night)}
+.s-navy{background:var(--navy)}
+.s-rust{background:var(--rust-d)}
+.s-night .muted,.s-navy .muted,.s-rust .muted,.on-dark .muted{color:var(--on-dark-muted)}
+.halftone{position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(rgba(243,236,224,.13) 1.15px,transparent 1.55px) 0 0/9px 9px;
+  -webkit-mask:radial-gradient(70% 60% at var(--hx,15%) var(--hy,25%),#000 0,transparent 70%),radial-gradient(55% 50% at var(--hx2,90%) var(--hy2,85%),#000 0,transparent 75%);
+  mask:radial-gradient(70% 60% at var(--hx,15%) var(--hy,25%),#000 0,transparent 70%),radial-gradient(55% 50% at var(--hx2,90%) var(--hy2,85%),#000 0,transparent 75%)}
+.s-rust .halftone{background-image:radial-gradient(rgba(10,13,27,.32) 1.2px,transparent 1.6px)}
+.leak{position:absolute;z-index:-1;pointer-events:none;border-radius:50%;filter:blur(70px);opacity:.55;mix-blend-mode:screen}
+.leak.l-rust{background:radial-gradient(circle,#D2552F 0,rgba(176,80,56,.6) 35%,transparent 70%)}
+.leak.l-pink{background:radial-gradient(circle,#FF3D8B 0,rgba(255,61,139,.45) 30%,transparent 70%);opacity:.38}
+.leak.l-acid{background:radial-gradient(circle,#E4FF3A 0,rgba(228,255,58,.3) 30%,transparent 70%);opacity:.18}
+.leak.l-blue{background:radial-gradient(circle,#4D63C9 0,rgba(77,99,201,.4) 35%,transparent 70%);opacity:.5}
+.ghost{position:absolute;z-index:-1;pointer-events:none;opacity:.05;width:min(240vw,3000px);max-width:none}
+.s-rust .ghost{opacity:.08;filter:brightness(0)}
+.s-paper .ghost,.s-paper2 .ghost{filter:brightness(0);opacity:.045}
+.grainy{position:absolute;inset:0;z-index:-1;pointer-events:none;background:var(--noise);background-size:200px;opacity:.5;mix-blend-mode:overlay}
+/* crop + registration marks on section corners */
+.marks{position:absolute;inset:clamp(10px,1.6vw,22px);pointer-events:none;z-index:2}
+.marks i{position:absolute;width:14px;height:14px;border:solid currentColor;opacity:.45}
+.marks i:nth-child(1){left:0;top:0;border-width:1.5px 0 0 1.5px}
+.marks i:nth-child(2){right:0;top:0;border-width:1.5px 1.5px 0 0}
+.marks i:nth-child(3){left:0;bottom:0;border-width:0 0 1.5px 1.5px}
+.marks i:nth-child(4){right:0;bottom:0;border-width:0 1.5px 1.5px 0}

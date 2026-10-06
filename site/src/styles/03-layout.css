@@ -1,0 +1,14 @@
+/* =========================== LAYOUT =========================== */
+.wrap{width:100%;max-width:var(--max);margin-inline:auto;padding-inline:var(--gut)}
+.sec{position:relative;isolation:isolate;padding-block:clamp(80px, 12vw, 168px)}
+.sec-sm{position:relative;isolation:isolate;padding-block:clamp(56px, 7vw, 104px)}
+.section{padding-block:clamp(72px, 11vw, 160px)}
+.center{text-align:center}
+.stack{display:flex;flex-direction:column;gap:16px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.row-center{justify-content:center}
+.split{display:grid;grid-template-columns:minmax(0,1fr);gap:clamp(28px,4vw,72px)}
+@media (min-width:900px){.split{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.split.end{align-items:end}.split.w46{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)}}
+.split > *{min-width:0}
+.mt-8{margin-top:8px}.mt-12{margin-top:12px}.mt-16{margin-top:16px}.mt-24{margin-top:24px}.mt-32{margin-top:32px}.mt-48{margin-top:clamp(32px,4vw,48px)}.mt-64{margin-top:clamp(44px,6vw,72px)}.mt-96{margin-top:clamp(60px,8vw,112px)}
+.z{position:relative;z-index:3}

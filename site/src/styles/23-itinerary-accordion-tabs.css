@@ -1,0 +1,25 @@
+/* =========================== ITINERARY, ACCORDION, TABS =========================== */
+.tabs{display:inline-flex;border:1.5px solid currentColor;border-radius:99px;padding:4px;gap:4px}
+.tabs button{padding:12px 20px;border-radius:99px;font:500 13px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase}
+.tabs button[aria-selected="true"]{background:var(--acid);color:var(--ink)}
+.acc{border-top:1.5px solid currentColor}
+.acc-item{border-bottom:1.5px solid currentColor}
+.acc-btn{width:100%;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:16px;align-items:center;text-align:left;padding-block:22px}
+.acc-btn .n{font:500 12.5px/1 var(--f-mono);letter-spacing:.12em;color:var(--rust);white-space:nowrap}
+.s-night .acc-btn .n,.s-navy .acc-btn .n{color:var(--acid)}
+.acc-btn .t{font:600 clamp(21px,2.8vw,34px)/1.08 var(--f-display);letter-spacing:-.035em}
+.acc-btn .pm{width:40px;height:40px;border-radius:50%;border:1.5px solid currentColor;position:relative;flex:0 0 auto;transition:transform .45s var(--ease),background .25s}
+.acc-btn .pm::before,.acc-btn .pm::after{content:"";position:absolute;left:50%;top:50%;width:14px;height:1.5px;background:currentColor;transform:translate(-50%,-50%)}
+.acc-btn .pm::after{transform:translate(-50%,-50%) rotate(90deg);transition:transform .35s}
+.acc-item.open .pm{transform:rotate(180deg);background:var(--acid);border-color:var(--acid);color:var(--ink)}
+.acc-item.open .pm::after{transform:translate(-50%,-50%) rotate(0)}
+.acc-panel{display:grid;grid-template-rows:0fr;transition:grid-template-rows .55s var(--ease)}
+.acc-item.open .acc-panel{grid-template-rows:1fr}
+.acc-panel > div{overflow:hidden}
+.acc-body{padding:0 0 26px;display:grid;gap:4px}
+.acc-body p{font:400 17.5px/1.62 var(--f-display);max-width:60ch}
+.slot{display:grid;grid-template-columns:100px minmax(0,1fr);gap:14px;padding-block:10px;border-top:1px dashed var(--line-d)}
+.s-paper .slot,.s-white .slot{border-top-color:var(--line-strong)}
+.slot b{font:500 12.5px/1.75 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--acid)}
+.s-paper .slot b{color:var(--rust)}
+.slot span{font:400 17px/1.55 var(--f-display)}

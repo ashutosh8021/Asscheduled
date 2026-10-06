@@ -1,0 +1,27 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/moodindigo/Hero.astro';
+import TheBrief from '../components/moodindigo/TheBrief.astro';
+import FieldNotes from '../components/moodindigo/FieldNotes.astro';
+import Plans from '../components/moodindigo/Plans.astro';
+import DayByDay from '../components/moodindigo/DayByDay.astro';
+import TheCity from '../components/moodindigo/TheCity.astro';
+import Stories from '../components/moodindigo/Stories.astro';
+import GetYourSpot from '../components/moodindigo/GetYourSpot.astro';
+---
+
+<Base
+  title="Mood Indigo’26 · AS SCHEDULED"
+  description="Mood Indigo at IIT Bombay in December, 4 days from ₹8,499 or 6 days with Mumbai from ₹11,499"
+  ogImage="/assets/img/mi-hero-l.jpg"
+  preloads={[{ href: '/assets/img/mi-hero-p.jpg', media: '(max-width: 767px)' }, { href: '/assets/img/mi-hero-l.jpg', media: '(min-width: 768px)' }]}
+>
+<Hero />
+<TheBrief />
+<FieldNotes />
+<Plans />
+<DayByDay />
+<TheCity />
+<Stories />
+<GetYourSpot />
+</Base>
