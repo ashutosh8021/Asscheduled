@@ -22,4 +22,26 @@ export default defineConfig({
   image: { service: { entrypoint: 'astro/assets/services/noop' } },
 
   devToolbar: { enabled: false },
+
+  vite: {
+    build: {
+      /* Without this, the CSS minifier rewrites every media query into
+         Media Queries Level 4 range syntax — `(max-width:767px)` becomes
+         `(width<=767px)` — across the WHOLE stylesheet, not just new
+         rules.
+
+         That syntax needs Safari 16.4, from March 2023. An older iPhone
+         does not merely miss the new syntax, it drops the entire
+         at-rule: every responsive rule in the site stops applying,
+         including the phone-only home hero composition that
+         docs/DECISIONS.md says the owner signed off and must not change.
+         CLAUDE.md says Safari first, and this is what that means.
+
+         Safari 15 covers iPhones back to the 6s. The rest are set low
+         enough to be irrelevant on any browser that still updates.
+         Check after upgrading Astro: `grep -o "@media ([^)]*)" dist/_astro/*.css`
+         must show min-width/max-width, never width<= or width>=. */
+      cssTarget: ['safari15', 'ios15', 'chrome90', 'firefox90', 'edge90'],
+    },
+  },
 });

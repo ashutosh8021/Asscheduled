@@ -45,3 +45,28 @@
 .shot[data-state="done"] .fine { color: var(--ink); font-weight: 600; }
 .shot[data-state="error"] .fine { color: var(--rust); font-weight: 600; }
 .shot[data-state="sending"] .fine { opacity: 0.7; }
+
+/* ---- the booking page on a phone ----
+   Measured on a 390×844 screen: the hero ended at 596px, the step dots
+   at 630, the heading at 693 and the first input at 846 — two pixels
+   below the fold. So somebody opening Get your spot on a phone saw a
+   boarding pass and no form at all, and had to guess there was one.
+
+   This reclaims the space from padding and gaps rather than from the
+   design: the headline, the boarding pass and the type are all
+   untouched, they just sit closer together. Phone only. */
+@media (max-width: 767px) {
+  .apply-side {
+    padding-top: 18px;
+    padding-bottom: 22px;
+    gap: 14px;
+  }
+  .apply-main {
+    padding-top: 18px;
+  }
+  /* Scoped to this grid, not the .mt-32 utility, which the whole site
+     uses. */
+  .apply-main .fgrid.mt-32 {
+    margin-top: 20px;
+  }
+}
