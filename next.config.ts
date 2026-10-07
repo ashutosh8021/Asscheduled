@@ -59,8 +59,52 @@ const nextConfig: NextConfig = {
   },
 
   async headers() {
+    /* Files in public/ are served by Next with
+       `public, max-age=0, must-revalidate`, which is the right default
+       for a folder somebody might drop anything into and the wrong one
+       for this site. The public site is 38 requests on the home page —
+       a 7.3MB hero video, ~20 photographs between 270KB and 600KB, an
+       86KB stylesheet — and with max-age=0 the browser re-checks every
+       one of them on every page view and every return visit. That is
+       what makes it feel slow: not the server (TTFB is ~0.25s) but a
+       site that refuses to let anything be kept.
+
+       Nothing below changes a byte of what is served, only how long a
+       browser may keep it. */
+    const forever = [
+      { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+    ];
+
     return [
       { source: "/:path*", headers: SECURITY_HEADERS },
+
+      /* Astro's own output. Every filename carries a content hash
+         (Base.BW1DPkCW.css), so the name changes whenever the bytes do
+         and a year is provably safe. */
+      { source: "/_astro/:path*", headers: forever },
+
+      /* The photography, the videos and the cut-outs. Final files, in
+         the sense docs/DECISIONS.md means it: already cropped, graded
+         and encoded, and never edited in place.
+         IF ONE EVER HAS TO CHANGE, GIVE IT A NEW FILENAME. A year is a
+         long time to serve a file somebody thinks they replaced. */
+      { source: "/assets/img/:path*", headers: forever },
+      { source: "/assets/video/:path*", headers: forever },
+      { source: "/assets/el/:path*", headers: forever },
+
+      /* Brand files and the brochures get a day, not a year, and the
+         reason is the payment QR. It lives here, it is the one file
+         that would be swapped in place rather than renamed, and serving
+         a stale one sends somebody's money to the wrong account. A day
+         still removes almost all of the repeat cost. */
+      {
+        source: "/assets/brand/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=86400" }],
+      },
+      {
+        source: "/assets/docs/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=86400" }],
+      },
       {
         /* The share cards are deterministic per departure. */
         source: "/:path*/opengraph-image",
