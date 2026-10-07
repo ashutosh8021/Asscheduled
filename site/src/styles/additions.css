@@ -1,0 +1,47 @@
+/* OURS, not the Co-work original.
+   Every other file in this folder is numbered and was carried across
+   from source-site/assets/css/site.css unchanged; tools/verify-css.mjs
+   checks those and deliberately ignores this one. Anything new belongs
+   here, so the guarantee about the original stays intact.
+   Imported last, so it can override. */
+
+/* The payment screenshot picker on the booking page. Set like the rest
+   of the form: mono label, ink rule, acid on the button. */
+.shot {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.shot input[type="file"] {
+  font: 400 14px/1.5 var(--f-mono);
+  color: var(--ink);
+  max-width: 100%;
+}
+.shot input[type="file"]::file-selector-button {
+  font: 500 12px/1 var(--f-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--acid);
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  padding: 10px 16px;
+  margin-right: 12px;
+  cursor: pointer;
+}
+.shot input[type="file"]::-webkit-file-upload-button {
+  font: 500 12px/1 var(--f-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--acid);
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  padding: 10px 16px;
+  margin-right: 12px;
+  cursor: pointer;
+}
+/* What happened to it, in the colour that says it. */
+.shot[data-state="done"] .fine { color: var(--ink); font-weight: 600; }
+.shot[data-state="error"] .fine { color: var(--rust); font-weight: 600; }
+.shot[data-state="sending"] .fine { opacity: 0.7; }

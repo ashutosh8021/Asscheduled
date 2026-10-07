@@ -14,7 +14,14 @@ export var AS = window.AS = Object.assign({
   phones: ['+91 78530 22360', '+91 89692 14005'],
   email: 'info@asscheduled.com',
   instagram: 'https://www.instagram.com/go.asscheduled/',
-  applyEndpoint: '',      // optional: URL that accepts a JSON POST of each booking (Google Apps Script, Formspree etc)
+  /* Where a booking goes the moment somebody presses Lock it, before any
+     money moves. This app's own route: it records the booking so it shows
+     in the admin panel straight away, and hands back a token that the
+     payment screenshot is then uploaded against.
+     See app/api/site/booking/route.ts. */
+  applyEndpoint: '/api/site/booking',
+  /* Where that screenshot goes, carrying the token. */
+  uploadEndpoint: '/api/documents/upload',
   newsletterEndpoint: '', // optional: URL that accepts a JSON POST of newsletter signups
   /* COUPONS, applied automatically on the booking page.
      left = how many bookings the coupon is still valid for. Lower it by one each time you confirm a paid booking

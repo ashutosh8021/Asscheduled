@@ -114,6 +114,18 @@
             <p class="fine">UPI ID <b class="upi-id" id="upi-id">singhmannat936@okicici</b>, on your phone tap Pay in UPI app or copy the ID, use your own name in the payment note if your app lets you, then take a screenshot</p></div>
         </div>
         <label class="check mt-32" for="a-paid"><input type="checkbox" id="a-paid"> <span>I’ve paid the booking amount and I have the screenshot</span></label>
+
+        {/* The screenshot, straight to us.
+            WhatsApp stays — it is how people expect to send it and how
+            you answer them — but a screenshot that only ever exists in a
+            chat is a screenshot nobody can find when the booking needs
+            checking against the bank. This puts the same image in the
+            system, attached to this booking, the moment they pick it. */}
+        <div class="shot mt-24" data-shot>
+          <label class="label" for="a-shot">Payment screenshot</label>
+          <input type="file" id="a-shot" accept="image/jpeg,image/png,image/webp" data-cursor="Pick">
+          <p class="fine" data-shot-msg>JPG, PNG or WebP. Optional, but it gets your seat confirmed faster.</p>
+        </div>
         <div class="row mt-24"><a class="btn btn-acid btn-xl" id="wa-send" href="https://wa.me/917853022360" target="_blank" rel="noopener" data-cursor="Send">Send on WhatsApp <span class="ar" aria-hidden="true">↗</span></a><button class="copybtn" type="button" data-copy="apply-text" data-cursor="Copy">Copy my details</button></div>
         <details class="mt-24"><summary class="label" style="cursor:pointer">See the message we’ll send</summary><pre id="apply-text" style="white-space:pre-wrap;font:400 14.5px/1.6 var(--f-mono);margin:14px 0 0;background:var(--paper);border:1.5px solid var(--ink);padding:16px;border-radius:6px"></pre></details>
         <p class="fine mt-24">Your seat is locked once we confirm on WhatsApp, usually within a few hours, if WhatsApp doesn’t open, message +91 78530 22360 with your screenshot and these details</p>

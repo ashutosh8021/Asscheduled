@@ -20,10 +20,22 @@ const stylesDir = path.join(here, '..', 'src', 'styles');
 const original = path.join(here, 'reference', 'site.css');
 
 const index = fs.readFileSync(path.join(stylesDir, 'site.css'), 'utf8');
-const names = [...index.matchAll(/@import\s+"\.\/([^"]+)"/g)].map((m) => m[1]);
+const imported = [...index.matchAll(/@import\s+"\.\/([^"]+)"/g)].map((m) => m[1]);
 
-if (names.length === 0) {
-  console.error('FAIL: site.css imports nothing');
+/* Only the NUMBERED partials are the Co-work stylesheet, cut into
+   pieces. Anything unnumbered — additions.css — is ours, and checking it
+   against an original it was never part of would be nonsense. The naming
+   rule is the whole convention: numbered means carried across and
+   frozen, unnumbered means new. */
+const names = imported.filter((n) => /^\d\d-/.test(n));
+const ours = imported.filter((n) => !/^\d\d-/.test(n));
+
+const EXPECTED = 36;
+if (names.length !== EXPECTED) {
+  console.error(
+    `FAIL: expected ${EXPECTED} numbered partials, site.css imports ${names.length}.\n` +
+      '  A numbered file was added, removed or renamed — the original had 36 blocks.'
+  );
   process.exit(1);
 }
 
@@ -53,7 +65,11 @@ for (const [from, to] of DEVIATIONS) {
 }
 
 if (joined === want) {
-  console.log(`CSS OK — ${names.length} partials reassemble to the original, with ${DEVIATIONS.length} documented deviation(s)`);
+  console.log(
+    `CSS OK — ${names.length} carried-across partials reassemble to the original, ` +
+      `with ${DEVIATIONS.length} documented deviation(s)` +
+      (ours.length ? `; ${ours.length} of our own (${ours.join(', ')}) not checked` : '')
+  );
   process.exit(0);
 }
 

@@ -44,3 +44,6 @@
 @import "./34-coupon-card.css";
 @import "./35-boarding-pass.css";
 @import "./36-journey-r4-r5.css";
+
+/* Ours, not the original. Last, so it can override. */
+@import "./additions.css";

@@ -116,10 +116,88 @@ if (af) {
       (v('a-insta') ? '\nInstagram: ' + v('a-insta') : '') + (v('a-why') ? '\nWhy I’m coming: ' + v('a-why') : '') + '\n\nPayment screenshot attached';
     $('#wa-send').setAttribute('href', 'https://wa.me/' + AS.whatsapp + '?text=' + encodeURIComponent(text));
     $('#apply-text').textContent = text;
+    /* DEVIATION from the Co-work original, which fired this and forgot
+       about it. It now waits for the answer, because the answer carries
+       the token the payment screenshot is uploaded against, and because
+       a booking that silently failed to reach us is a person nobody
+       calls back. A failure un-sets the flag so pressing Lock it again
+       retries rather than going quiet. */
     if (AS.applyEndpoint && !af._sent) {
       af._sent = true;
-      try { fetch(AS.applyEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ plan: pid, price: q.pay, listPrice: q.base, coupon: q.coupon ? q.coupon.code : '', couponOff: q.off, deposit: dep, name: v('a-name'), age: v('a-age'), gender: g, phone: v('a-phone'), email: v('a-email'), college: v('a-college'), city: v('a-city'), state: v('a-state'), instagram: v('a-insta'), why: v('a-why'), at: new Date().toISOString() }) }); } catch (x) {}
+      var body = { plan: pid, price: q.pay, listPrice: q.base, coupon: q.coupon ? q.coupon.code : '', couponOff: q.off, deposit: dep, name: v('a-name'), age: v('a-age'), gender: g, phone: v('a-phone'), email: v('a-email'), college: v('a-college'), city: v('a-city'), state: v('a-state'), instagram: v('a-insta'), why: v('a-why'), at: new Date().toISOString() };
+      fetch(AS.applyEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+        .then(function (r) { return r.json().catch(function () { return {}; }); })
+        .then(function (j) {
+          af._settled = true;
+          if (!j || !j.ok) {
+            af._sent = false;
+            /* Said once, quietly: WhatsApp still works, and the message
+               below already carries every detail. */
+            if (j && j.error) toast(j.error);
+            if (af._pendingShot) shotFallback();
+            return;
+          }
+          af._token = j.token || null;
+          af._ref = j.reference || null;
+          /* They may have picked the screenshot before this came back. */
+          if (af._pendingShot) sendShot(af._pendingShot);
+        })
+        .catch(function () { af._sent = false; af._settled = true; if (af._pendingShot) shotFallback(); });
     }
+  }
+
+  /* ---- the payment screenshot ----
+     WhatsApp stays exactly as it was. This puts the same image in the
+     system too, attached to this booking by the token the route above
+     handed back, so a transfer can be checked without going hunting
+     through a chat. Optional: nothing here blocks the WhatsApp hand-off,
+     and a failed upload never fails a booking that is already saved. */
+  var shot = $('#a-shot'), shotMsg = $('[data-shot-msg]'), shotBox = $('[data-shot]');
+  var SHOT_TYPES = ['image/jpeg', 'image/png', 'image/webp'], SHOT_MAX = 10000000;
+  function shotSay(msg, state) {
+    if (shotMsg) shotMsg.textContent = msg;
+    if (shotBox) shotBox.setAttribute('data-state', state || '');
+  }
+  /* No token means the booking never reached us — the row it would
+     attach to does not exist. Say so, rather than leaving a file sitting
+     in a variable and a message that still reads like an invitation. */
+  function shotFallback() {
+    af._pendingShot = null;
+    shotSay('We could not take the screenshot here. Send it on WhatsApp with your details.', 'error');
+  }
+  function sendShot(file) {
+    if (!AS.uploadEndpoint) return;
+    if (!af._token) {
+      /* Still waiting on the booking's answer: hold it and send the
+         moment the token arrives. Already answered without one: tell
+         them now. */
+      af._pendingShot = file;
+      if (af._settled) shotFallback();
+      else shotSay('Holding on…', 'sending');
+      return;
+    }
+    af._pendingShot = null;
+    shotSay('Sending…', 'sending');
+    var fd = new FormData();
+    fd.append('token', af._token);
+    fd.append('kind', 'payment_proof');
+    fd.append('file', file);
+    fetch(AS.uploadEndpoint, { method: 'POST', body: fd })
+      .then(function (r) { return r.json().catch(function () { return {}; }); })
+      .then(function (j) {
+        if (j && j.ok) shotSay('Got it, we have your screenshot.', 'done');
+        else shotSay((j && j.error) || 'That did not upload. Send it on WhatsApp instead.', 'error');
+      })
+      .catch(function () { shotSay('That did not upload. Send it on WhatsApp instead.', 'error'); });
+  }
+  if (shot) {
+    shot.addEventListener('change', function () {
+      var f = shot.files && shot.files[0];
+      if (!f) return;
+      if (SHOT_TYPES.indexOf(f.type) < 0) { shotSay('Needs to be a JPG, PNG or WebP image.', 'error'); shot.value = ''; return; }
+      if (f.size > SHOT_MAX) { shotSay('That file is over 10MB, a screenshot should be far smaller.', 'error'); shot.value = ''; return; }
+      sendShot(f);
+    });
   }
   var paid = $('#a-paid');
   if (paid) paid.addEventListener('change', function () { $('#wa-send').classList.toggle('is-ready', paid.checked); });
