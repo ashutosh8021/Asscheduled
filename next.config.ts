@@ -143,6 +143,22 @@ const nextConfig: NextConfig = {
     });
 
     return [
+      /* The home page has one address, and it is "/".
+
+         The logo links say index.html, and they have to: the page-wipe
+         handler decides a link is internal by testing it for a .html
+         ending, so href="/" would skip the wipe and hard-jump. This
+         keeps the link as it is — the wipe plays — and then sends the
+         browser on to "/", so the address bar never shows index.html.
+
+         It also means the page genuinely exists at one URL rather than
+         two, which a canonical tag only ever asks search engines to
+         believe. Permanent, because this will not change.
+
+         No loop: Next checks redirects before rewrites, so "/" is never
+         matched here and goes straight to the rewrite below it. */
+      { source: "/index.html", destination: "/", permanent: true },
+
       /* The old public routes, sent to their counterpart on the new site.
          These paths are in people's history, in WhatsApp messages and in
          Google's index — /somewhere/hallucia-aiims-nagpur above all, which
