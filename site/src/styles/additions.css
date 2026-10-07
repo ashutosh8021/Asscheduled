@@ -70,3 +70,32 @@
     margin-top: 20px;
   }
 }
+
+/* ---- the brochure links on a phone ----
+   They are a 12.5px mono label with a hairline under it: fine beside a
+   price on a laptop, nearly invisible on a phone, and a tap target about
+   18px tall when Apple's floor is 44px.
+
+   On phones they become an outlined pill instead. Inside a plan card it
+   runs the full width of the card, so it reads as a button rather than a
+   caption; the standalone Edition Guide link hugs its own text. The
+   colour stays currentColor, so it inverts correctly between the dark
+   plan card and the light one, and it stays an outline rather than a
+   fill so it never competes with the acid "Get your spot". */
+@media (max-width: 767px) {
+  .plan-doc {
+    display: inline-block;
+    border: 1.5px solid currentColor;
+    border-radius: 999px;
+    /* 16px top and bottom against a 12.5px line puts the box at ~45px,
+       clear of the 44px minimum tap target. */
+    padding: 16px 20px;
+    line-height: 1;
+  }
+  .plan .plan-doc {
+    display: block;
+    align-self: stretch;
+    text-align: center;
+    margin-top: 8px;
+  }
+}
