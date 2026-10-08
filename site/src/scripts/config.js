@@ -22,7 +22,14 @@ export var AS = window.AS = Object.assign({
   applyEndpoint: '/api/site/booking',
   /* Where that screenshot goes, carrying the token. */
   uploadEndpoint: '/api/documents/upload',
-  newsletterEndpoint: '', // optional: URL that accepts a JSON POST of newsletter signups
+  /* The footer newsletter. Writes to the subscribers table and shows in
+     the admin. */
+  newsletterEndpoint: '/api/somewhere/subscribe',
+  /* The collab form on the contact page. Writes to the collaborations
+     table, which is the admin's COLLABS tab. The WhatsApp hand-off below
+     it is unchanged — this is in addition, not instead, so a festival
+     that fills the form and never presses the button is still reachable. */
+  collabEndpoint: '/api/somewhere/collab',
   /* COUPONS, applied automatically on the booking page.
      left = how many bookings the coupon is still valid for. Lower it by one each time you confirm a paid booking
      that used it (the WhatsApp message says when it did). At 0 the coupon disappears and full prices show. */

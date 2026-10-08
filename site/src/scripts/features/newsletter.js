@@ -20,7 +20,11 @@ $$('[data-news]').forEach(function (f) {
     if (!em.value || !/^\S+@\S+\.\S+$/.test(em.value)) { msg.textContent = 'That email looks off, try again'; msg.classList.add('err'); em.focus(); return; }
     if (ok && !ok.checked) { msg.textContent = 'Tick the box so we’re allowed to email you'; msg.classList.add('err'); return; }
     var pref = ($('input[name="news-pref"]:checked', f) || {}).value || 'both';
-    var payload = { email: em.value, preference: pref, consentAt: new Date().toISOString(), page: location.pathname };
+    var payload = { email: em.value, preference: pref, consentAt: new Date().toISOString(), page: location.pathname,
+        /* The route's honeypot. It reads email, preference and website,
+           and rejects the whole body if any of the three is absent — so
+           this has to be sent, empty, by a real person. */
+        website: '' };
     if (AS.newsletterEndpoint) { try { fetch(AS.newsletterEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); } catch (x) {} }
     store.set('as_news', payload);
     msg.innerHTML = 'You’re in, the next one hits your inbox first ✱ <a href="' + AS.instagram + '" target="_blank" rel="noopener" style="text-decoration:underline">follow @go.asscheduled</a>';

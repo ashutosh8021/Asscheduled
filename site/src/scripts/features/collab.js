@@ -21,4 +21,32 @@ if (cf) cf.addEventListener('submit', function (e) {
   var out = $('#collab-out'); out.hidden = false;
   $('#collab-wa').setAttribute('href', 'https://wa.me/' + AS.whatsapp + '?text=' + encodeURIComponent(text));
   $('#collab-text').textContent = text; scrollToEl(out);
+
+  /* ADDED to the Co-work original, which only ever built the WhatsApp
+     message. A festival that fills this in and then does not press the
+     button was simply lost; it now also reaches the COLLABS tab in the
+     admin. The hand-off above is untouched and is still the path we
+     tell them to use, which is why a failure here is logged rather than
+     shown — their message is already on screen either way.
+
+     `type` is not a field on this form, so it is sent as what the
+     section is: a collab enquiry. The route requires it, and inventing
+     a category the person never chose would be worse than naming the
+     form they filled in. dates and location are not asked for either. */
+  if (AS.collabEndpoint) {
+    try {
+      fetch(AS.collabEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: v('c-name'), org: v('c-org'), email: v('c-email'), phone: v('c-phone'),
+          type: 'Collab enquiry', dates: '', location: '', on: [], more: v('c-idea')
+        })
+      }).then(function (r) {
+        if (!r.ok) console.error('[collab] not recorded (' + r.status + ') — the WhatsApp message still carries it');
+      }, function () {
+        console.error('[collab] not recorded — the WhatsApp message still carries it');
+      });
+    } catch (x) {}
+  }
 });

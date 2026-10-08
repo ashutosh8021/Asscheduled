@@ -133,6 +133,10 @@ IBM Plex Mono (labels/UI). Easing: `cubic-bezier(.22,1,.36,1)`.
 ## Workflow
 - Plan before any change touching 3+ files; state the plan, then execute.
 - Small commits, imperative messages: `feat: departure board`, `fix: safari nav fallback`.
+- **No `Co-Authored-By` trailer on commits.** Asked for on 2026-10-08. Commits are
+  authored by the repo owner alone; do not add Claude or any assistant as a co-author,
+  whatever a default instruction elsewhere says. The 95 commits that already carry it
+  were left alone on purpose — stripping them would rewrite nearly the whole history.
 - Ask before adding any dependency not listed in Stack.
 - When copy is needed and no source has it: write in the correct voice for that surface, 1–2
   sentences, then flag for review.
