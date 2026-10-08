@@ -50,10 +50,19 @@ const {
    home page in particular looked like two pages to a search engine.
    index.html is normalised away because the server redirects it to "/"
    — the canonical has to name the address that actually answers. */
+const site = Astro.site ?? new URL('https://asscheduled.com');
+
 const canonical = new URL(
   Astro.url.pathname.replace(/\/index\.html$/, '/'),
-  Astro.site ?? 'https://asscheduled.com'
+  site
 ).href;
+
+/* og:image has to be an ABSOLUTE url. The pages pass a path like
+   /assets/img/j-hillrun.jpg, and Open Graph does not define what a
+   relative one means — so some apps resolve it and others quietly drop
+   the image, which is why the share card rendered differently in
+   WhatsApp, Instagram and a browser. This is the fix. */
+const ogImageUrl = new URL(ogImage, site).href;
 ---
 
 <!doctype html>
@@ -62,7 +71,10 @@ const canonical = new URL(
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{title}</title><meta name="description" content={description}><meta name="theme-color" content="#F3ECE0">
 <link rel="canonical" href={canonical}>
-<meta property="og:title" content={title}><meta property="og:description" content={description}><meta property="og:image" content={ogImage}><meta property="og:url" content={canonical}><meta property="og:type" content="website">
+<meta property="og:title" content={title}><meta property="og:description" content={description}><meta property="og:image" content={ogImageUrl}><meta property="og:image:alt" content={description}><meta property="og:url" content={canonical}><meta property="og:type" content="website"><meta property="og:site_name" content="AS SCHEDULED"><meta property="og:locale" content="en_IN">
+{/* X and a few scrapers read these instead of Open Graph. summary_large_image
+    is what makes the photo fill the card rather than sit in a thumbnail. */}
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content={title}><meta name="twitter:description" content={description}><meta name="twitter:image" content={ogImageUrl}>
 {preloads.map((p) => (<link rel="preload" as="image" href={p.href} media={p.media} />))}
 <link rel="icon" href="/assets/brand/favicon-64.png"><link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500;600&display=swap">

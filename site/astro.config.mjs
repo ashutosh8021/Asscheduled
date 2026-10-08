@@ -2,7 +2,12 @@ import { defineConfig } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://asscheduled.com',
+  /* www, not the apex. The apex 308-redirects to www, and this value is
+     what builds every canonical, og:url and og:image. An og:image that
+     redirects is an og:image some scrapers drop rather than follow,
+     which is how a share card ends up with no photo. Point at the host
+     that actually answers. */
+  site: 'https://www.asscheduled.com',
 
   /* `file` gives /somewhere.html, not /somewhere/index.html.
 
