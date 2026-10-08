@@ -11,10 +11,12 @@ live design. **This supersedes the docx spec, `docs/SPEC.md` and the `/asset` co
 page order, routes, navigation, copy, colour and the application flow.** Those three
 describe designs that are no longer on the site.
 
-- **Public URLs end in `.html`** (`/`, `/somewhere.html`, `/hallucia.html`, …). Not a
-  style choice: the page-wipe handler tests links against `/\.html(#…)?$/i`, so
-  extensionless URLs silently kill every page transition. Old routes redirect — see
-  `next.config.ts`.
+- **Public URLs are clean** (`/`, `/somewhere`, `/hallucia`, …) but the BUILD still
+  writes `somewhere.html` and the markup still links to `somewhere.html`. Both are
+  required: the page-wipe handler tests a link against `/\.html(#…)?$/i`, so an
+  extensionless href silently kills the transition. `next.config.ts` holds the pair that
+  hides the extension — a redirect `/somewhere.html` → `/somewhere` and a `beforeFiles`
+  rewrite back. Never "tidy" the hrefs to extensionless.
 - **`app/` is now the application only**: `/admin`, `/partner`, `/crew`, `/crew/login`,
   `/crew/dashboard`, `/api/*`, `/documents/[token]`. Its public pages still build but are
   redirected away from and must not be developed further.

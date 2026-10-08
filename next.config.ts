@@ -47,6 +47,27 @@ const SECURITY_HEADERS = [
   { key: "Content-Security-Policy-Report-Only", value: CSP_REPORT_ONLY },
 ];
 
+/* Every page the public site publishes, by its clean path.
+
+   The build still produces somewhere.html and the markup still links to
+   somewhere.html — it has to, because the page-wipe handler decides a
+   link is internal by testing it for a .html ending. The pair of rules
+   below is what hides the extension anyway: the link fires the wipe,
+   the redirect cleans the address bar, the rewrite serves the file. */
+const PAGES = [
+  "somewhere",
+  "hallucia",
+  "mood-indigo",
+  "about",
+  "contact",
+  "faqs",
+  "apply",
+  "privacy",
+  "terms",
+  "legal",
+  "cancellation-policy",
+];
+
 const nextConfig: NextConfig = {
   poweredByHeader: false,
 
@@ -124,7 +145,13 @@ const nextConfig: NextConfig = {
      collides with nothing, so it needs no rule at all. */
   async rewrites() {
     return {
-      beforeFiles: [{ source: "/", destination: "/index.html" }],
+      /* beforeFiles, so these run ahead of the filesystem: /somewhere is
+         not a file, and without this it would 404 before anything had a
+         chance to serve somewhere.html. */
+      beforeFiles: [
+        { source: "/", destination: "/index.html" },
+        ...PAGES.map((p) => ({ source: `/${p}`, destination: `/${p}.html` })),
+      ],
       afterFiles: [],
       fallback: [],
     };
@@ -132,10 +159,10 @@ const nextConfig: NextConfig = {
 
   async redirects() {
     /* Temporary (307), not permanent (301), and deliberately so. A 301 is
-       cached by the browser more or less for ever; while the two designs
-       are being reconciled we need to be able to change our minds without
-       stranding anyone on a rule we can no longer reach. Promote these to
-       permanent once the shape has settled. */
+       cached by the browser more or less for ever; while the shape of the
+       site is still settling we need to be able to change our minds
+       without stranding anyone on a rule we can no longer reach. Promote
+       these once it has settled. */
     const toNew = (from: string, to: string) => ({
       source: from,
       destination: to,
@@ -147,51 +174,57 @@ const nextConfig: NextConfig = {
 
          The logo links say index.html, and they have to: the page-wipe
          handler decides a link is internal by testing it for a .html
-         ending, so href="/" would skip the wipe and hard-jump. This
-         keeps the link as it is — the wipe plays — and then sends the
-         browser on to "/", so the address bar never shows index.html.
+         ending, so href="/" would skip the wipe and hard-jump. This keeps
+         the link as it is — the wipe plays — and then sends the browser on
+         to "/", so the address bar never shows index.html.
 
-         It also means the page genuinely exists at one URL rather than
-         two, which a canonical tag only ever asks search engines to
-         believe. Permanent, because this will not change.
+         Permanent, unlike the rest: index.html is never going to become a
+         canonical URL again whatever else changes.
 
          No loop: Next checks redirects before rewrites, so "/" is never
-         matched here and goes straight to the rewrite below it. */
+         matched here and goes straight to the rewrite above. */
       { source: "/index.html", destination: "/", permanent: true },
+
+      /* The same trick for every other page, which is what hides .html.
+         Request /somewhere.html and you are sent to /somewhere; request
+         /somewhere and the rewrite serves the file. One hop, no loop,
+         and the hash survives — /apply.html#hal5 still preselects the
+         plan, because browsers carry the fragment across a redirect. */
+      ...PAGES.map((p) => toNew(`/${p}.html`, `/${p}`)),
 
       /* The old public routes, sent to their counterpart on the new site.
          These paths are in people's history, in WhatsApp messages and in
          Google's index — /somewhere/hallucia-aiims-nagpur above all, which
          is the link Crew and applicants were given. Without these they are
          served the OLD design, which is worse than a 404: it still works,
-         so nobody reports it. */
-      toNew("/about", "/about.html"),
-      toNew("/contact", "/contact.html"),
-      toNew("/faqs", "/faqs.html"),
-      toNew("/faq", "/faqs.html"),
-      toNew("/apply", "/apply.html"),
-      toNew("/apply/thank-you", "/apply.html"),
-      toNew("/somewhere", "/somewhere.html"),
-      toNew("/somewhere/hallucia-aiims-nagpur", "/hallucia.html"),
+         so nobody reports it.
+
+         Note what is NOT here any more: /about, /contact, /faqs, /apply,
+         /somewhere, /privacy and /terms. Those are the real URLs now, and
+         a rule pointing them at themselves is an infinite redirect. */
+      toNew("/faq", "/faqs"),
+      toNew("/apply/thank-you", "/apply"),
+      toNew("/somewhere/hallucia-aiims-nagpur", "/hallucia"),
       /* The rest of the old departures — Pulse, Thomso — have no
          counterpart on the new site, so they land on the trips page
-         rather than on a 404. */
-      toNew("/somewhere/:slug*", "/somewhere.html"),
-      toNew("/gallery", "/somewhere.html"),
+         rather than on a 404.
+         :slug+ not :slug*, because * also matches zero segments, which
+         would make this rule swallow /somewhere itself and redirect it to
+         itself. */
+      toNew("/somewhere/:slug+", "/somewhere"),
+      toNew("/gallery", "/somewhere"),
 
       /* Paperwork. The new site keeps each one as its own page. */
-      toNew("/paperwork", "/legal.html"),
-      toNew("/paperwork/privacy", "/privacy.html"),
-      toNew("/paperwork/terms", "/terms.html"),
-      toNew("/paperwork/cancellation-policy", "/cancellation-policy.html"),
-      toNew("/privacy", "/privacy.html"),
-      toNew("/terms", "/terms.html"),
-      toNew("/refund-policy", "/cancellation-policy.html"),
-      toNew("/refunds", "/cancellation-policy.html"),
+      toNew("/paperwork", "/legal"),
+      toNew("/paperwork/privacy", "/privacy"),
+      toNew("/paperwork/terms", "/terms"),
+      toNew("/paperwork/cancellation-policy", "/cancellation-policy"),
+      toNew("/refund-policy", "/cancellation-policy"),
+      toNew("/refunds", "/cancellation-policy"),
 
       /* Season-01 routes that were never part of the new design. */
-      toNew("/trips", "/somewhere.html"),
-      toNew("/trips/:slug*", "/somewhere.html"),
+      toNew("/trips", "/somewhere"),
+      toNew("/trips/:slug+", "/somewhere"),
       toNew("/experiences", "/"),
       toNew("/stories", "/"),
       toNew("/events", "/"),

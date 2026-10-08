@@ -38,10 +38,13 @@ in that same order. They register callbacks with `onFrame`, and the loop calls
 them in registration order, so reordering the imports reorders the work inside
 every animation frame.
 
-**URLs keep their `.html`.** `build.format: 'file'` is not a preference. The
-page-wipe handler decides a link is internal by testing it against
-`/\.html(#[\w.~-]*)?$/i`. Serve this at extensionless URLs and no internal link
-matches, so the wipe never plays and every navigation becomes a hard jump.
+**The build keeps `.html`; the site serves clean URLs.** `build.format: 'file'`
+is not a preference. The page-wipe handler decides a link is internal by testing
+it against `/\.html(#[\w.~-]*)?$/i`, so the hrefs must keep the extension or the
+wipe never plays. The extension is hidden at the server instead:
+`next.config.ts` redirects `/somewhere.html` to `/somewhere` and rewrites it
+back. `src/scripts/core/wipe.js` strips `.html` on both sides when deciding
+whether a link is a same-page anchor, because the two no longer look alike.
 
 ## Deviations from the original
 

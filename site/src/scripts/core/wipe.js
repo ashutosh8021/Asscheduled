@@ -31,8 +31,20 @@ document.addEventListener('click', function (e) {
   if (!a || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button) return;
   var h = a.getAttribute('href');
   if (!h || a.target === '_blank' || /^(#|mailto:|tel:|https?:|\/\/)/i.test(h) || !/\.html(#[\w.~-]*)?$/i.test(h)) return;
-  var cur = location.pathname.split('/').pop() || 'index.html';
-  if (h.split('#')[0] === cur && h.indexOf('#') > -1) {
+  /* DEVIATION from the Co-work original, which compared these raw.
+
+     The original ran at somewhere.html, so location's last segment and
+     the link's path were both "somewhere.html" and matched. The site now
+     serves clean URLs — the markup still links to somewhere.html, which
+     is what fires the wipe, and the server redirects to /somewhere — so
+     the two sides no longer look alike and a same-page anchor would do a
+     full page reload instead of a smooth scroll. docs/BEHAVIOUR.md calls
+     that case out by name: contact.html#collab while already on contact.
+     Dropping the extension from both sides makes them comparable again,
+     whichever way the page is being served. */
+  var bare = function (s) { return s.replace(/\.html$/i, ''); };
+  var cur = bare(location.pathname.split('/').pop() || 'index');
+  if (bare(h.split('#')[0]) === cur && h.indexOf('#') > -1) {
     var st = document.getElementById(h.split('#')[1]); if (st) { e.preventDefault(); scrollToEl(st); }
     return;
   }

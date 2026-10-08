@@ -52,8 +52,11 @@ const {
    — the canonical has to name the address that actually answers. */
 const site = Astro.site ?? new URL('https://asscheduled.com');
 
+/* The build writes somewhere.html, but the site is served at /somewhere
+   — see the redirect and rewrite pair in next.config.ts. The canonical has
+   to name the address that actually answers, not the file on disk. */
 const canonical = new URL(
-  Astro.url.pathname.replace(/\/index\.html$/, '/'),
+  Astro.url.pathname.replace(/\/index\.html$/, '/').replace(/\.html$/, ''),
   site
 ).href;
 
