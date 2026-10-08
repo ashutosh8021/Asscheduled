@@ -1,10 +1,20 @@
 ---
-/* index.html — section 1 of 7, carried across verbatim.
-   See docs/PAGES.md for what it is and which hooks it carries. */
+/* index.html — section 1 of 7, carried across verbatim, with one change.
+
+   DEVIATION: the video is preload="metadata", not the original's
+   preload="auto". hillrun-4k.mp4 is 7.1MB and auto told the browser to
+   pull all of it before anything else finished — on a home page already
+   carrying 13MB across 38 requests, that is most of why the site felt
+   slow. metadata fetches the header, then the player streams the rest
+   once it decides to play, which it still does automatically.
+
+   Nothing about the design changes. The poster covers the first moment
+   either way, and phones were never affected: the <source> media query
+   means they only ever load the 1.1MB crop. */
 ---
 
 <section class="hero hero-run" aria-label="Season 02">
-  <div class="hero-media hm-run"><video autoplay muted loop playsinline webkit-playsinline disablepictureinpicture disableremoteplayback x-webkit-airplay="deny" preload="auto" poster="/assets/img/j-hillrun.jpg" data-parallax="0.1" aria-label="Friends running down a hillside into the sunset"><source src="/assets/video/hillrun-m.mp4" type="video/mp4" media="(max-width: 767px)"><source src="/assets/video/hillrun-4k.mp4" type="video/mp4" media="(min-width: 768px)"></video><script is:inline>(function(v){try{if(matchMedia('(max-width: 767px)').matches)v.setAttribute('poster','/assets/img/j-hillrun-m.jpg')}catch(e){}})(document.currentScript.previousElementSibling)</script></div>
+  <div class="hero-media hm-run"><video autoplay muted loop playsinline webkit-playsinline disablepictureinpicture disableremoteplayback x-webkit-airplay="deny" preload="metadata" poster="/assets/img/j-hillrun.jpg" data-parallax="0.1" aria-label="Friends running down a hillside into the sunset"><source src="/assets/video/hillrun-m.mp4" type="video/mp4" media="(max-width: 767px)"><source src="/assets/video/hillrun-4k.mp4" type="video/mp4" media="(min-width: 768px)"></video><script is:inline>(function(v){try{if(matchMedia('(max-width: 767px)').matches)v.setAttribute('poster','/assets/img/j-hillrun-m.jpg')}catch(e){}})(document.currentScript.previousElementSibling)</script></div>
   <div class="hero-copy">
     <span class="label hero-label">Season 02 · now boarding</span>
     <h1 class="h1 hero-h"><span class="hh">We bring</span> <span class="rot2" data-words="culture,chaos,people,noise,stories"><span class="rot2-w">culture</span></span></h1>

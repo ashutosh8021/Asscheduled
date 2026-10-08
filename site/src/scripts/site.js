@@ -44,3 +44,7 @@ import './motion/hero.js';
 import './motion/touch-hover.js';
 import './features/footage.js';
 import './motion/count-up.js';
+
+/* Ours, not the original. Last, because it only reacts to what the
+   carried-across modules have already built. */
+import './features/pinned-images.js';

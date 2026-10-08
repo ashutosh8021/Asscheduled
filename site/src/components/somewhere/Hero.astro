@@ -1,10 +1,12 @@
 ---
-/* somewhere.html — section 1 of 6, carried across verbatim.
-   See docs/PAGES.md for what it is and which hooks it carries. */
+/* somewhere.html — section 1 of 6, carried across verbatim, with one
+   change: preload="metadata" rather than the original's "auto", so the
+   2.0MB citywalk.mp4 streams when it plays instead of being pulled in
+   full before the page has settled. Same reasoning as the home hero. */
 ---
 
 <section class="hero phero" aria-label="Somewhere else">
-  <div class="hero-media hm-walk"><video autoplay muted loop playsinline webkit-playsinline preload="auto" poster="/assets/img/j-citywalk.jpg" data-parallax="0.1" aria-label="A crew walking through a city at night"><source src="/assets/video/citywalk.mp4" type="video/mp4"></video></div>
+  <div class="hero-media hm-walk"><video autoplay muted loop playsinline webkit-playsinline preload="metadata" poster="/assets/img/j-citywalk.jpg" data-parallax="0.1" aria-label="A crew walking through a city at night"><source src="/assets/video/citywalk.mp4" type="video/mp4"></video></div>
   <div class="hero-copy">
     <span class="label hero-label">Departures · Season 02</span>
     <h1 class="h1">Somewhere <span class="it">else</span></h1>
