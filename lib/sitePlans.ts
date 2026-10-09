@@ -36,8 +36,8 @@ export interface SiteCoupon {
 }
 
 export const SITE_COUPONS: Record<string, SiteCoupon> = {
-  hal: { code: "SAYYES", off: 500, left: 50 },
-  mi: { code: "SAYYES", off: 1000, left: 50 },
+  hal: { code: "SAYYES", off: 1000, left: 15 },
+  mi: { code: "SAYYES", off: 1000, left: 15 },
 };
 
 /* HAL-26 is a real departure in lib/departures.ts. MI-26 is not: Mood
@@ -53,7 +53,7 @@ export const SITE_PLANS: Record<string, SitePlan> = {
     trip: "Hallucia'26",
     where: "AIIMS Nagpur",
     when: "25 Nov → 29 Nov",
-    inr: 8999,
+    inr: 9999,
     deposit: 0.3,
     coupon: "hal",
   },
@@ -63,7 +63,7 @@ export const SITE_PLANS: Record<string, SitePlan> = {
     trip: "Hallucia'26",
     where: "AIIMS Nagpur + Pachmarhi",
     when: "25 Nov onwards",
-    inr: 12999,
+    inr: 14999,
     deposit: 0.3,
     coupon: "hal",
   },

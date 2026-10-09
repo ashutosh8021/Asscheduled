@@ -34,14 +34,14 @@ export var AS = window.AS = Object.assign({
      left = how many bookings the coupon is still valid for. Lower it by one each time you confirm a paid booking
      that used it (the WhatsApp message says when it did). At 0 the coupon disappears and full prices show. */
   coupons: {
-    hal: { code: 'SAYYES', off: 500, left: 50, name: 'Hallucia' },
-    mi:  { code: 'SAYYES', off: 1000, left: 50, name: 'Mood Indigo' }
+    hal: { code: 'SAYYES', off: 1000, left: 15, name: 'Hallucia' },
+    mi:  { code: 'SAYYES', off: 1000, left: 15, name: 'Mood Indigo' }
   },
   couponEndpoint: '',     // optional: URL that returns {"hal": 49, "mi": 47}, the live count, once the site is on your own domain
   plans: {
-    hal5: { trip: 'Hallucia’26', short: 'Hallucia', plan: 'Hallucia · 5 days, 4 nights', where: 'AIIMS Nagpur', to: 'Nagpur', code: 'NAG', dcode: '25 NOV 26', board: '05:40', when: '25 Nov → 29 Nov', price: 8999, deposit: 0.3, coupon: 'hal',
+    hal5: { trip: 'Hallucia’26', short: 'Hallucia', plan: 'Hallucia · 5 days, 4 nights', where: 'AIIMS Nagpur', to: 'Nagpur', code: 'NAG', dcode: '25 NOV 26', board: '05:40', when: '25 Nov → 29 Nov', price: 9999, deposit: 0.3, coupon: 'hal',
             travel: 'Travel from your city is included, your exact fare depends on your state and we confirm it before you pay' },
-    hal7: { trip: 'Hallucia’26', short: 'Hallucia × Pachmarhi', plan: 'Hallucia × Pachmarhi · 7 days', where: 'AIIMS Nagpur + Pachmarhi', to: 'Nagpur', code: 'NAG', dcode: '25 NOV 26', board: '05:40', when: '25 Nov onwards', price: 12999, deposit: 0.3, coupon: 'hal',
+    hal7: { trip: 'Hallucia’26', short: 'Hallucia × Pachmarhi', plan: 'Hallucia × Pachmarhi · 7 days', where: 'AIIMS Nagpur + Pachmarhi', to: 'Nagpur', code: 'NAG', dcode: '25 NOV 26', board: '05:40', when: '25 Nov onwards', price: 14999, deposit: 0.3, coupon: 'hal',
             travel: 'Travel from your city is included, your exact fare depends on your state and we confirm it before you pay' },
     mi4:  { trip: 'Mood Indigo’26', short: 'Mood Indigo', plan: 'Mood Indigo · 4 days, 3 nights', where: 'IIT Bombay, Mumbai', to: 'Mumbai', code: 'BOM', dcode: 'DEC 26', board: 'TBC', when: 'December', price: 8499, deposit: 0.3, coupon: 'mi',
             travel: 'Plus your train or flight to Mumbai, balance due within 30 days before the fest' },
