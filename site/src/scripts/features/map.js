@@ -11,8 +11,8 @@ import { $, $$ } from '../core/env.js';
 
 /* ===================== map ===================== */
 $$('[data-map]').forEach(function (m) {
-  var svg = $('svg', m), hubs = { hal: $('.map-hub.hal', svg), mi: $('.map-hub.mi', svg) }, rh = $('.r-hal', svg), rm = $('.r-mi', svg);
-  var outH = $('[data-dist="hal"]', m), outM = $('[data-dist="mi"]', m), outC = $('[data-dist="city"]', m);
+  var svg = $('svg', m), hubs = { hal: $('.map-hub.hal', svg), mi: $('.map-hub.mi', svg), sf: $('.map-hub.sf', svg) }, rh = $('.r-hal', svg), rm = $('.r-mi', svg), rs = $('.r-sf', svg);
+  var outH = $('[data-dist="hal"]', m), outM = $('[data-dist="mi"]', m), outS = $('[data-dist="sf"]', m), outC = $('[data-dist="city"]', m);
   function km(a, b) { var R = 6371, t = Math.PI / 180, dl = (b[1] - a[1]) * t, dn = (b[0] - a[0]) * t; var h = Math.sin(dl / 2) * Math.sin(dl / 2) + Math.cos(a[1] * t) * Math.cos(b[1] * t) * Math.sin(dn / 2) * Math.sin(dn / 2); return Math.round(2 * R * Math.asin(Math.sqrt(h)) / 10) * 10; }
   function ll(el) { return [parseFloat(el.getAttribute('data-lon')), parseFloat(el.getAttribute('data-lat'))]; }
   function xy(el) { return [parseFloat(el.getAttribute('data-x')), parseFloat(el.getAttribute('data-y'))]; }
@@ -24,6 +24,11 @@ $$('[data-map]').forEach(function (m) {
     var p = xy(c); rh.setAttribute('d', arc(p, xy(hubs.hal))); rm.setAttribute('d', arc(p, xy(hubs.mi))); rh.classList.add('draw'); rm.classList.add('draw');
     if (outH) outH.textContent = km(ll(c), ll(hubs.hal)).toLocaleString('en-IN') + ' km';
     if (outM) outM.textContent = km(ll(c), ll(hubs.mi)).toLocaleString('en-IN') + ' km';
+    /* Ours, not the original: Spring Fest's hub at Kharagpur, a third route
+       beside the two the Co-work map drew. Guarded, so a map without it is
+       exactly the original. */
+    if (hubs.sf && rs) { rs.setAttribute('d', arc(p, xy(hubs.sf))); rs.classList.add('draw'); }
+    if (hubs.sf && outS) outS.textContent = km(ll(c), ll(hubs.sf)).toLocaleString('en-IN') + ' km';
     if (outC) outC.textContent = name;
   }
   $$('[data-city]', m).forEach(function (b) { b.addEventListener('click', function () { pick(b.getAttribute('data-city')); }); });

@@ -160,3 +160,15 @@
       rgba(6, 8, 16, 0) 100%);
   }
 }
+
+/* ---- Spring Fest on the route planner ----
+   The Co-work map has two hubs, rust for Nagpur and pink for Mumbai.
+   Kharagpur is the third, in the date-stamp orange so it reads apart
+   from both and from the acid of the picked city. Its distance box
+   spans the full row under the other two, so the two the original laid
+   out keep their width and their type size. */
+.map-hub.sf circle.core{fill:var(--stamp)}
+.map-hub.sf circle.ring{stroke:var(--stamp)}
+.route.r-sf{stroke:var(--stamp)}
+.dist .k{grid-column:1/-1}
+.dist .k b{color:var(--stamp)}
