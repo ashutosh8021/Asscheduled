@@ -116,37 +116,54 @@ The source JPEGs are in `asset/`. The published PNGs are the same artwork
 cropped to their content with the white background keyed to transparency —
 no part of the artwork itself was altered.
 
-## Spring Fest 2027 — `site/public/assets/img/sf-*.jpg`, `card-springfest.jpg`
+## Spring Fest 2027 — `site/public/assets/img/sf-*.jpg`, `card-springfest2.jpg`
 
-Source: the two AS SCHEDULED × Spring Fest 2027 brochures in
-`asset/iit kgp/`, which are also published verbatim at
-`site/public/assets/docs/spring-fest-5-day-brochure.pdf` and
-`spring-fest-6-day-brochure.pdf`.
+Two sources, and the distinction matters.
 
-The brochures are flattened — one image per page, no embedded originals — so
-each photograph here was rendered from the page at 400dpi and cut to the
-largest rectangle that fits inside its arch frame, with no part of the
-artwork, the captions or the background in the crop. Nothing was retouched.
+### The photographs — supplied by Spring Fest
 
-| File | What | Credit |
+Nine high-resolution JPEGs supplied by Mannat on 2026-10-25 and kept in
+`asset/iit kgp/`. These are Spring Fest's own photographs of their own
+festival. Each file below is a straight aspect-ratio crop and resize of one of
+them — nothing retouched, nothing composited, no watermark removed.
+
+| File | Source | What |
 |---|---|---|
-| `sf-hero-l.jpg`, `sf-hero-p.jpg` | Fireworks over the main stage | Spring Fest 2026, courtesy of Spring Fest, IIT Kharagpur |
-| `sf-arrival.jpg` | A group on campus | ditto |
-| `sf-dance.jpg` | Dancers on the floor | ditto |
-| `sf-night.jpg` | The main stage after dark | ditto |
-| `sf-mural.jpg` | A mural being painted | ditto |
-| `card-springfest.jpg` | Students taking a selfie | ditto |
-| `sf-waves.jpg` | Wave artwork | A design element of our own brochure |
+| `sf-hero2-l.jpg` | #9 | Jets and confetti over the main stage |
+| `sf-hero2-p.jpg` | #1 | A performer on stage, mic up |
+| `card-springfest2.jpg`, `sf-crowd.jpg` | #5 | Students crowding into one selfie |
+| `sf-classical.jpg` | #2 | A classical dance troupe on stage |
+| `sf-fashion.jpg` | #7 | The ramp at night |
+| `sf-stage.jpg` | #4 | Fireworks over the main stage |
+| `sf-campus.jpg` | #6 | A large group on campus |
 
-The brochures credit the photographs as **"Spring Fest 2026, courtesy of
-Spring Fest, IIT Kharagpur"**, and the page carries that line under the
-frames. They are presented as the fest's own and never as ours.
+Five of the nine carry Spring Fest's own watermark, top-left. **It is left
+where it falls.** The two used for the hero (#9 and #1) are the two that have
+none, which is why they are the heroes: over a full-bleed hero their mark
+would sit exactly where our own wordmark does. In the smaller frames the mark
+is visible and reads as the credit it is, and the page also credits them in
+text beneath the frames.
 
-**Open item.** The brochure's own credits page also names two Wikimedia
-images — IIT Kharagpur Main Building and Shaheed Bhawan, both Ambuj Saxena,
-CC BY 2.5 — and a CC0 sunset at Mandarmani by Anupam Chatterjee88. None of
-those three are used on the website; they appear only inside the published
-PDFs, where the brochure credits them itself.
+**TODO(mannat): confirm in writing that Spring Fest's permission covers use of
+these photographs on the website, not only inside the brochure.** They are
+presented as the fest's own throughout and never as ours.
 
-TODO(mannat): confirm the written permission from Spring Fest covers use of
-their 2026 photographs on the website, not only inside the brochure.
+### `sf-waves.jpg` — from our own brochure
+
+Wave artwork, a design element of the AS SCHEDULED × Spring Fest brochures in
+`asset/iit kgp/`, which are published verbatim at
+`site/public/assets/docs/spring-fest-5-day-brochure.pdf` and
+`spring-fest-6-day-brochure.pdf`. Rendered from the page at 400dpi.
+
+Earlier crops cut from the brochure pages themselves (`sf-arrival`, `sf-dance`,
+`sf-night`, `sf-mural`, and the first heroes) were replaced by the supplied
+originals above on 2026-10-25 and deleted. They were low-resolution by
+necessity — the brochures are flattened, one image per page.
+
+### Inside the PDFs only
+
+The brochures' own credits page names two Wikimedia images — IIT Kharagpur
+Main Building and Shaheed Bhawan, both Ambuj Saxena, CC BY 2.5 — and a CC0
+sunset at Mandarmani by Anupam Chatterjee88. **None of those three are used on
+the website.** They appear only inside the published PDFs, which credit them
+themselves.
