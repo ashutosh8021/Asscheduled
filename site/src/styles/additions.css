@@ -99,3 +99,30 @@
     margin-top: 8px;
   }
 }
+
+/* ---- a third card in the hero strip ----
+   The strip was built for two departures: two columns on a phone, and
+   `.hero-run .hero-cards` pins it to two fixed-width columns from 768px
+   up. Spring Fest is the third, and left alone it wraps onto a second
+   row inside a hero that is already a full viewport tall.
+
+   One row at every width instead. The phone sizes come from the space
+   actually available: three cards across a 390px screen leave about
+   108px each, so the name and the date step down to 13px and 11px and
+   the image goes square, which is the crop that still reads at that
+   width. Above 768px the columns simply go from two to three and the
+   card keeps the size it had. */
+@media (max-width: 767px) {
+  .hero-run .hero-cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .hero-run .hero-card .m { aspect-ratio: 1/1; }
+  .hero-run .hero-card b { font-size: 13px; margin-top: 7px; }
+  .hero-run .hero-card small { font-size: 11px; }
+}
+@media (min-width: 768px) {
+  .hero-run .hero-cards {
+    grid-template-columns: repeat(3, minmax(0, clamp(190px, 14.5vw, 250px)));
+  }
+}

@@ -22,9 +22,12 @@ export interface SitePlan {
   where: string;
   when: string;
   inr: number;
-  /** Share taken at booking. 0.3 on every plan. */
+  /** Share taken at booking. 0.3 on the Season 02 fests; 1 on Spring
+   *  Fest, which the brochure sells as paid in full at booking. */
   deposit: number;
-  coupon: "hal" | "mi";
+  /** null where no coupon runs on that trip — Spring Fest's ₹4,999 and
+   *  ₹7,999 are already the early-bird prices, so nothing comes off. */
+  coupon: "hal" | "mi" | null;
 }
 
 export interface SiteCoupon {
@@ -87,6 +90,38 @@ export const SITE_PLANS: Record<string, SitePlan> = {
     deposit: 0.3,
     coupon: "mi",
   },
+  /* Spring Fest 2027, IIT Kharagpur. Two differences from every plan
+     above, both taken from the brochures in asset/iit kgp/ and both
+     deliberate:
+
+     deposit is 1 — "Your booking is confirmed after payment and
+     confirmation from us." The brochure sells the whole fare at
+     booking, not 30% of it, so the apply page quotes the full amount
+     and the balance row falls away.
+
+     coupon is null — ₹4,999 and ₹7,999 ARE the early-bird prices, for
+     the first 50 registrations. Stacking SAYYES on top would discount a
+     discount nobody authorised. */
+  sf5: {
+    departure: "SF-27",
+    label: "Spring Fest · 5 days, 4 nights",
+    trip: "Spring Fest 2027",
+    where: "IIT Kharagpur",
+    when: "21 Jan → 25 Jan",
+    inr: 4999,
+    deposit: 1,
+    coupon: null,
+  },
+  sf6: {
+    departure: "SF-27",
+    label: "Spring Fest + Ocean · 6 days, 5 nights",
+    trip: "Spring Fest 2027",
+    where: "IIT Kharagpur + Mandarmani",
+    when: "21 Jan → 26 Jan",
+    inr: 7999,
+    deposit: 1,
+    coupon: null,
+  },
 };
 
 export interface SiteQuote {
@@ -94,7 +129,7 @@ export interface SiteQuote {
   off: number;
   /** What the package costs after the coupon. */
   pay: number;
-  /** Taken now. 30%, rounded to the nearest ₹10. */
+  /** Taken now: the plan's share of `pay`, rounded to the nearest ₹10. */
   deposit: number;
   couponCode: string | null;
 }
@@ -104,12 +139,12 @@ export interface SiteQuote {
  *
  * Deliberately identical to priceOf() in
  * site/src/scripts/features/coupons.js, including the rounding: the
- * deposit is 30% of the price AFTER the coupon, rounded to the nearest
- * ten rupees. A different rounding here would quote the applicant one
- * figure and record another.
+ * deposit is the plan's share of the price AFTER the coupon, rounded to
+ * the nearest ten rupees. A different rounding here would quote the
+ * applicant one figure and record another.
  */
 export function quoteFor(plan: SitePlan): SiteQuote {
-  const coupon = SITE_COUPONS[plan.coupon];
+  const coupon = plan.coupon ? SITE_COUPONS[plan.coupon] : undefined;
   const live = coupon && coupon.left > 0 ? coupon : null;
   const off = live ? live.off : 0;
   const pay = plan.inr - off;
@@ -118,7 +153,11 @@ export function quoteFor(plan: SitePlan): SiteQuote {
     base: plan.inr,
     off,
     pay,
-    deposit: Math.round((pay * plan.deposit) / 10) * 10,
+    /* Rounding to the nearest ₹10 is for a part payment, where ₹3,000
+       reads better than ₹2,999.70. A plan paid in full is not rounded:
+       ₹4,999 would otherwise be quoted, charged and recorded as
+       ₹5,000, and the applicant would be ₹1 short of their own fare. */
+    deposit: plan.deposit >= 1 ? pay : Math.round((pay * plan.deposit) / 10) * 10,
     couponCode: live ? live.code : null,
   };
 }

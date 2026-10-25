@@ -115,3 +115,38 @@ sticker and the brochure carry PULSE's own branding; **Mannat confirmed on
 The source JPEGs are in `asset/`. The published PNGs are the same artwork
 cropped to their content with the white background keyed to transparency —
 no part of the artwork itself was altered.
+
+## Spring Fest 2027 — `site/public/assets/img/sf-*.jpg`, `card-springfest.jpg`
+
+Source: the two AS SCHEDULED × Spring Fest 2027 brochures in
+`asset/iit kgp/`, which are also published verbatim at
+`site/public/assets/docs/spring-fest-5-day-brochure.pdf` and
+`spring-fest-6-day-brochure.pdf`.
+
+The brochures are flattened — one image per page, no embedded originals — so
+each photograph here was rendered from the page at 400dpi and cut to the
+largest rectangle that fits inside its arch frame, with no part of the
+artwork, the captions or the background in the crop. Nothing was retouched.
+
+| File | What | Credit |
+|---|---|---|
+| `sf-hero-l.jpg`, `sf-hero-p.jpg` | Fireworks over the main stage | Spring Fest 2026, courtesy of Spring Fest, IIT Kharagpur |
+| `sf-arrival.jpg` | A group on campus | ditto |
+| `sf-dance.jpg` | Dancers on the floor | ditto |
+| `sf-night.jpg` | The main stage after dark | ditto |
+| `sf-mural.jpg` | A mural being painted | ditto |
+| `card-springfest.jpg` | Students taking a selfie | ditto |
+| `sf-waves.jpg` | Wave artwork | A design element of our own brochure |
+
+The brochures credit the photographs as **"Spring Fest 2026, courtesy of
+Spring Fest, IIT Kharagpur"**, and the page carries that line under the
+frames. They are presented as the fest's own and never as ours.
+
+**Open item.** The brochure's own credits page also names two Wikimedia
+images — IIT Kharagpur Main Building and Shaheed Bhawan, both Ambuj Saxena,
+CC BY 2.5 — and a CC0 sunset at Mandarmani by Anupam Chatterjee88. None of
+those three are used on the website; they appear only inside the published
+PDFs, where the brochure credits them itself.
+
+TODO(mannat): confirm the written permission from Spring Fest covers use of
+their 2026 photographs on the website, not only inside the brochure.

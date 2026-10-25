@@ -12,7 +12,12 @@ import { $, $$, inr } from '../core/env.js';
 
 /* ===================== coupons ===================== */
 export function couponFor(p) { var c = p && AS.coupons && AS.coupons[p.coupon]; return c && c.left > 0 ? c : null; }
-export function priceOf(p) { var c = couponFor(p), off = c ? c.off : 0, pay = p.price - off; return { base: p.price, off: off, pay: pay, coupon: c, dep: Math.round(pay * p.deposit / 10) * 10 }; }
+/* DEVIATION from the Co-work original, which always rounded the booking
+   amount to the nearest ₹10. That is right for a part payment — ₹3,000
+   reads better than ₹2,999.70 — and wrong for a plan paid in full,
+   where it would quote ₹5,000 against a ₹4,999 fare. Mirrors quoteFor()
+   in lib/sitePlans.ts, which is what the booking is recorded at. */
+export function priceOf(p) { var c = couponFor(p), off = c ? c.off : 0, pay = p.price - off; return { base: p.price, off: off, pay: pay, coupon: c, dep: p.deposit >= 1 ? pay : Math.round(pay * p.deposit / 10) * 10 }; }
 export var couponHooks = [];
 export function couponsChanged() { couponHooks.forEach(function (f) { f(); }); }
 if (AS.couponEndpoint && window.fetch) {

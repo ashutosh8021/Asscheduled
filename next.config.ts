@@ -58,6 +58,7 @@ const PAGES = [
   "somewhere",
   "hallucia",
   "mood-indigo",
+  "spring-fest",
   "about",
   "contact",
   "faqs",

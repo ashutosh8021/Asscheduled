@@ -46,6 +46,13 @@ export var AS = window.AS = Object.assign({
     mi4:  { trip: 'Mood Indigo’26', short: 'Mood Indigo', plan: 'Mood Indigo · 4 days, 3 nights', where: 'IIT Bombay, Mumbai', to: 'Mumbai', code: 'BOM', dcode: 'DEC 26', board: 'TBC', when: 'December', price: 8499, deposit: 0.3, coupon: 'mi',
             travel: 'Plus your train or flight to Mumbai, balance due within 30 days before the fest' },
     mi6:  { trip: 'Mood Indigo’26', short: 'Mumbai + Mood Indigo', plan: 'Mumbai + Mood Indigo · 6 days, 5 nights', where: 'IIT Bombay, Mumbai', to: 'Mumbai', code: 'BOM', dcode: 'DEC 26', board: 'TBC', when: 'December', price: 11499, deposit: 0.3, coupon: 'mi',
-            travel: 'Plus your train or flight to Mumbai, balance due within 30 days before the fest' }
+            travel: 'Plus your train or flight to Mumbai, balance due within 30 days before the fest' },
+    /* Spring Fest 2027, IIT Kharagpur. deposit 1 and no coupon, both on
+       purpose — see lib/sitePlans.ts, which is the copy that decides
+       what a booking is actually recorded at. Change the two together. */
+    sf5:  { trip: 'Spring Fest 2027', short: 'Spring Fest', plan: 'Spring Fest · 5 days, 4 nights', where: 'IIT Kharagpur', to: 'Kharagpur', code: 'KGP', dcode: '21 JAN 27', board: 'TBC', when: '21 Jan → 25 Jan', price: 4999, deposit: 1,
+            travel: 'Your train or flight to Howrah or Kharagpur is not included, we pick you up from either station' },
+    sf6:  { trip: 'Spring Fest 2027', short: 'Spring Fest + Ocean', plan: 'Spring Fest + Ocean · 6 days, 5 nights', where: 'IIT Kharagpur + Mandarmani', to: 'Kharagpur', code: 'KGP', dcode: '21 JAN 27', board: 'TBC', when: '21 Jan → 26 Jan', price: 7999, deposit: 1,
+            travel: 'Your train or flight to Howrah or Kharagpur is not included, we pick you up from either station and drop you back at Howrah on the 26th' }
   }
 }, window.AS || {});

@@ -104,7 +104,12 @@ if (af) {
     $('#s-price').innerHTML = q.coupon ? '<s>' + inr(q.base) + '</s>' : inr(q.base);
     $('#s-cp-row').hidden = !q.coupon; $('#s-pay-row').hidden = !q.coupon;
     if (q.coupon) { $('#s-cp-code').textContent = q.coupon.code; $('#s-cp').textContent = '−' + inr(q.off); $('#s-pay').textContent = inr(q.pay); }
-    $('#s-dep').textContent = inr(dep) + ' (' + Math.round(p.deposit * 100) + '%)';
+    /* Spring Fest is paid in full at booking, so there is no share to
+       quote and no balance to come. "(100%)" and a row reading ₹0 both
+       describe a split that does not exist on that plan. */
+    var full = dep >= q.pay;
+    $('#s-dep').textContent = full ? inr(dep) + ' (in full)' : inr(dep) + ' (' + Math.round(p.deposit * 100) + '%)';
+    $('#s-bal-row').hidden = full;
     $('#s-bal').textContent = inr(q.pay - dep); $('#s-travel').textContent = p.travel; $('#pay-amount').textContent = inr(dep);
     var up = $('#upi-pay');
     if (up && AS.upi) up.setAttribute('href', 'upi://pay?pa=' + AS.upi.id + '&pn=' + encodeURIComponent(AS.upi.name) + '&am=' + dep.toFixed(2) + '&cu=INR&tn=' + encodeURIComponent(('AS SCHEDULED ' + (p.code || '') + ' ' + v('a-name')).trim().slice(0, 48)));

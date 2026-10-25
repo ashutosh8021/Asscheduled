@@ -1,0 +1,31 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/springfest/Hero.astro';
+import TheFest from '../components/springfest/TheFest.astro';
+import Plans from '../components/springfest/Plans.astro';
+import FieldNotes from '../components/springfest/FieldNotes.astro';
+import TheCampus from '../components/springfest/TheCampus.astro';
+import ThenTheSea from '../components/springfest/ThenTheSea.astro';
+import OnePrice from '../components/springfest/OnePrice.astro';
+import GettingThere from '../components/springfest/GettingThere.astro';
+import Stories from '../components/springfest/Stories.astro';
+import GetYourSpot from '../components/springfest/GetYourSpot.astro';
+---
+
+<Base
+  title="Spring Fest 2027 · AS SCHEDULED"
+  description="Five days at Spring Fest, IIT Kharagpur, 21 to 25 January 2027, from ₹4,999 with station pickup, hostel stay, all meals and your fest pass"
+  ogImage="/assets/img/sf-hero-l.jpg"
+  preloads={[{ href: '/assets/img/sf-hero-p.jpg', media: '(max-width: 767px)' }, { href: '/assets/img/sf-hero-l.jpg', media: '(min-width: 768px)' }]}
+>
+<Hero />
+<TheFest />
+<Plans />
+<FieldNotes />
+<TheCampus />
+<ThenTheSea />
+<OnePrice />
+<GettingThere />
+<Stories />
+<GetYourSpot />
+</Base>

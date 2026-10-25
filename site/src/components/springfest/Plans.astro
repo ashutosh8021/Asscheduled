@@ -1,0 +1,39 @@
+---
+/* spring-fest.html — section 3 of 10.
+
+   Same markup contract as hallucia/Plans.astro: [data-plans] with one
+   .plan per package, each carrying the plan id that
+   scripts/features/plan-picker.js and features/booking.js look up in
+   AS.plans, and a [data-lock] bar the picker rewrites as you choose.
+
+   No "travelling from" selector here, unlike Hallucia and Mood Indigo.
+   On those the fare moves with your state because travel is inside the
+   price. On Spring Fest it is not — the fare is the same from
+   everywhere and your train is yours — so a selector would ask a
+   question that changes nothing. */
+---
+
+<section class="sec s-paper2" id="plans">
+  <div class="wrap">
+    <p class="slug"><b>02</b><span>Pick your plan</span><span class="ln"></span><span class="m hide-s">Early bird · first 50</span></p>
+    <div class="split end">
+      <div class="stack"><h2 class="d-l" data-split>The fest, <span class="it">or the fest and the sea</span></h2>
+        <p class="body">One price either way, the whole thing paid at booking, no balance to chase later</p></div>
+    </div>
+    <div class="mt-48">
+      <div class="plans" data-plans><label class="plan" data-id="sf5" for="plan-sf5" data-cursor="Pick">
+  <input type="radio" name="trip-plan" id="plan-sf5" value="sf5">
+  <div class="plan-top"><span class="plan-tag">Plan 01 · 5D / 4N</span><span class="plan-tick" aria-hidden="true"></span></div>
+  <h3>The trip</h3><p>Five days at Spring Fest, 21 to 25 January</p><ul><li>Pickup and drop, Howrah or Kharagpur</li><li>Four nights, IIT KGP hostel</li><li>All meals</li><li>Spring Fest pass, all three fest days</li><li>Trip captain</li></ul><a class="plan-doc" href="/assets/docs/spring-fest-5-day-brochure.pdf" target="_blank" rel="noopener" data-cursor="Open">Brochure ↓</a>
+  <div class="plan-price"><b class="tabular">₹4,999</b><small>per person, early bird</small></div>
+</label><label class="plan" data-id="sf6" for="plan-sf6" data-cursor="Pick">
+  <input type="radio" name="trip-plan" id="plan-sf6" value="sf6">
+  <div class="plan-top"><span class="plan-tag">Plan 02 · 6D / 5N</span><span class="plan-tick" aria-hidden="true"></span></div>
+  <h3>Trip + Ocean</h3><p>The same fest, then two days by road to the Bay of Bengal</p><ul><li>Everything in Plan 01</li><li>Digha, Tajpur and Mandarmani</li><li>A night at a beach resort</li><li>Private road transport</li><li>Drop at Howrah Junction on the 26th</li></ul><a class="plan-doc" href="/assets/docs/spring-fest-6-day-brochure.pdf" target="_blank" rel="noopener" data-cursor="Open">Brochure ↓</a>
+  <div class="plan-price"><b class="tabular">₹7,999</b><small>per person, early bird</small></div>
+</label></div>
+    </div>
+    <div class="lock-bar" data-lock><span>Spring Fest · ₹4,999</span><a class="btn btn-acid" href="apply.html#sf5" data-cursor="Go">Get your spot<span class="ar" aria-hidden="true">→</span></a></div>
+    <p class="fine mt-24">Early-bird prices, for the first 50 registrations on each plan. Your train or flight to Howrah or Kharagpur is not in the price, but we handle train and flight support for colleges, clubs and solo travellers, tell us your city and group size</p>
+  </div>
+</section>

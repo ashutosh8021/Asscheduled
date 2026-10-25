@@ -24,6 +24,7 @@ const PAGES: {
   { path: "/somewhere", priority: 0.9, freq: "weekly" },
   { path: "/hallucia", priority: 0.9, freq: "weekly" },
   { path: "/mood-indigo", priority: 0.9, freq: "weekly" },
+  { path: "/spring-fest", priority: 0.9, freq: "weekly" },
   { path: "/apply", priority: 0.8, freq: "weekly" },
   { path: "/about", priority: 0.6, freq: "monthly" },
   { path: "/faqs", priority: 0.7, freq: "monthly" },
