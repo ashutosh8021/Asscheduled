@@ -131,7 +131,8 @@ them — nothing retouched, nothing composited, no watermark removed.
 |---|---|---|
 | `sf-hero2-l.jpg` | #9 | Jets and confetti over the main stage |
 | `sf-hero2-p.jpg` | #1 | A performer on stage, mic up |
-| `card-springfest2.jpg`, `sf-crowd.jpg` | #5 | Students crowding into one selfie |
+| `sf-crowd.jpg` | #5 | Students crowding into one selfie |
+| `card-springfest3.jpg` | #3 | A performer on stage against the lit backdrop |
 | `sf-classical.jpg` | #2 | A classical dance troupe on stage |
 | `sf-fashion.jpg` | #7 | The ramp at night |
 | `sf-stage.jpg` | #4 | Fireworks over the main stage |
