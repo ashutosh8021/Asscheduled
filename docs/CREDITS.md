@@ -132,7 +132,13 @@ them — nothing retouched, nothing composited, no watermark removed.
 | `sf-hero2-l.jpg` | #9 | Jets and confetti over the main stage |
 | `sf-hero2-p.jpg` | #1 | A performer on stage, mic up |
 | `sf-crowd.jpg` | #5 | Students crowding into one selfie |
-| `card-springfest3.jpg` | #3 | A performer on stage against the lit backdrop |
+| `card-springfest4.jpg`, `sf-stage.jpg` | #4 | Fireworks over the main stage |
+
+The card is a centred 3:4 reframe of #4 and so falls inside the watermark,
+which sits in the top-left corner of the full frame. `sf-stage.jpg` is the
+same photograph at full width and keeps it, as does every other frame on the
+trip page, and the page credits Spring Fest in text beneath them.
+
 | `sf-classical.jpg` | #2 | A classical dance troupe on stage |
 | `sf-fashion.jpg` | #7 | The ramp at night |
 | `sf-stage.jpg` | #4 | Fireworks over the main stage |
