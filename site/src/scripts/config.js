@@ -35,7 +35,11 @@ export var AS = window.AS = Object.assign({
      that used it (the WhatsApp message says when it did). At 0 the coupon disappears and full prices show. */
   coupons: {
     hal: { code: 'SAYYES', off: 1000, left: 15, name: 'Hallucia' },
-    mi:  { code: 'SAYYES', off: 1000, left: 15, name: 'Mood Indigo' }
+    mi:  { code: 'SAYYES', off: 1000, left: 15, name: 'Mood Indigo' },
+    /* Spring Fest's early bird: ₹7,499 → ₹4,999 on the 5-day plan, for the first 30. At 0 it is ₹7,499.
+       When this changes, change SITE_COUPONS in lib/sitePlans.ts and the static card in
+       src/components/springfest/Plans.astro in the same commit. */
+    sf:  { code: 'EARLYBIRD', off: 2500, left: 30, name: 'Spring Fest' }
   },
   couponEndpoint: '',     // optional: URL that returns {"hal": 49, "mi": 47}, the live count, once the site is on your own domain
   plans: {
@@ -47,12 +51,13 @@ export var AS = window.AS = Object.assign({
             travel: 'Plus your train or flight to Mumbai, balance due within 30 days before the fest' },
     mi6:  { trip: 'Mood Indigo’26', short: 'Mumbai + Mood Indigo', plan: 'Mumbai + Mood Indigo · 6 days, 5 nights', where: 'IIT Bombay, Mumbai', to: 'Mumbai', code: 'BOM', dcode: 'DEC 26', board: 'TBC', when: 'December', price: 11499, deposit: 0.3, coupon: 'mi',
             travel: 'Plus your train or flight to Mumbai, balance due within 30 days before the fest' },
-    /* Spring Fest 2027, IIT Kharagpur. deposit 1 and no coupon, both on
-       purpose — see lib/sitePlans.ts, which is the copy that decides
-       what a booking is actually recorded at. Change the two together. */
-    sf5:  { trip: 'Spring Fest 2027', short: 'Spring Fest', plan: 'Spring Fest · 5 days, 4 nights', where: 'IIT Kharagpur', to: 'Kharagpur', code: 'KGP', dcode: '21 JAN 27', board: 'TBC', when: '21 Jan → 25 Jan', price: 4999, deposit: 1,
-            travel: 'Your train or flight to Howrah or Kharagpur is not included, we pick you up from either station' },
-    sf6:  { trip: 'Spring Fest 2027', short: 'Spring Fest + Ocean', plan: 'Spring Fest + Ocean · 6 days, 5 nights', where: 'IIT Kharagpur + Mandarmani', to: 'Kharagpur', code: 'KGP', dcode: '21 JAN 27', board: 'TBC', when: '21 Jan → 26 Jan', price: 7999, deposit: 1,
-            travel: 'Your train or flight to Howrah or Kharagpur is not included, we pick you up from either station and drop you back at Howrah on the 26th' }
+    /* Spring Fest 2027, IIT Kharagpur. book is a fixed booking amount, ₹2,499 on either plan, with the
+       balance due by 22 Dec 2026, 30 days before pickup; it takes the place of deposit. The 5-day plan
+       carries the early bird above, the 6-day plan none. lib/sitePlans.ts is the copy that decides what
+       a booking is actually recorded at. Change the two together. */
+    sf5:  { trip: 'Spring Fest 2027', short: 'Spring Fest', plan: 'Spring Fest · 5 days, 4 nights', where: 'IIT Kharagpur', to: 'Kharagpur', code: 'KGP', dcode: '21 JAN 27', board: 'TBC', when: '21 Jan → 25 Jan', price: 7499, deposit: 0, book: 2499, coupon: 'sf',
+            travel: 'Your train or flight to Howrah or Kharagpur is not included, we pick you up from either station, the balance is due by 22 December, 30 days before the fest' },
+    sf6:  { trip: 'Spring Fest 2027', short: 'Spring Fest + Ocean', plan: 'Spring Fest + Ocean · 6 days, 5 nights', where: 'IIT Kharagpur + Mandarmani', to: 'Kharagpur', code: 'KGP', dcode: '21 JAN 27', board: 'TBC', when: '21 Jan → 26 Jan', price: 7999, deposit: 0, book: 2499,
+            travel: 'Your train or flight to Howrah or Kharagpur is not included, we pick you up from either station and drop you back at Howrah on the 26th, the balance is due by 22 December, 30 days before the fest' }
   }
 }, window.AS || {});

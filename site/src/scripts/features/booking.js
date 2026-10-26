@@ -104,11 +104,12 @@ if (af) {
     $('#s-price').innerHTML = q.coupon ? '<s>' + inr(q.base) + '</s>' : inr(q.base);
     $('#s-cp-row').hidden = !q.coupon; $('#s-pay-row').hidden = !q.coupon;
     if (q.coupon) { $('#s-cp-code').textContent = q.coupon.code; $('#s-cp').textContent = '−' + inr(q.off); $('#s-pay').textContent = inr(q.pay); }
-    /* Spring Fest is paid in full at booking, so there is no share to
-       quote and no balance to come. "(100%)" and a row reading ₹0 both
-       describe a split that does not exist on that plan. */
+    /* A plan paid in full has no share to quote and no balance to come;
+       "(100%)" and a row reading ₹0 both describe a split that does not
+       exist. A fixed booking amount (Spring Fest's ₹2,499) is not a
+       percentage either, so it is shown as the amount alone. */
     var full = dep >= q.pay;
-    $('#s-dep').textContent = full ? inr(dep) + ' (in full)' : inr(dep) + ' (' + Math.round(p.deposit * 100) + '%)';
+    $('#s-dep').textContent = full ? inr(dep) + ' (in full)' : p.book ? inr(dep) : inr(dep) + ' (' + Math.round(p.deposit * 100) + '%)';
     $('#s-bal-row').hidden = full;
     $('#s-bal').textContent = inr(q.pay - dep); $('#s-travel').textContent = p.travel; $('#pay-amount').textContent = inr(dep);
     var up = $('#upi-pay');

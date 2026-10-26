@@ -116,6 +116,16 @@ export default function ApplicationsTable({ rows }: { rows: ApplicationRow[] }) 
        which findPlan() does not read. */
     const sitePlan = plan ? null : sitePlanFor(r.departure_code, r.plan);
     if (sitePlan) money.push({ label: "Plan", value: `${sitePlan.label} · ${inr(sitePlan.inr)}` });
+    /* A site coupon (SAYYES, Spring Fest's EARLYBIRD) carries no partner
+       code, so the Partner row below never shows it. */
+    if (sitePlan && r.discount_inr && !r.partner_code) {
+      money.push({ label: "Discount", value: `−${inr(r.discount_inr)}` });
+    }
+    /* What is still owed after the booking amount. */
+    if (sitePlan && typeof r.amount_due === "number") {
+      const balance = sitePlan.inr - (r.discount_inr ?? 0) - r.amount_due;
+      if (balance > 0) money.push({ label: "Balance", value: inr(balance) });
+    }
     /* Before the discount, because it answers a different question:
        who sent this person, not what they pay. They can differ — an
        ambassador's code can lose on price to a bigger automatic

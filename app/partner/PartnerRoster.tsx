@@ -47,10 +47,20 @@ function fieldsFor(r: ApplicationRow): Field[] {
     { label: "Booked", value: fullWhen(r.created_at) },
     { label: "Reference", value: r.reference },
     { label: "Status", value: r.status },
-    { label: "Plan", value: site ? `${site.label} · ${inr(site.inr)}` : planCell(r) },
+    { label: "Plan", value: site ? site.label : planCell(r) },
+    /* The price they actually pay, after any early bird, then how it
+       splits: the booking amount now and the balance still to come. */
+    { label: "Package", value: site ? inr(site.inr - (r.discount_inr ?? 0)) : null },
     {
-      label: "Amount due",
+      label: "Booking amount",
       value: typeof r.amount_due === "number" ? inr(r.amount_due) : null,
+    },
+    {
+      label: "Balance",
+      value:
+        site && typeof r.amount_due === "number"
+          ? inr(Math.max(0, site.inr - (r.discount_inr ?? 0) - r.amount_due))
+          : null,
     },
     { label: "Name", value: r.name },
     { label: "Phone", value: <a href={`tel:+91${r.phone}`}>+91 {r.phone}</a> },

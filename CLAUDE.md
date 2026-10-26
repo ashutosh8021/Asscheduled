@@ -55,8 +55,12 @@ board, GSAP/Framer setup, Safari and perf work.
 - **₹500 registration fee. Non-refundable.** Never returned on rejection, and it does **not**
   credit against the final trip payment. Never write "refundable", "deposit", "credited", or
   "net cost ₹0". Trip-fee refund slabs (80/50/0%) are a separate policy and still stand.
-  **Spring Fest 2027 is the exception on both counts**: it is paid in **full** at booking,
-  not 30%, and its brochure sets its own refund windows (75/50/25/0%, counted back from
+  **Spring Fest 2027 is the exception on both counts**: it takes a fixed **₹2,499** at
+  booking on either plan, not 30%, with the balance due by 22 Dec 2026 (30 days before
+  pickup) — changed from paid-in-full on 2026-10-26. The 5-day plan is ₹7,499 with an
+  EARLYBIRD ₹2,500 off for the first 30 (a manual `left` counter in
+  `site/src/scripts/config.js` and `lib/sitePlans.ts`, lowered together); the 6-day is
+  ₹7,999. Its brochure sets its own refund windows (75/50/25/0%, counted back from
   21 Jan 2027). Both are published and labelled. Do not "correct" either to match the
   other — awaiting Mannat's call on which governs.
   (Note: docx §23/§34 say "credited against the final trip payment" — overridden by direct

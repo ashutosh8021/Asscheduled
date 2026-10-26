@@ -172,3 +172,11 @@
 .route.r-sf{stroke:var(--stamp)}
 .dist .k{grid-column:1/-1}
 .dist .k b{color:var(--stamp)}
+
+/* ---- the struck-through list price on the Spring Fest plan card ----
+   The booking page's mini cards already style an <s> beside the price
+   (34-coupon-card.css). The Spring Fest page's full-size card had no
+   discount to show until the early bird; same treatment, sized for
+   the larger card. */
+.plan-price s{font:500 18px/1 var(--f-display);opacity:.55}
+.plans-mini .plan-price s{font-size:15px}

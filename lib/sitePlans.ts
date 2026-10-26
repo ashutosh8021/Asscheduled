@@ -22,12 +22,16 @@ export interface SitePlan {
   where: string;
   when: string;
   inr: number;
-  /** Share taken at booking. 0.3 on the Season 02 fests; 1 on Spring
-   *  Fest, which the brochure sells as paid in full at booking. */
+  /** Share taken at booking. 0.3 on the Season 02 fests. Ignored when
+   *  `bookInr` is set. */
   deposit: number;
-  /** null where no coupon runs on that trip — Spring Fest's ₹4,999 and
-   *  ₹7,999 are already the early-bird prices, so nothing comes off. */
-  coupon: "hal" | "mi" | null;
+  /** A fixed amount taken at booking instead of a share — Spring Fest's
+   *  ₹2,499, with the balance due 30 days before the fest. Never more
+   *  than the price after any discount. */
+  bookInr?: number;
+  /** null where no coupon runs on that trip. "sf" is Spring Fest's early
+   *  bird, on the 5-day plan only. */
+  coupon: "hal" | "mi" | "sf" | null;
 }
 
 export interface SiteCoupon {
@@ -41,6 +45,11 @@ export interface SiteCoupon {
 export const SITE_COUPONS: Record<string, SiteCoupon> = {
   hal: { code: "SAYYES", off: 1000, left: 15 },
   mi: { code: "SAYYES", off: 1000, left: 15 },
+  /* Spring Fest's early bird: ₹7,499 → ₹4,999 on the 5-day plan for the
+     first 30. Same `left` as site/src/scripts/config.js — lower both
+     together, or the page quotes one price and the booking records
+     another. */
+  sf: { code: "EARLYBIRD", off: 2500, left: 30 },
 };
 
 /* HAL-26 is a real departure in lib/departures.ts. MI-26 is not: Mood
@@ -90,27 +99,25 @@ export const SITE_PLANS: Record<string, SitePlan> = {
     deposit: 0.3,
     coupon: "mi",
   },
-  /* Spring Fest 2027, IIT Kharagpur. Two differences from every plan
-     above, both taken from the brochures in asset/iit kgp/ and both
-     deliberate:
+  /* Spring Fest 2027, IIT Kharagpur. Changed on instruction, 2026-10-26,
+     from the brochure's paid-in-full, first-50 terms:
 
-     deposit is 1 — "Your booking is confirmed after payment and
-     confirmation from us." The brochure sells the whole fare at
-     booking, not 30% of it, so the apply page quotes the full amount
-     and the balance row falls away.
+     bookInr is ₹2,499 on both plans, the balance due by 22 December
+     2026, 30 days before the 21 January pickup.
 
-     coupon is null — ₹4,999 and ₹7,999 ARE the early-bird prices, for
-     the first 50 registrations. Stacking SAYYES on top would discount a
-     discount nobody authorised. */
+     The 5-day plan is ₹7,499 with the "sf" early bird taking ₹2,500
+     off for the first 30, so ₹4,999 while it lasts. The 6-day plan is
+     ₹7,999 with no early bird. */
   sf5: {
     departure: "SF-27",
     label: "Spring Fest · 5 days, 4 nights",
     trip: "Spring Fest 2027",
     where: "IIT Kharagpur",
     when: "21 Jan → 25 Jan",
-    inr: 4999,
-    deposit: 1,
-    coupon: null,
+    inr: 7499,
+    deposit: 0,
+    bookInr: 2499,
+    coupon: "sf",
   },
   sf6: {
     departure: "SF-27",
@@ -119,7 +126,8 @@ export const SITE_PLANS: Record<string, SitePlan> = {
     where: "IIT Kharagpur + Mandarmani",
     when: "21 Jan → 26 Jan",
     inr: 7999,
-    deposit: 1,
+    deposit: 0,
+    bookInr: 2499,
     coupon: null,
   },
 };
@@ -185,8 +193,14 @@ export function quoteFor(plan: SitePlan): SiteQuote {
     /* Rounding to the nearest ₹10 is for a part payment, where ₹3,000
        reads better than ₹2,999.70. A plan paid in full is not rounded:
        ₹4,999 would otherwise be quoted, charged and recorded as
-       ₹5,000, and the applicant would be ₹1 short of their own fare. */
-    deposit: plan.deposit >= 1 ? pay : Math.round((pay * plan.deposit) / 10) * 10,
+       ₹5,000, and the applicant would be ₹1 short of their own fare.
+       A fixed booking amount is taken as written, capped at the price. */
+    deposit:
+      plan.bookInr !== undefined
+        ? Math.min(plan.bookInr, pay)
+        : plan.deposit >= 1
+          ? pay
+          : Math.round((pay * plan.deposit) / 10) * 10,
     couponCode: live ? live.code : null,
   };
 }
