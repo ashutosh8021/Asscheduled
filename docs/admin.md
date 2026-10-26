@@ -176,6 +176,33 @@ everyone, the struck-through figure on the card claims a saving that is not
 real. Either drop the ₹1,000 from `lib/packages.ts` and retire the coupon,
 or keep the coupon and stop rendering the "was" price.
 
+## The Spring Fest panel
+
+`/partner/spring-fest` — the Spring Fest team's read-only view of **SF-27 and
+nothing else**. Every booking, each row opening to every answer the booking form
+collected (plan, amount, name, phone, email, age, gender, college, city, state,
+Instagram, why), and a PAYMENTS tab with the screenshots. Nothing on it changes a
+record: status, delete and payment checks stay in `/admin`.
+
+**Its own allowlist, `SPRINGFEST_EMAILS`.** Not `PARTNER_EMAILS`: a partner's scope
+is every departure with `sharedWith`, so putting Spring Fest there would show PULSE
+to Spring Fest and Spring Fest to PULSE. `currentSpringFestViewer()` in
+`lib/admin.ts` admits admins and this list, always scoped to SF-27, and the list
+opens nothing else — not `/admin`, not `/partner`. Fails closed.
+
+### Giving the Spring Fest team an account
+
+1. Supabase → **Authentication → Users → Add user**: their email and a password
+   you choose, **Auto Confirm User** ticked.
+2. Add the email to `SPRINGFEST_EMAILS` — in `.env.local` and in Vercel.
+3. Redeploy. Send them the address `/admin/login`, the email and the password by
+   separate messages. Signing in sends them straight to their panel.
+
+Removing the address and redeploying revokes access immediately.
+
+In `/admin` itself Spring Fest is an ordinary departure tab (**SPRING FEST'27**),
+named from `SITE_DEPARTURES` in `lib/sitePlans.ts`, with the full admin actions.
+
 ## The partner panel
 
 `/partner` — the festival's own read-only view of its departure. PULSE signs in

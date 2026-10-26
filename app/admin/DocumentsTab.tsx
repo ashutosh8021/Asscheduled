@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ALL_DEPARTURES } from "@/lib/departures";
+import { SITE_DEPARTURES, SPRING_FEST_ID } from "@/lib/sitePlans";
 import type { DocumentBundle } from "@/lib/adminData";
 
 /* Every uploaded document in one place, grouped by traveller.
@@ -26,8 +27,15 @@ const KIND_LABEL: Record<string, string> = {
    than as an absence you have to notice. */
 const EXPECTED = ["photo_id", "college_id"];
 
+/* Spring Fest asks for a payment screenshot and no identity documents,
+   so "still waiting on a photo ID" would be a gap that is not one. */
+function expectedFor(code: string): string[] {
+  return code === SPRING_FEST_ID ? ["payment_proof"] : EXPECTED;
+}
+
 function departureName(code: string): string {
-  const d = ALL_DEPARTURES.find((x) => x.id === code);
+  const d =
+    ALL_DEPARTURES.find((x) => x.id === code) ?? SITE_DEPARTURES.find((x) => x.id === code);
   return d ? `${d.fest} — ${d.campus}` : code;
 }
 
@@ -62,7 +70,7 @@ export default function DocumentsTab({ bundles }: { bundles: DocumentBundle[] })
   return (
     <div className="a-dt">
       {bundles.map((b) => {
-        const missing = EXPECTED.filter((k) => !b.files.some((f) => f.kind === k));
+        const missing = expectedFor(b.departureCode).filter((k) => !b.files.some((f) => f.kind === k));
 
         return (
           <section key={b.applicationId} className="a-dt-card">

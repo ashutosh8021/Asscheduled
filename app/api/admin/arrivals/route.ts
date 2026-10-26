@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { currentViewer } from "@/lib/admin";
+import { currentSpringFestViewer, currentViewer } from "@/lib/admin";
 import { arrivalCounts } from "@/lib/adminData";
 
 /* How many applications and enquiries there are right now.
@@ -22,7 +22,18 @@ import { arrivalCounts } from "@/lib/adminData";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(request: Request) {
+  /* The Spring Fest panel asks with ?scope=spring-fest. That can only
+     narrow: currentSpringFestViewer() scopes everyone, admins included,
+     to SF-27, and is the only door the Spring Fest team has here. */
+  if (new URL(request.url).searchParams.get("scope") === "spring-fest") {
+    const sf = await currentSpringFestViewer();
+    if (!sf) {
+      return NextResponse.json({ ok: false, error: "Not signed in." }, { status: 401 });
+    }
+    return NextResponse.json({ ok: true, ...(await arrivalCounts(sf.departures)) });
+  }
+
   const viewer = await currentViewer();
   if (!viewer) {
     return NextResponse.json({ ok: false, error: "Not signed in." }, { status: 401 });

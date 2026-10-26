@@ -32,7 +32,15 @@ function phrase(n: number, one: string, many: string): string | null {
   return `${n} new ${n === 1 ? one : many}`;
 }
 
-export default function Arrivals({ applications, enquiries }: Counts) {
+export default function Arrivals({
+  applications,
+  enquiries,
+  endpoint = "/api/admin/arrivals",
+}: Counts & {
+  /** Where to poll. The Spring Fest panel counts its own scope, so its
+   *  baseline and its poll are the same set of rows. */
+  endpoint?: string;
+}) {
   const router = useRouter();
 
   /* A ref, not state: the poll must compare against the render the
@@ -54,7 +62,7 @@ export default function Arrivals({ applications, enquiries }: Counts) {
 
     async function look() {
       try {
-        const res = await fetch("/api/admin/arrivals", { cache: "no-store" });
+        const res = await fetch(endpoint, { cache: "no-store" });
         if (res.ok && live) {
           const j = (await res.json()) as Partial<Counts>;
           if (typeof j.applications === "number" && typeof j.enquiries === "number") {
@@ -77,7 +85,7 @@ export default function Arrivals({ applications, enquiries }: Counts) {
       live = false;
       clearTimeout(timer);
     };
-  }, []);
+  }, [endpoint]);
 
   const total = extra.applications + extra.enquiries;
 

@@ -52,6 +52,10 @@ export interface ApplicationRow {
   /** Who referred them, independent of which discount won. Arrives
    *  with docs/schema-mi.sql; absent on rows written before it. */
   referred_by?: string | null;
+  /** From docs/schema-hallucia.sql. The public site's booking form
+   *  asks for both; Form 7A-era rows have neither. */
+  email?: string | null;
+  city?: string | null;
 }
 
 export interface MessageRow {

@@ -15,6 +15,7 @@ import {
   APPLICATION_STATUSES,
 } from "@/lib/adminData";
 import { ALL_DEPARTURES } from "@/lib/departures";
+import { SITE_DEPARTURES } from "@/lib/sitePlans";
 import ApplicationsTable from "./ApplicationsTable";
 import MessagesTable from "./MessagesTable";
 import CollabsTable from "./CollabsTable";
@@ -131,7 +132,9 @@ export default async function AdminPage({
               <Link className="a-tab" href={link({ departure: undefined })} data-on={!sp.departure}>
                 EVERY DEPARTURE
               </Link>
-              {ALL_DEPARTURES.map((d) => (
+              {/* Site-only departures sit beside the old app's, so Spring
+                  Fest gets a tab like every other trip. */}
+              {[...ALL_DEPARTURES, ...SITE_DEPARTURES].map((d) => (
                 <Link
                   key={d.id}
                   className="a-tab"

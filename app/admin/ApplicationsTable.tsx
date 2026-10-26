@@ -5,6 +5,7 @@ import { Fragment, useState } from "react";
 import type { ApplicationRow, ApplicationStatus } from "@/lib/adminData";
 import { ALL_DEPARTURES, inr } from "@/lib/departures";
 import { findPlan } from "@/lib/packages";
+import { SITE_DEPARTURES, SPRING_FEST_ID, sitePlanFor } from "@/lib/sitePlans";
 import { Detail, fullWhen, type Field } from "./Detail";
 import DocumentsPanel from "./DocumentsPanel";
 
@@ -21,7 +22,10 @@ const NEXT: { label: string; status: ApplicationStatus }[] = [
 const COLUMNS = 11;
 
 function departureName(code: string): string {
-  const d = ALL_DEPARTURES.find((x) => x.id === code);
+  /* Site-only departures (Spring Fest) have no entry in ALL_DEPARTURES,
+     so they are named from lib/sitePlans.ts rather than shown as a code. */
+  const d =
+    ALL_DEPARTURES.find((x) => x.id === code) ?? SITE_DEPARTURES.find((x) => x.id === code);
   return d ? `${d.fest} — ${d.campus}` : code;
 }
 
@@ -89,7 +93,12 @@ export default function ApplicationsTable({ rows }: { rows: ApplicationRow[] }) 
        completely — the files were in the bucket and nothing in the
        admin said so. Anywhere else stays clean. */
     const departure = ALL_DEPARTURES.find((x) => x.id === r.departure_code);
-    const mayHaveDocuments = r.status === "accepted" || departure?.documentsAtApply === true;
+    /* Spring Fest takes the payment screenshot at booking, so like a
+       documentsAtApply departure it may already have something to show. */
+    const mayHaveDocuments =
+      r.status === "accepted" ||
+      departure?.documentsAtApply === true ||
+      r.departure_code === SPRING_FEST_ID;
 
     const docs: Field[] = mayHaveDocuments
       ? [{ label: "Documents", value: <DocumentsPanel id={r.id} />, wide: true }]
@@ -103,6 +112,10 @@ export default function ApplicationsTable({ rows }: { rows: ApplicationRow[] }) 
     const money: Field[] = [];
 
     if (plan) money.push({ label: "Plan", value: `${plan.n} — ${plan.name}` });
+    /* A booking from the public site names its plan in lib/sitePlans.ts,
+       which findPlan() does not read. */
+    const sitePlan = plan ? null : sitePlanFor(r.departure_code, r.plan);
+    if (sitePlan) money.push({ label: "Plan", value: `${sitePlan.label} · ${inr(sitePlan.inr)}` });
     /* Before the discount, because it answers a different question:
        who sent this person, not what they pay. They can differ — an
        ambassador's code can lose on price to a bigger automatic
@@ -131,6 +144,12 @@ export default function ApplicationsTable({ rows }: { rows: ApplicationRow[] }) 
         label: "Phone",
         value: <a href={`tel:+91${r.phone}`}>+91 {r.phone}</a>,
       },
+      /* Only where the form asked. Rows from before the site's booking
+         form have neither, and two empty labels on each would be noise. */
+      ...(r.email
+        ? [{ label: "Email", value: <a href={`mailto:${r.email}`}>{r.email}</a> }]
+        : []),
+      ...(r.city ? [{ label: "City", value: r.city }] : []),
       { label: "Age", value: r.age },
       { label: "Gender", value: r.gender },
       { label: "State", value: r.state },

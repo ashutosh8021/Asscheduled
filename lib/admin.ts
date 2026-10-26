@@ -20,6 +20,7 @@
 import { cookies } from "next/headers";
 import { supabaseConfig } from "./env";
 import { sharedDepartureIds } from "./departures";
+import { SPRING_FEST_ID } from "./sitePlans";
 
 export const SESSION_COOKIE = "as_admin";
 export const REFRESH_COOKIE = "as_admin_r";
@@ -44,6 +45,18 @@ function allowlist(): string[] {
  */
 function partnerAllowlist(): string[] {
   return emails(process.env.PARTNER_EMAILS);
+}
+
+/**
+ * Emails permitted into /partner/spring-fest — the Spring Fest team.
+ *
+ * Its own list rather than PARTNER_EMAILS, because a partner's scope
+ * there is every departure with `sharedWith`, and PULSE must never see
+ * Spring Fest's applicants or the other way round. This list sees
+ * SF-27 and nothing else. Fails closed like the others.
+ */
+function springFestAllowlist(): string[] {
+  return emails(process.env.SPRINGFEST_EMAILS);
 }
 
 function emails(raw: string | undefined): string[] {
@@ -194,10 +207,13 @@ export async function currentAdmin(): Promise<AdminUser | null> {
  * password. Anyone on neither list gets /admin and is refused there —
  * this decides a destination, never an entitlement.
  */
-export function destinationFor(email: string): "/admin" | "/partner" {
+export type Destination = "/admin" | "/partner" | "/partner/spring-fest";
+
+export function destinationFor(email: string): Destination {
   const e = email.trim().toLowerCase();
   if (allowlist().includes(e)) return "/admin";
   if (partnerAllowlist().includes(e)) return "/partner";
+  if (springFestAllowlist().includes(e)) return "/partner/spring-fest";
   return "/admin";
 }
 
@@ -253,6 +269,32 @@ export async function currentViewer(): Promise<Viewer | null> {
   }
 
   console.warn(`[admin] rejected ${user.email} — not in ADMIN_EMAILS or PARTNER_EMAILS`);
+  return null;
+}
+
+/**
+ * The current viewer for the Spring Fest panel: an admin, or somebody on
+ * SPRINGFEST_EMAILS. Either way the scope is SF-27 alone.
+ *
+ * Separate from currentViewer() so that list never reaches /partner or
+ * anything else currentViewer() guards — the Spring Fest team can open
+ * this one page and the arrivals count for it, and nothing more.
+ */
+export async function currentSpringFestViewer(): Promise<Viewer | null> {
+  const jar = await cookies();
+  const token = jar.get(SESSION_COOKIE)?.value;
+  if (!token) return null;
+
+  const user = await whoami(token);
+  if (!user) return null;
+
+  const email = user.email.toLowerCase();
+  const departures = [SPRING_FEST_ID];
+
+  if (allowlist().includes(email)) return { ...user, role: "admin", departures };
+  if (springFestAllowlist().includes(email)) return { ...user, role: "partner", departures };
+
+  console.warn(`[admin] rejected ${user.email} — not in ADMIN_EMAILS or SPRINGFEST_EMAILS`);
   return null;
 }
 

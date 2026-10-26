@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import type {
   ApplicationRow,
   DocumentBundle,
@@ -9,6 +9,8 @@ import type {
 } from "@/lib/adminData";
 import { inr } from "@/lib/departures";
 import { findPlan } from "@/lib/packages";
+import { sitePlanFor } from "@/lib/sitePlans";
+import { Detail, fullWhen, type Field } from "../admin/Detail";
 
 /* Who is coming, the documents to check them against, and the
  * transfers to reconcile.
@@ -20,7 +22,55 @@ import { findPlan } from "@/lib/packages";
  *
  * Read-only throughout. Nothing here changes a record. */
 
-type Tab = "roster" | "documents" | "payments" | "enquiries";
+export type Tab = "roster" | "documents" | "payments" | "enquiries";
+
+const ALL_TABS: Tab[] = ["roster", "documents", "payments", "enquiries"];
+
+/** The plan as a short cell: the old app's number, or the site's label. */
+function planCell(r: ApplicationRow): string {
+  const plan = findPlan(r.departure_code, r.plan);
+  if (plan) return plan.n;
+  return sitePlanFor(r.departure_code, r.plan)?.label ?? "—";
+}
+
+/**
+ * Every answer the booking form collected, for the `full` roster.
+ *
+ * What a festival sees is exactly what the privacy policy says it sees,
+ * so this list and the policy move together. Left out on purpose: who
+ * referred them (a Crew code is our business, not the festival's) and
+ * the internal stage.
+ */
+function fieldsFor(r: ApplicationRow): Field[] {
+  const site = sitePlanFor(r.departure_code, r.plan);
+  return [
+    { label: "Booked", value: fullWhen(r.created_at) },
+    { label: "Reference", value: r.reference },
+    { label: "Status", value: r.status },
+    { label: "Plan", value: site ? `${site.label} · ${inr(site.inr)}` : planCell(r) },
+    {
+      label: "Amount due",
+      value: typeof r.amount_due === "number" ? inr(r.amount_due) : null,
+    },
+    { label: "Name", value: r.name },
+    { label: "Phone", value: <a href={`tel:+91${r.phone}`}>+91 {r.phone}</a> },
+    { label: "Email", value: r.email ? <a href={`mailto:${r.email}`}>{r.email}</a> : null },
+    { label: "Age", value: r.age },
+    { label: "Gender", value: r.gender },
+    { label: "College", value: r.college },
+    { label: "City", value: r.city ?? null },
+    { label: "State", value: r.state },
+    {
+      label: "Instagram",
+      value: r.instagram ? (
+        <a href={`https://instagram.com/${r.instagram}`} target="_blank" rel="noreferrer">
+          @{r.instagram}
+        </a>
+      ) : null,
+    },
+    { label: "Why they want to come", value: r.why, wide: true },
+  ];
+}
 
 const KIND_LABEL: Record<string, string> = {
   photo_id: "Government photo ID",
@@ -73,13 +123,22 @@ export default function PartnerRoster({
   apps,
   bundles,
   enquiries = [],
+  tabs = ALL_TABS,
+  full = false,
 }: {
   apps: ApplicationRow[];
   bundles: DocumentBundle[];
   /** Custom-booking questions asked from this departure's page. */
   enquiries?: MessageRow[];
+  /** Which tabs to offer. Spring Fest collects no identity documents
+   *  and has no enquiry form, so two empty tabs would only mislead. */
+  tabs?: Tab[];
+  /** Roster rows expand to every answer the form collected. Off for
+   *  PULSE, whose view is fixed by what its privacy notice describes. */
+  full?: boolean;
 }) {
-  const [tab, setTab] = useState<Tab>("roster");
+  const [tab, setTab] = useState<Tab>(tabs[0] ?? "roster");
+  const [open, setOpen] = useState<string | null>(null);
   const [onlyAccepted, setOnlyAccepted] = useState(false);
   const [q, setQ] = useState("");
 
@@ -119,33 +178,41 @@ export default function PartnerRoster({
   return (
     <>
       <div className="a-tabs">
-        <button type="button" className="a-tab" data-on={tab === "roster"} onClick={() => setTab("roster")}>
-          ROSTER<span className="a-tab-count">{apps.length}</span>
-        </button>
-        <button
-          type="button"
-          className="a-tab"
-          data-on={tab === "documents"}
-          onClick={() => setTab("documents")}
-        >
-          DOCUMENTS<span className="a-tab-count">{withIds.length}</span>
-        </button>
-        <button
-          type="button"
-          className="a-tab"
-          data-on={tab === "payments"}
-          onClick={() => setTab("payments")}
-        >
-          PAYMENTS<span className="a-tab-count">{withPayment.length}</span>
-        </button>
-        <button
-          type="button"
-          className="a-tab"
-          data-on={tab === "enquiries"}
-          onClick={() => setTab("enquiries")}
-        >
-          ENQUIRIES<span className="a-tab-count">{enquiries.length}</span>
-        </button>
+        {tabs.includes("roster") ? (
+          <button type="button" className="a-tab" data-on={tab === "roster"} onClick={() => setTab("roster")}>
+            ROSTER<span className="a-tab-count">{apps.length}</span>
+          </button>
+        ) : null}
+        {tabs.includes("documents") ? (
+          <button
+            type="button"
+            className="a-tab"
+            data-on={tab === "documents"}
+            onClick={() => setTab("documents")}
+          >
+            DOCUMENTS<span className="a-tab-count">{withIds.length}</span>
+          </button>
+        ) : null}
+        {tabs.includes("payments") ? (
+          <button
+            type="button"
+            className="a-tab"
+            data-on={tab === "payments"}
+            onClick={() => setTab("payments")}
+          >
+            PAYMENTS<span className="a-tab-count">{withPayment.length}</span>
+          </button>
+        ) : null}
+        {tabs.includes("enquiries") ? (
+          <button
+            type="button"
+            className="a-tab"
+            data-on={tab === "enquiries"}
+            onClick={() => setTab("enquiries")}
+          >
+            ENQUIRIES<span className="a-tab-count">{enquiries.length}</span>
+          </button>
+        ) : null}
       </div>
 
       <div className="a-search">
@@ -189,6 +256,7 @@ export default function PartnerRoster({
             <table className="a-table">
               <thead>
                 <tr>
+                  {full ? <th /> : null}
                   <th>Applied</th>
                   <th>Reference</th>
                   <th>Name</th>
@@ -202,31 +270,46 @@ export default function PartnerRoster({
               </thead>
               <tbody>
                 {shown.map((r) => {
-                  const plan = findPlan(r.departure_code, r.plan);
+                  const isOpen = full && open === r.id;
                   return (
-                    <tr key={r.id}>
-                      <td className="a-nowrap a-dim">{when(r.created_at)}</td>
-                      <td className="a-nowrap a-dim">{r.reference}</td>
-                      <td className="a-nowrap a-strong">{r.name}</td>
-                      <td className="a-nowrap">
-                        <a href={`tel:+91${r.phone}`} style={{ color: "inherit" }}>
-                          +91 {r.phone}
-                        </a>
-                      </td>
-                      <td>{r.college}</td>
-                      <td className="a-nowrap a-dim">
-                        {r.age} · {r.gender}
-                      </td>
-                      <td className="a-nowrap">{plan ? plan.n : "—"}</td>
-                      <td className="a-nowrap">
-                        {typeof r.amount_due === "number" ? inr(r.amount_due) : "—"}
-                      </td>
-                      <td>
-                        <span className="a-pill" data-s={r.status}>
-                          {r.status}
-                        </span>
-                      </td>
-                    </tr>
+                    <Fragment key={r.id}>
+                      <tr>
+                        {full ? (
+                          <td>
+                            <button
+                              type="button"
+                              className="a-row-toggle"
+                              aria-expanded={isOpen}
+                              onClick={() => setOpen(isOpen ? null : r.id)}
+                            >
+                              {isOpen ? "−" : "+"}
+                            </button>
+                          </td>
+                        ) : null}
+                        <td className="a-nowrap a-dim">{when(r.created_at)}</td>
+                        <td className="a-nowrap a-dim">{r.reference}</td>
+                        <td className="a-nowrap a-strong">{r.name}</td>
+                        <td className="a-nowrap">
+                          <a href={`tel:+91${r.phone}`} style={{ color: "inherit" }}>
+                            +91 {r.phone}
+                          </a>
+                        </td>
+                        <td>{r.college}</td>
+                        <td className="a-nowrap a-dim">
+                          {r.age} · {r.gender}
+                        </td>
+                        <td className="a-nowrap">{planCell(r)}</td>
+                        <td className="a-nowrap">
+                          {typeof r.amount_due === "number" ? inr(r.amount_due) : "—"}
+                        </td>
+                        <td>
+                          <span className="a-pill" data-s={r.status}>
+                            {r.status}
+                          </span>
+                        </td>
+                      </tr>
+                      {isOpen ? <Detail fields={fieldsFor(r)} span={10} /> : null}
+                    </Fragment>
                   );
                 })}
               </tbody>
@@ -256,9 +339,13 @@ export default function PartnerRoster({
                 AMOUNT{" "}
                 <b>{typeof r.amount_due === "number" ? inr(r.amount_due) : "—"}</b>
               </span>
-              <span>
-                UTR <b>{r.utr ?? "—"}</b>
-              </span>
+              {/* The site's booking form takes a screenshot, not a typed
+                  UTR, so on the full view an empty UTR is not a gap. */}
+              {!full || r.utr ? (
+                <span>
+                  UTR <b>{r.utr ?? "—"}</b>
+                </span>
+              ) : null}
             </>
           )}
         />

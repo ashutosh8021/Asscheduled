@@ -124,6 +124,35 @@ export const SITE_PLANS: Record<string, SitePlan> = {
   },
 };
 
+/**
+ * Departures sold only on the public site, for the admin's labels and
+ * filters. Not `Departure`s — those carry a full page's worth of fields
+ * the old app renders — so the admin reads names from here when
+ * `ALL_DEPARTURES` has no entry for a code.
+ *
+ * MI-26 is left out on purpose: it has no filter tab yet (see above),
+ * and adding one is a separate decision from Spring Fest's.
+ */
+export interface SiteDeparture {
+  id: string;
+  fest: string;
+  campus: string;
+}
+
+export const SPRING_FEST_ID = "SF-27";
+
+export const SITE_DEPARTURES: SiteDeparture[] = [
+  { id: SPRING_FEST_ID, fest: "SPRING FEST'27", campus: "IIT KHARAGPUR" },
+];
+
+/** The site plan an application was booked on, or null. Checked against
+ *  the row's departure so a plan id can only ever resolve to its own
+ *  trip's plan. */
+export function sitePlanFor(departure: string, id: string | null | undefined): SitePlan | null {
+  const plan = findSitePlan(id);
+  return plan && plan.departure === departure ? plan : null;
+}
+
 export interface SiteQuote {
   base: number;
   off: number;

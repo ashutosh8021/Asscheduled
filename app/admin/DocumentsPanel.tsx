@@ -22,6 +22,7 @@ interface Doc {
 const KIND_LABEL: Record<string, string> = {
   photo_id: "Government photo ID",
   college_id: "College ID",
+  payment_proof: "Payment screenshot",
 };
 
 export default function DocumentsPanel({ id }: { id: string }) {

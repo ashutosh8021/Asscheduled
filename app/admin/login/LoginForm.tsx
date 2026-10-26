@@ -28,7 +28,13 @@ export default function LoginForm() {
            session cookie; push alone could serve a cached shell.
            The destination is decided server-side from the allowlists —
            a partner belongs at /partner and cannot open /admin. */
-        router.replace(json.redirect === "/partner" ? "/partner" : "/admin");
+        /* Only the three known panels; anything else falls back to
+           /admin, which checks the session itself. */
+        const to =
+          json.redirect === "/partner" || json.redirect === "/partner/spring-fest"
+            ? json.redirect
+            : "/admin";
+        router.replace(to);
         router.refresh();
       } else {
         setError(json.error ?? "That did not work.");
